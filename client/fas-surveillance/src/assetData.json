@@ -1,0 +1,22 @@
+{
+  "asset": [
+    {
+      "id": 1,
+      "name": "Chain: Lifting Equipment Clamp, Chain Length 22 in",
+      "pn": "902437",
+      "sn": "SLB-15352",
+      "certificationDate": "22/05/2020",
+      "location": "JOP",
+      "condition": "GOOD"
+    },
+    {
+      "id": 2,
+      "name": "Spreader: Lifting Equipment Clamp, Chain Length 33 in (to use on equipment with compensating shipping cap)",
+      "pn": "100367280",
+      "sn": "SLB-15352",
+      "certificationDate": "22/05/2020",
+      "location": "JOP",
+      "condition": "GOOD"
+    }
+  ]
+}
