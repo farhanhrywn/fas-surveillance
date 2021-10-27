@@ -17,13 +17,15 @@ import CIcon from '@coreui/icons-react'
 import * as Icon from '@coreui/icons'
 import Swal from 'sweetalert2'
 import FormAdd from './formAdd'
+import moment from 'moment'
+import axios from '../config/axios'
 
 const fields = [
-  { key: 'id', label: 'No' },
-  { key: 'name', label: 'Name' },
+  { key: 'id_surv', label: 'No' },
+  { key: 'item', label: 'Name' },
   { key: 'pn', label: 'PN' },
   { key: 'sn', label: 'SN' },
-  { key: 'certificationDate', label: 'Certification Date' },
+  { key: 'cert_date', label: 'Certification Date' },
   { key: 'location', label: 'Location' },
   { key: 'condition', label: 'Condition'},
   { key: 'action', label: 'Action'}
@@ -32,18 +34,32 @@ const fields = [
 export default function AssetTable () {
   const [assetData, setAssetData] = useState([])
   const [isModalOpen, setModalOpen] = useState(false)
+  const locationId = localStorage.getItem('location_id')
 
-  const fetchDataAsset = () => {
-    fetch('http://localhost:3005/asset', {
+  const fetchDataAsset = (locationId) => {
+    axios({
+      // url: `/Surveillance/${locationId}`
+      url: '/asset',
       method: 'GET'
     })
-    .then(res => res.json())
-    .then(data => setAssetData(data))
-    .catch(err => console.log(err))
+    .then(({ data }) => {
+      setAssetData(data)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   }
 
   const editAsset = (assetId) => {
     
+  }
+
+  const convertDate = (asset) => {
+    return (
+        <td>
+          {moment(asset.cert_date).format('DD MMM YYYY')}
+        </td>
+    )
   }
 
   const actionField = (assetId) => {
@@ -51,13 +67,13 @@ export default function AssetTable () {
       <td>
         <CRow>
           <CCol md="3">
-            <CIcon icon={Icon.cilPencil} width="20" onClick={() => editAsset(assetId)} />
+            <CIcon icon={Icon.cilPencil} width={20} onClick={() => editAsset(assetId)} />
           </CCol>
           <CCol md="3">
-            <CIcon icon={Icon.cilNoteAdd} width="20" onClick={() => editAsset(assetId)} />
+            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => editAsset(assetId)} />
           </CCol>
           <CCol md="3">
-            <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width="20" onClick={() => editAsset(assetId)} />
+            <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => editAsset(assetId)} />
           </CCol>
         </CRow>
     </td>
@@ -65,7 +81,7 @@ export default function AssetTable () {
   }
 
   useEffect(() => {
-    fetchDataAsset()
+    fetchDataAsset(locationId)
   },[])
 
   return (
@@ -99,6 +115,7 @@ export default function AssetTable () {
                 hover
                 striped
                 scopedSlots={{
+                  'cert_date': (asset) => convertDate(asset),
                   'action': (asset, index) => actionField(asset.id)
                 }}
               />
