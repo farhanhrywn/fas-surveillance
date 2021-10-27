@@ -18,7 +18,7 @@ class LocationModel extends Model
         'update_by',
         'update_date'
     ];
-    protected $returnType    = 'App\Entities\Location';
+    protected $returnType    = 'array'; //'App\Entities\Location';
     protected $useTimestamps = false;
 
     public function finById($id = null)

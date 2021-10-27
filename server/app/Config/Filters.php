@@ -2,6 +2,7 @@
 
 namespace Config;
 
+use App\Filters\FilterJwt;
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
@@ -22,7 +23,8 @@ class Filters extends BaseConfig
         'csrf'     => \CodeIgniter\Filters\CSRF::class,
         'toolbar'  => \CodeIgniter\Filters\DebugToolbar::class,
         'honeypot' => \CodeIgniter\Filters\Honeypot::class,
-        'options' => \App\Filters\Options::class,
+        'cors' => \App\Filters\Cors::class,
+        'auth' => \App\Filters\Auth::class,
     ];
 
     /**
@@ -33,12 +35,12 @@ class Filters extends BaseConfig
      */
     public $globals = [
         'before' => [
-            'options'
+            'cors'
             // 'honeypot',
             // 'csrf',
         ],
         'after' => [
-            'toolbar',
+            //'toolbar',
             // 'honeypot',
         ],
     ];

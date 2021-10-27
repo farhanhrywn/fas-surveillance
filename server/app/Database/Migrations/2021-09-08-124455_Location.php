@@ -27,7 +27,7 @@ class Location extends Migration
             ],
             'password' => [
                 'type' => 'VARCHAR',
-                'constraint'     => 30,
+                'constraint'     => '255',
                 'null' => true,
             ],
             'status' => [

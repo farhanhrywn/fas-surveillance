@@ -62,7 +62,7 @@ class Surveillance2 extends Migration
                 'null' => true,
             ],
             //bakal pindah ke tabel removed tools
-            'handover_pict' => [
+            'handover_file' => [
                 'type' => 'VARCHAR',
                 'constraint'     => 100,
                 'null' => true,
@@ -83,7 +83,7 @@ class Surveillance2 extends Migration
             ],
             'status' => [
                 'type' => 'ENUM',
-                'constraint' => ['Active', 'Handover'],
+                'constraint' => ['Active', 'Incative'],
             ],
         ]);
         $this->forge->addKey('id_surv', true);
