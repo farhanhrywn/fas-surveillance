@@ -22,6 +22,12 @@ class RoleSeeder extends Seeder
                 'create_by' => 'developer',
                 'create_date'    => Time::now()
             ],
+            [
+                'nama_role' => 'lokasi',
+                'status'    => '1',
+                'create_by' => 'developer',
+                'create_date'    => Time::now()
+            ],
         ];
 
         // Simple Queries

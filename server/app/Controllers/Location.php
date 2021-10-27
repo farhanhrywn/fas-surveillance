@@ -36,78 +36,111 @@ class Location extends ResourceController
 
     public function create()
     {
-        $data = $this->request->getPost();
-        // $data = [
-        //     'nama_lokasi' => $this->request->getPost('nama_lokasi'),
-        //     'alamat_lokasi' => $this->request->getPost('alamat_lokasi'),
-        //     'password' => $this->request->getPost('password'),
-        //     'create_by' => $this->request->getPost('password'),
-        // ];
-
-        $validate = $this->validation->run($data, 'registLocation'); //nama validasinya (app/config/validation)
+        helper(['form']);
+        $input = $this->request->getRawInput();
+        $validate = $this->validation->run($input, 'registLocation'); //nama validasinya (app/config/validation)
         $error = $this->validation->getErrors();
         if ($error) {
-            //return $this->fail($error);
-            return $this->fail('Location name is already exist');
+            return $this->fail($error);
         }
 
-        $location = new \App\Entities\Location();
-        $location->fill($data);
-        $location->create_date = $this->datetime;
+        $data = [
+            'nama_lokasi' => $this->request->getVar('nama_lokasi'),
+            'alamat_lokasi' => $this->request->getVar('alamat_lokasi'),
+            'password' => password_hash($this->request->getVar('password'), PASSWORD_BCRYPT),
+            'create_by' => $this->request->getVar('create_by'),
+            'status' => 1,
+        ];
 
-        if ($this->model->save($location)) {
-            return $this->respondCreated($location, 'has been created');
+        $model = new LocationModel();
+        $action = $model->save($data);
+        if ($action) {
+            $code = 200;
+            $msg = 'insert success';
+            $response = [
+                'status' => $code,
+                'error' => false,
+                'data' => $msg,
+            ];
+        } else {
+            $code = 400;
+            $msg = 'insert failed';
+            $response = [
+                'status' => $code,
+                'error' => false,
+                'data' => $msg,
+            ];
         }
+        return $this->respond($response, $code);
     }
 
     public function update($id = null)
     {
-        $data = $this->request->getRawInput();
-        $data['id_lokasi'] = $id;
-        $validate = $this->validation->run($data, 'updateLocation');
-        $errors = $this->validation->getErrors();
+        if (!$this->show($id)) {
+            return $this->fail('id not found');
+        }
 
+        $input = $this->request->getRawInput();
+        $input['id_lokasi'] = $id;
+        $validate = $this->validation->run($input, 'updateLocation');
+        $errors = $this->validation->getErrors();
         if ($errors) {
             return $this->fail($errors);
         }
 
-        if (!$this->show($id)) {
-            return $this->fail('id tidak ditemukan');
-        }
+        $data = [
+            'nama_lokasi' => $input['nama_lokasi'],
+            'alamat_lokasi' => $input['alamat_lokasi'],
+            'update_by' => $input['update_by'],
+            'status' => 1,
+        ];
 
-        $location = new \App\Entities\Location();
-        $location->fill($data);
-        $location->update_date = $this->datetime;
-
-        if ($this->model->save($location)) {
-            return $this->respondUpdated($location, 'user updated');
+        $model = new LocationModel();
+        $action = $model->update($id, $data);
+        if ($action) {
+            $code = 200;
+            $msg = 'update success';
+            $response = [
+                'status' => $code,
+                'error' => false,
+                'data' => $msg,
+            ];
+        } else {
+            $code = 400;
+            $msg = 'update failed';
+            $response = [
+                'status' => $code,
+                'error' => false,
+                'data' => $msg,
+            ];
         }
+        return $this->respond($response, $code);
     }
 
     public function delete($id = null)
     {
-        /*if (!$this->show($id)) {
+        if (!$this->show($id)) {
             return $this->fail('id tidak ditemukan');
         }
 
         if ($this->model->delete($id)) {
             return $this->respondDeleted(['id' => $id . ' Deleted']);
-        }*/
-
-        if (!$this->show($id)) {
-            return $this->fail('id not found');
         }
 
-        $data = $this->request->getRawInput();
-        $data['id_lokasi'] = $id; //ngambil id dari url (request)
+        // if (!$this->show($id)) {
+        //     return $this->fail('id not found');
+        // }
 
-        $location = new \App\Entities\Location();
-        $location->fill($data);
-        $location->update_date = $this->datetime;
-        $location->status = 2;
+        // $data = $this->request->getRawInput();
+        // $data['id_lokasi'] = $id; //ngambil id dari url (request)
 
-        if ($this->model->save($location)) {
-            return $this->respondUpdated($location, 'has been deleted');
-        }
+        // $location = new \App\Entities\Location();
+        // $location->fill($data);
+        // $location->update_date = $this->datetime;
+        // $location->status = 2;
+
+        // if ($this->model->save($location)) {
+        //     return $this->respondUpdated($location, 'has been deleted');
+        // }
     }
 }
