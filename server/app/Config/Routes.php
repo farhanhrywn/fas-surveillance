@@ -31,13 +31,14 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-$routes->get('/', 'Home::index', ['filter' => 'auth']);
+$routes->get('/', 'Home::index');
 
 #Surveillance Page
 //$routes->get('/Surveillance', 'Surveillance::index', ['filter' => 'auth']);
 $routes->get('/Surveillance/(:num)', 'Surveillance::indexByLocation/$1');
 $routes->get('/Surveillance/(:num)/(:num)', 'Surveillance::indexByLocation/$1/$2');
 $routes->get('/Surveillance/detail/(:num)', 'Surveillance::show/$1');
+$routes->get('/Surveillance/download/(:num)', 'Surveillance::download/$1');
 
 //surveillance - ubah status jadi handover
 //$routes->put('/Surveillance/handover/(:num)', 'Surveillance::handover/$1');
@@ -52,7 +53,7 @@ $routes->post('loginSpv', 'Login::loginSpv');
 $routes->post('loginWH', 'Login::loginWH');
 
 #Location
-$routes->get('Location', 'Location::index', ['filter' => 'auth']);
+$routes->get('Location', 'Location::index');
 $routes->get('/Location/show/(:num)', 'Location::show/$1');
 
 $routes->resource('Role');
