@@ -44,27 +44,27 @@ class Validation
     #Location
     public $registLocation = [
         'nama_lokasi' => [
-            'rules' => 'required|max_length[100]|is_unique[location.nama_lokasi]',
+            'rules' => 'required|max_length[100]',
             'errors' => [
                 'required' => 'You must fill location name',
                 'max_length' => 'maximum characters = 100',
-                'is_unique' => 'Location has been used'
             ],
         ],
         'password' => [
             'rules' => 'required|min_length[5]'
         ],
-        'status' => [
-            'rules' => 'required'
-        ]
+        // 'status' => [
+        //     'rules' => 'required'
+        // ]
     ];
     public $updateLocation = [
+        //|is_unique[location.nama_lokasi,id_lokasi,{id_lokasi}]
         'nama_lokasi' => [
-            'rules' => 'required|max_length[100]|is_unique[location.nama_lokasi,id_lokasi,{id_lokasi}]' //,id_lokasi,{id_lokasi}]',
+            'rules' => 'required|max_length[100]' //,id_lokasi,{id_lokasi}]',
         ],
-        'status' => [
-            'rules' => 'required'
-        ],
+        // 'status' => [
+        //     'rules' => 'required'
+        // ],
         'update_by' => [
             'rules' => 'required'
         ],

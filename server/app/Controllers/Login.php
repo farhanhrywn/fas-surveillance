@@ -40,13 +40,13 @@ class Login extends ResourceController
 
         $model = new LocationModel();
 
-        $teknisi = $model->Where('nama_lokasi', $this->request->getVar('nama_lokasi'))->first();
+        $teknisi = $model->Where('alamat_lokasi', $this->request->getVar('nama_lokasi'))->first();
         if (!$teknisi) return $this->failNotFound('Nama Lokasi not Found');
         //return $this->respond($this->request->getVar('password'));
 
         $verify = password_verify($this->request->getVar('password'), $teknisi['password']); //ini kalo passwordnya udah di hash
         //$verify = $this->checkPass($this->request->getVar('password'), $teknisi['password']);
-        if (!$verify) return $this->failNotFound('Wrong Password' . $teknisi['nama_lokasi']);
+        if (!$verify) return $this->failNotFound('Wrong Password');
 
 
         //bikin jwt nya

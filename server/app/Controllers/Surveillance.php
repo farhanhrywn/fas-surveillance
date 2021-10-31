@@ -161,12 +161,13 @@ class Surveillance extends ResourceController
     public function delete($id = null)
     {
         $item = new SurveillanceModel();
-        if (!$item) {
+        $data = $item->find($id);
+        if (!$data) {
             return $this->fail('id not found');
         }
-        $data = $item->find($id);
+
         $existStatus = $data->status;
-        $data->status = 1;
+        $data->status = 2;
         $action = $this->model->save($data);
         if ($action) {
             $code = 200;
@@ -190,14 +191,12 @@ class Surveillance extends ResourceController
 
     public function handover($id = null)
     {
-        // if (!$this->show($id)) {
-        //     return $this->fail('id not found');
-        // }
         $item = new SurveillanceModel();
-        if (!$item) {
+        $existItem = $item->find($id);
+        if (!$existItem) {
             return $this->fail('id not found');
         }
-        $existItem = $item->find($id);
+
 
         $input = $this->request->getPost();
         $input['id_surv'] = $id;
@@ -243,48 +242,14 @@ class Surveillance extends ResourceController
         }
         return $this->respond($response, $code);
     }
+
+    public function download($id = null)
+    {
+        $model = new SurveillanceModel();
+        $data = $model->find($id);
+        if (!$data) {
+            return $this->fail('id not found');
+        }
+        return $this->response->download('./assets/upload/' . $data->handover_file, null);
+    }
 }
-
-
-
-// $data = [
-        //     'id' => $id,
-        //     'item' => $input['item'],
-        //     'location' => $input['location'],
-        //     'pn' => $input['pn'],
-        //     'sn' => $input['sn'],
-        //     'qty' => $input['qty'],
-        //     'category' => $input['category'],
-        //     'jenis' => $input['jenis'],
-        //     'condition' => $input['condition'],
-        //     'cert_date' => $input['cert_date'],
-        //     'handover_notes' => $input['handover_notes'],
-        //     'handover_file' => $input['handover_file'],
-        //     'phone' => $input['phone'],
-        //     'maintenance_by' => $input['maintenance_by'],
-        //     'maintenance_date' => $this->datetime,
-        //     'status' => $input['status'],
-        // ];
-
-
-
-
-
-
-        // $data = [
-        //     'item' => $this->request->getVar('item'),
-        //     'location' => $this->request->getVar('location'),
-        //     'pn' => $this->request->getVar('pn'),
-        //     'sn' => $this->request->getVar('sn'),
-        //     'qty' => $this->request->getVar('qty'),
-        //     'category' => $this->request->getVar('category'),
-        //     'jenis' => $this->request->getVar('jenis'),
-        //     'condition' => $this->request->getVar('condition'),
-        //     'cert_date' => $this->request->getVar('cert_date'),
-        //     'handover_notes' => $this->request->getVar('handover_notes'),
-        //     'handover_file' => $this->request->getVar('handover_file'),
-        //     'phone' => $this->request->getVar('phone'),
-        //     'maintenance_by' => $this->request->getVar('maintenance_by'),
-        //     'maintenance_date' => $this->datetime,
-        //     'status' => $this->request->getVar('status'),
-        // ];

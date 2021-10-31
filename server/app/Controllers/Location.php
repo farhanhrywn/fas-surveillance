@@ -49,6 +49,7 @@ class Location extends ResourceController
             'alamat_lokasi' => $this->request->getVar('alamat_lokasi'),
             'password' => password_hash($this->request->getVar('password'), PASSWORD_BCRYPT),
             'create_by' => $this->request->getVar('create_by'),
+            'create_date' => $this->datetime,
             'status' => 1,
         ];
 
@@ -92,6 +93,7 @@ class Location extends ResourceController
             'nama_lokasi' => $input['nama_lokasi'],
             'alamat_lokasi' => $input['alamat_lokasi'],
             'update_by' => $input['update_by'],
+            'update_date' => $this->datetime,
             'status' => 1,
         ];
 

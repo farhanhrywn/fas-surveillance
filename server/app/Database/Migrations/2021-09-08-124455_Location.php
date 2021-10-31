@@ -18,7 +18,7 @@ class Location extends Migration
             'nama_lokasi'       => [
                 'type'       => 'VARCHAR',
                 'constraint' => '100',
-                'unique' => true,
+                //'unique' => true,
             ],
             'alamat_lokasi' => [
                 'type' => 'VARCHAR',
