@@ -56,13 +56,13 @@ class Surveillance2 extends Migration
                 'null' => true,
             ],
             //bakal pindah ke tabel removed tools
-            'handover_notes' => [
+            'remark_notes' => [
                 'type' => 'VARCHAR',
                 'constraint'     => 100,
                 'null' => true,
             ],
             //bakal pindah ke tabel removed tools
-            'handover_file' => [
+            'remark_file' => [
                 'type' => 'VARCHAR',
                 'constraint'     => 100,
                 'null' => true,

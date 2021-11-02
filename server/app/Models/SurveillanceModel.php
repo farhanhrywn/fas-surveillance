@@ -14,12 +14,12 @@ class SurveillanceModel extends Model
         'pn',
         'sn',
         'qty',
-        'category',
-        'jenis',
+        'sheet',
+        'type',
         'condition',
         'cert_date',
-        'handover_notes',
-        'handover_file',
+        'remark',
+        'remark_file',
         'phone',
         'maintenance_by',
         'maintenance_date',
@@ -50,5 +50,34 @@ class SurveillanceModel extends Model
             return $data;
         }
         return false;
+    }
+
+    public function getDetail($id = null)
+    {
+        $input = $this->find($id);
+        $join = $this
+            ->select('
+            Surveillance.id_surv,
+            Surveillance.item,
+            Location.nama_lokasi,
+            Surveillance.pn,
+            Surveillance.sn,
+            Surveillance.qty,
+            Surveillance.category,
+            Surveillance.jenis,
+            Surveillance.condition,
+            Surveillance.cert_date,
+            Surveillance.handover_notes,
+            Surveillance.handover_file,
+            Surveillance.maintenance_by,
+            Surveillance.phone,
+            Surveillance.maintenance_date,
+            Surveillance.status
+            ')
+            ->join('Location', 'Location.id_lokasi=Surveillance.location', 'left')
+            ->where(['Surveillance.id_surv' => $input->id_surv])
+            ->get()->getresultArray();
+
+        return $join;
     }
 }

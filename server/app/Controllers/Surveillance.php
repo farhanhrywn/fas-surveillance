@@ -90,7 +90,7 @@ class Surveillance extends ResourceController
     {
         $file = $this->request->getFile('handover_file');
         $rules = [
-            'handover_file' => 'uploaded[handover_file]|max_size[handover_file,10240]|ext_in[handover_file,pdf,png,jpg,xlsx,docx,txt]',
+            'handover_file' => 'uploaded[handover_file]|max_size[handover_file,10240]|ext_in[handover_file,pdf,png,jpg,jpeg,heif,hevc,xlsx,docx,txt]',
         ];
         //cek uploaded via http
         if (!$file->isvalid()) {
@@ -150,21 +150,33 @@ class Surveillance extends ResourceController
 
     public function show($id = null)
     {
-        $data = $this->model->find($id);
-        if ($data) {
-            return $this->respond($data);
+        $input = $this->model->find($id);
+        if (!$input) {
+            return $this->fail('id not found');
         }
-        return false;
+
+        $model = new SurveillanceModel();
+        $data = $model->getDetail($id);
+
+        return $this->respond($data);
     }
 
     #delete = set status jadi 0 + update untuk remove (backllad / handover)
     public function delete($id = null)
     {
-        $item = new SurveillanceModel();
-        $data = $item->find($id);
+        // $item = new SurveillanceModel();
+        $data = $this->model->find($id);
         if (!$data) {
             return $this->fail('id not found');
         }
+
+        //ambil remark backload dan boxcode
+        $input = $this->request->getPost();
+        $input['id_surv'] = $id;
+
+        $surv = new \App\Entities\Surveillance();
+        $surv->fill($input);
+        $surv->maintenance_date = $this->datetime;
 
         $existStatus = $data->status;
         $data->status = 2;
@@ -210,7 +222,11 @@ class Surveillance extends ResourceController
             $file = $this->uploadFile($this->request->getFile('handover_file'));
             //kalo balikan dari uploadFile ada yg error
             if ($file == 'error') {
-                return $this->respond(['status' => 400, 'error' => true, 'data' => 'File format is not supported. File Format Supported : docx, xlsx, pdf, jpg, png. Size maximum : 10 Mb',], 400);
+                return $this->respond([
+                    'status' => 400,
+                    'error' => true,
+                    'data' => 'File format is not supported. File Format Supported : pdf, png, jpg, jpeg, heif, hevc, xlsx, docx, txt. Size maximum : 10 Mb'
+                ], 400);
             } else {
                 $old_file = $existItem->handover_file;
                 //file dengan id item tersebut ada ga?

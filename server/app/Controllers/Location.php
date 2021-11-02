@@ -121,28 +121,28 @@ class Location extends ResourceController
 
     public function delete($id = null)
     {
-        if (!$this->show($id)) {
-            return $this->fail('id tidak ditemukan');
-        }
-
-        if ($this->model->delete($id)) {
-            return $this->respondDeleted(['id' => $id . ' Deleted']);
-        }
-
         // if (!$this->show($id)) {
-        //     return $this->fail('id not found');
+        //     return $this->fail('id tidak ditemukan');
         // }
 
-        // $data = $this->request->getRawInput();
-        // $data['id_lokasi'] = $id; //ngambil id dari url (request)
-
-        // $location = new \App\Entities\Location();
-        // $location->fill($data);
-        // $location->update_date = $this->datetime;
-        // $location->status = 2;
-
-        // if ($this->model->save($location)) {
-        //     return $this->respondUpdated($location, 'has been deleted');
+        // if ($this->model->delete($id)) {
+        //     return $this->respondDeleted(['id' => $id . ' Deleted']);
         // }
+
+        if (!$this->show($id)) {
+            return $this->fail('id not found');
+        }
+
+        $data = $this->request->getRawInput();
+        $data['id_lokasi'] = $id; //ngambil id dari url (request)
+
+        $location = new \App\Entities\Location();
+        $location->fill($data);
+        $location->update_date = $this->datetime;
+        $location->status = 2;
+
+        if ($this->model->save($location)) {
+            return $this->respondUpdated($location, 'has been deleted');
+        }
     }
 }

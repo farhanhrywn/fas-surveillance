@@ -98,10 +98,10 @@ class Validation
             ],
         ],
         'sn' => [
-            'rules' => 'required|max_length[20]|min_length[4]|is_unique[surveillance.sn]',
+            'rules' => 'required|max_length[20]|min_length[4]', // '|is_unique[surveillance.sn]',
             'errors' => [
                 'required' => 'You must fill sn',
-                'is_unique' => 'Serial Number is already inserted'
+                // 'is_unique' => 'Serial Number is already inserted'
             ],
         ],
         'qty' => [
@@ -151,10 +151,10 @@ class Validation
             ],
         ],
         'sn' => [
-            'rules' => 'max_length[20]|min_length[4]|is_unique[surveillance.sn,id_surv,{id_surv}]',
+            'rules' => 'max_length[20]|min_length[4]', //'|is_unique[surveillance.sn,id_surv,{id_surv}]',
             'errors' => [
                 'required' => 'You must fill item',
-                'is_unique' => 'SN cannot same with another item'
+                // 'is_unique' => 'SN cannot same with another item'
             ],
         ],
         'qty' => [
@@ -183,19 +183,11 @@ class Validation
                 'number' => 'Phone must be a number'
             ],
         ],
-        // 'handover_file' => [
-        //     'rules' => 'uploaded[handover_file]|max_size[handover_file,10240]|ext_in[handover_file,pdf,png,jpg,xlsx,docx,txt]',
-        //     'errors' => [
-        //         'required' => 'You must fill phone number',
-        //         'number' => 'Phone must be a number',
-        //         'uploaded' => 'uploaded error'
-        //     ],
-        // ]
     ];
 
     public $surveillanceValHandover = [
         'handover_file' => [
-            'rules' => 'uploaded[handover_file]|max_size[handover_file,10240]|ext_in[handover_file,pdf,png,jpg,xlsx,docx,txt]',
+            'rules' => 'uploaded[handover_file]|max_size[handover_file,10240]|ext_in[handover_file,pdf,png,jpg,jpeg,heif,hevc,xlsx,docx,txt]',
             'errors' => [
                 'max_size' => 'Maximum file size is 10Mb',
                 'ext_in' => 'You can only upload file with extension jpg,png,doc,txt,xlsx'
@@ -237,6 +229,33 @@ class Validation
             ],
         ]
     ];
+
+    #User Update 
+    public $updateUser = [
+        'nama_user' => [
+            'rules' => 'required|is_unique[user.username,id_user,{id_user}]',
+            'errors' => [
+                'required' => 'Username must fill',
+                'is_unique' => 'Username has been used'
+            ]
+        ],
+        'email' => [
+            'rules' => 'required|valid_email|is_unique[user.email,id_user,{id_user}]',
+            'errors' => [
+                'required' => 'Email must fill',
+                'valid_email' => 'Format email must be valid',
+                'is_unique' => 'Email has been used'
+            ]
+        ],
+        'phone' => [
+            'rules' => 'required|numeric',
+            'errors' => [
+                'required' => 'You must fill phone number',
+                'number' => 'Phone must be a number'
+            ],
+        ]
+    ];
+
 
     #teknisi login 
     public $loginTeknisi = [

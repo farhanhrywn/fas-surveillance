@@ -44,8 +44,10 @@ $routes->get('/Surveillance/download/(:num)', 'Surveillance::download/$1');
 //$routes->put('/Surveillance/handover/(:num)', 'Surveillance::handover/$1');
 $routes->post('/Surveillance/handover/(:num)', 'Surveillance::handover/$1');
 
-#warehouse register 
+#User
+//warehouse register 
 $routes->post('register', 'Register::index');
+$routes->post('User', 'User::index');
 
 #Login
 $routes->post('loginLoc', 'Login::loginLocation');
@@ -56,8 +58,10 @@ $routes->post('loginWH', 'Login::loginWH');
 $routes->get('Location', 'Location::index');
 $routes->get('/Location/show/(:num)', 'Location::show/$1');
 
+
+
 $routes->resource('Role');
-# $routes->resource('User');
+$routes->resource('User');
 $routes->resource('Location');
 # $routes->resource('Request');
 $routes->resource('Surveillance');
