@@ -8,20 +8,19 @@ import {
   CCard,
   CCardBody,
   CDataTable,
-  CFormGroup,
-  CInput,
-  CTextarea
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
 import * as Icon from '@coreui/icons'
-import Swal from 'sweetalert2'
 import FormAdd from './formAdd'
 import moment from 'moment'
 import axios from '../config/axios'
+import Modal from 'react-bootstrap/Modal'
+import Swal from 'sweetalert2'
+import assetType from '../assetType.json'
 
 const fields = [
-  { key: 'id_surv', label: 'No' },
+  { key: 'id', label: 'No' },
   { key: 'item', label: 'Name' },
   { key: 'pn', label: 'PN' },
   { key: 'sn', label: 'SN' },
@@ -50,10 +49,6 @@ export default function AssetTable () {
     })
   }
 
-  const editAsset = (assetId) => {
-    
-  }
-
   const convertDate = (asset) => {
     return (
         <td>
@@ -67,28 +62,59 @@ export default function AssetTable () {
       <td>
         <CRow>
           <CCol md="3">
-            <CIcon icon={Icon.cilPencil} width={20} onClick={() => editAsset(assetId)} />
+            <CIcon icon={Icon.cilPencil} width={20} />
           </CCol>
           <CCol md="3">
-            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => editAsset(assetId)} />
+            <CIcon icon={Icon.cilNoteAdd} width={20} />
           </CCol>
           <CCol md="3">
-            <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => editAsset(assetId)} />
+            <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} />
           </CCol>
         </CRow>
     </td>
     )
   }
 
+  const showModal = () => {
+    setModalOpen(true)
+  }
+
+  const hideModal = () => {
+    setModalOpen(false)
+  }
+
+  const saveItem = (item) => {
+    console.log(item)
+    axios({
+      url: '/asset',
+      method: 'POST',
+      data: {...item, id: assetData[assetData.length - 1].id + 1, location: 1}
+    })
+    .then(({ data }) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Sukses menambahkan asset',
+        timer: 2000,
+        showConfirmButton: false
+      })
+      fetchDataAsset()
+      hideModal()
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
+
   useEffect(() => {
     fetchDataAsset(locationId)
-  },[])
+  },[locationId])
+
 
   return (
     <>
       <CRow className="mt-5 justify-content-between">
         <CCol md="4">
-          <CButton block color="primary" onClick={() => setModalOpen(true)}>Add Item</CButton>
+          <CButton block color="primary" onClick={showModal}>Add Item</CButton>
         </CCol>
         <CCol md="4">
           <CRow>
@@ -98,8 +124,11 @@ export default function AssetTable () {
             <CCol md="8">
               <CSelect>
                 <option value="">Select the type</option>
-                <option value="type 1">Type 1</option>
-                <option value="type 2">Type 2</option>
+                {
+                  assetType.map(type => (
+                    <option value={type.value}>{type.label}</option>
+                  ))
+                }
               </CSelect>
             </CCol>
           </CRow>
@@ -123,7 +152,16 @@ export default function AssetTable () {
           </CCard>
         </CCol>
       </CRow>
-      <FormAdd show={isModalOpen} onHide={() => setModalOpen(false)}/>
+
+      {/* Modal component for add new item */}
+      <Modal show={isModalOpen} size="xl" centered>
+        <Modal.Header>
+          <Modal.Title>Add New Item</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <FormAdd onSubmit={saveItem} onCancel={hideModal}/>
+        </Modal.Body>
+      </Modal>
     </>
   )
 }
