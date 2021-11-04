@@ -9,19 +9,22 @@ class SurveillanceModel extends Model
     protected $table = 'Surveillance';
     protected $primaryKey = 'id_surv';
     protected $allowedFields = [
+        'type',
         'item',
         'location',
+        'plan',
         'pn',
         'sn',
         'qty',
-        'category',
-        'jenis',
+        'sheet',
+        'steelbox',
         'condition',
         'cert_date',
-        'handover_notes',
-        'handover_file',
-        'phone',
+        'remark',
+        'remark_file',
         'maintenance_by',
+        'phone',
+        'tools_date_in',
         'maintenance_date',
         'status'
     ];
@@ -50,5 +53,35 @@ class SurveillanceModel extends Model
             return $data;
         }
         return false;
+    }
+
+    public function getDetail($id = null)
+    {
+        $input = $this->find($id);
+        $join = $this
+            ->select('
+            Surveillance.id_surv,
+            Surveillance.item,
+            Location.nama_lokasi,
+            Surveillance.pn,
+            Surveillance.sn,
+            Surveillance.qty,
+            Surveillance.sheet,
+            Surveillance.type,
+            Surveillance.condition,
+            Surveillance.cert_date,
+            Surveillance.tools_date_in,
+            Surveillance.remark,
+            Surveillance.remark_file,
+            Surveillance.maintenance_by,
+            Surveillance.phone,
+            Surveillance.maintenance_date,
+            Surveillance.status
+            ')
+            ->join('Location', 'Location.id_lokasi=Surveillance.location', 'left')
+            ->where(['Surveillance.id_surv' => $input->id_surv])
+            ->get()->getresultArray();
+
+        return $join;
     }
 }
