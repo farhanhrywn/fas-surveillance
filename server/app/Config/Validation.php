@@ -111,10 +111,10 @@ class Validation
                 'number' => 'Quantity must be a number'
             ],
         ],
-        'jenis' => [
+        'type' => [
             'rules' => 'required',
             'errors' => [
-                'required' => 'You must fill jenis'
+                'required' => 'You must fill type'
             ],
         ],
         'condition' => [
@@ -129,7 +129,45 @@ class Validation
                 'required' => 'You must fill phone number',
                 'number' => 'Phone must be a number'
             ],
-        ]
+        ],
+        'tools_date_in' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'You must fill tools in',
+            ],
+        ],
+        'plan' => [
+            'rules' => 'required|max_length[50]',
+            'errors' => [
+                'required' => 'You must fill plan',
+                'max_length' => 'maximum characters = 50',
+            ],
+        ],
+        'steelbox' => [
+            'rules' => 'required|max_length[20]',
+            'errors' => [
+                'required' => 'You must fill steelbox',
+                'max_length' => 'maximum characters = 20',
+            ],
+        ],
+        'sheet' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'You must fill Category',
+            ],
+        ],
+        'status' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'You must fill Status',
+            ],
+        ],
+        'maintenance_by' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'You must fill PIC',
+            ],
+        ],
     ];
 
     public $surveillanceValUpdate = [
@@ -164,7 +202,7 @@ class Validation
                 'number' => 'Quantity must be a number'
             ],
         ],
-        'jenis' => [
+        'type' => [
             'rules' => 'required',
             'errors' => [
                 'required' => 'You must fill jenis'
@@ -183,11 +221,17 @@ class Validation
                 'number' => 'Phone must be a number'
             ],
         ],
+        'plan' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'You must fill phone number',
+            ],
+        ],
     ];
 
     public $surveillanceValHandover = [
-        'handover_file' => [
-            'rules' => 'uploaded[handover_file]|max_size[handover_file,10240]|ext_in[handover_file,pdf,png,jpg,jpeg,heif,hevc,xlsx,docx,txt]',
+        'remark_file' => [
+            'rules' => 'uploaded[remark_file]|max_size[remark_file,10240]|ext_in[remark_file,pdf,png,jpg,jpeg,heif,hevc,xlsx,docx,txt]',
             'errors' => [
                 'max_size' => 'Maximum file size is 10Mb',
                 'ext_in' => 'You can only upload file with extension jpg,png,doc,txt,xlsx'

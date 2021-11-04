@@ -12,7 +12,7 @@ class Surveillance extends ResourceController
     protected $modelName = 'App\Models\SurveillanceModel';
     protected $format = 'json';
     protected $datetime;
-    protected $PATH_UPLOADED = './assets/upload';
+    protected $PATH_UPLOADED = './assets/upload/';
 
     public function __construct()
     {
@@ -31,7 +31,6 @@ class Surveillance extends ResourceController
     {
         #indexnya bakal nampilin tools sesuai lokasinya biar ga berat (select all)
         //$data = $this->model->getWhere(['location' => $lokasi])->getResult();
-
         //param buat detil tools yg ada di lokasi tsb
         $arrParam = ['location' => $lokasi, 'id_surv' => $idTools];
         //tapi kalo id tools nya null dia bakal nampil seluruh tools yg ada di lokasi tsb (view all tools in spesific location)
@@ -54,9 +53,7 @@ class Surveillance extends ResourceController
         if ($error) {
             return $this->fail($error);
         }
-
         //$file = $this->uploadFile($this->request->getFile('handover_file'));
-
         $item = new \App\Entities\Surveillance();
         $item->fill($data);
         $item->maintenance_date = $this->datetime;
@@ -88,15 +85,15 @@ class Surveillance extends ResourceController
 
     public function uploadFile($file)
     {
-        $file = $this->request->getFile('handover_file');
+        $file = $this->request->getFile('remark_file');
         $rules = [
-            'handover_file' => 'uploaded[handover_file]|max_size[handover_file,10240]|ext_in[handover_file,pdf,png,jpg,jpeg,heif,hevc,xlsx,docx,txt]',
+            'remark_file' => 'uploaded[remark_file]|max_size[remark_file,10240]|ext_in[remark_file,pdf,png,jpg,jpeg,heif,hevc,xlsx,docx,txt]',
         ];
         //cek uploaded via http
         if (!$file->isvalid()) {
             return 'error';
         }
-        //cek sesuai rules
+        // cek sesuai rules
         if (!$this->validate($rules)) {
             return 'error';
         }
@@ -109,14 +106,14 @@ class Surveillance extends ResourceController
     #update harian
     public function update($id = null)
     {
-        if (!$this->show($id)) {
+        if (!$this->model->find($id)) {
             return $this->fail('id not found');
         }
 
         $data = $this->request->getRawInput();
 
         $data['id_surv'] = $id;
-        $validate = $this->validation->run($data, 'surveillanceValUpdate');
+        $validate = $this->validation->run($data, 'surveillanceValCreate');
         $errors = $this->validation->getErrors();
 
         if ($errors) {
@@ -127,7 +124,7 @@ class Surveillance extends ResourceController
         $surv->fill($data);
         $surv->maintenance_date = $this->datetime;
 
-        $update = $this->model->save($data);
+        $update = $this->model->save($surv);
         if ($update) {
             $code = 200;
             $msg = 'update success';
@@ -145,7 +142,8 @@ class Surveillance extends ResourceController
                 'data' => $msg,
             ];
         }
-        return $this->respond($response, $code);
+        // return $this->respond($response, $code);
+        return $this->respondUpdated($surv);
     }
 
     public function show($id = null)
@@ -164,23 +162,21 @@ class Surveillance extends ResourceController
     #delete = set status jadi 0 + update untuk remove (backllad / handover)
     public function delete($id = null)
     {
-        // $item = new SurveillanceModel();
+        #tambahin kondisi : yg bisa dihapus cuma yg statusnya installed & backload
         $data = $this->model->find($id);
         if (!$data) {
             return $this->fail('id not found');
         }
-
-        //ambil remark backload dan boxcode
-        $input = $this->request->getPost();
-        $input['id_surv'] = $id;
-
-        $surv = new \App\Entities\Surveillance();
-        $surv->fill($input);
-        $surv->maintenance_date = $this->datetime;
-
         $existStatus = $data->status;
-        $data->status = 2;
-        $action = $this->model->save($data);
+        // $data->status = 2;
+        if ($existStatus != 'Backload' && $existStatus != 'Installed') {
+            return $this->respond($response = [
+                'status' => 200,
+                'error' => true,
+                'data' => 'status item must be installed or backload',
+            ], 200);
+        }
+        $action = $this->model->delete($id);
         if ($action) {
             $code = 200;
             $msg = 'delete success';
@@ -198,7 +194,16 @@ class Surveillance extends ResourceController
                 'data' => $msg,
             ];
         }
+        $this->deleteFile($data->remark_file);
         return $this->respond($response, $code);
+    }
+
+    public  function deleteFile($file = null)
+    {
+        if (file_exists($this->PATH_UPLOADED . $file) && $file != null) {
+            //kalo ada diapus dulu biar file ga numpuk di db
+            unlink($this->PATH_UPLOADED . $file);
+        }
     }
 
     public function handover($id = null)
@@ -209,7 +214,6 @@ class Surveillance extends ResourceController
             return $this->fail('id not found');
         }
 
-
         $input = $this->request->getPost();
         $input['id_surv'] = $id;
 
@@ -218,24 +222,23 @@ class Surveillance extends ResourceController
         $surv->maintenance_date = $this->datetime;
 
         //cek apakah param handover_file ada isinya?
-        if ($this->request->getFile('handover_file')) {
-            $file = $this->uploadFile($this->request->getFile('handover_file'));
-            //kalo balikan dari uploadFile ada yg error
+        if ($this->request->getFile('remark_file')) {
+            #2
+            $old_file = $existItem->remark_file;
+            //file dengan id item tersebut ada ga?
+            if (file_exists($this->PATH_UPLOADED . $old_file) && $old_file != null) {
+                //kalo ada diapus dulu biar file ga numpuk di db
+                unlink($this->PATH_UPLOADED . $old_file);
+            }
+            $file = $this->uploadFile($this->request->getFile('remark_file'));
             if ($file == 'error') {
                 return $this->respond([
                     'status' => 400,
                     'error' => true,
                     'data' => 'File format is not supported. File Format Supported : pdf, png, jpg, jpeg, heif, hevc, xlsx, docx, txt. Size maximum : 10 Mb'
                 ], 400);
-            } else {
-                $old_file = $existItem->handover_file;
-                //file dengan id item tersebut ada ga?
-                if (file_exists($this->PATH_UPLOADED . '/' . $old_file)) {
-                    //kalo ada diapus dulu biar file ga numpuk di db
-                    unlink($this->PATH_UPLOADED . '/' . $old_file);
-                }
-                $surv->handover_file = $file->getName();
             }
+            $surv->remark_file = $file->getName();
         }
 
         $action = $this->model->save($surv);
@@ -266,6 +269,28 @@ class Surveillance extends ResourceController
         if (!$data) {
             return $this->fail('id not found');
         }
-        return $this->response->download('./assets/upload/' . $data->handover_file, null);
+        return $this->response->download('./assets/upload/' . $data->remark_file, null);
     }
 }
+
+
+//function upload file cara pertama
+            #1
+            // $file = $this->uploadFile($this->request->getFile('remark_file'));
+            // //kalo balikan dari uploadFile ada yg error
+            // if ($file == 'error') {
+            //     return $this->respond([
+            //         'status' => 400,
+            //         'error' => true,
+            //         'data' => 'File format is not supported. File Format Supported : pdf, png, jpg, jpeg, heif, hevc, xlsx, docx, txt. Size maximum : 10 Mb'
+            //     ], 400);
+            // } else {
+            //     $old_file = $existItem->remark_file;
+            //     // return $this->respond($old_file);
+            //     //file dengan id item tersebut ada ga?
+            //     if (file_exists($this->PATH_UPLOADED . '/' . $old_file)) {
+            //         //kalo ada diapus dulu biar file ga numpuk di db
+            //         unlink($this->PATH_UPLOADED . '/' . $old_file);
+            //     }
+            //     $surv->remark_file = $file->getName();
+            // }
