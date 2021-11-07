@@ -13,12 +13,14 @@ class Surveillance extends ResourceController
     protected $format = 'json';
     protected $datetime;
     protected $PATH_UPLOADED = './assets/upload/';
+    protected $validation;
 
     public function __construct()
     {
         $this->validation = \Config\Services::validation();
         date_default_timezone_set('Asia/Jakarta');
         $this->datetime = date('Y-m-d H:i:s');
+        $validation =  \Config\Services::validation();
     }
 
     public function index()
@@ -46,23 +48,27 @@ class Surveillance extends ResourceController
 
     public function create()
     {
-        $data = $this->request->getPost();
+        #ini kalo dari frontend
+        // $input = $this->request->getPost();
+        // $data1 = json_decode(json_encode($input), true);
+        // $data2 = key((array)$data1);
+        // $data = json_decode($data2, true);
 
+        #testing from backend
+        $data = $this->request->getPost();
         $validate = $this->validation->run($data, 'surveillanceValCreate'); //nama validasinya (app/config/validation)
         $error = $this->validation->getErrors();
         if ($error) {
             return $this->fail($error);
         }
-        //$file = $this->uploadFile($this->request->getFile('handover_file'));
+
         $item = new \App\Entities\Surveillance();
         $item->fill($data);
         $item->maintenance_date = $this->datetime;
-        $item->status = 1;
-        //$item->handover_file = $file->getName();
+        // $item->status = 1;
+        // $item->location = 1;
 
         $created = $this->model->save($item);
-        // helper(['response_helper']);
-        // reponseHelper($created);
         if ($created) {
             $code = 200;
             $msg = 'insert success';
@@ -85,7 +91,7 @@ class Surveillance extends ResourceController
 
     public function uploadFile($file)
     {
-        $file = $this->request->getFile('remark_file');
+        // $file = $this->request->getFile('remark_file');
         $rules = [
             'remark_file' => 'uploaded[remark_file]|max_size[remark_file,10240]|ext_in[remark_file,pdf,png,jpg,jpeg,heif,hevc,xlsx,docx,txt]',
         ];
@@ -106,6 +112,13 @@ class Surveillance extends ResourceController
     #update harian
     public function update($id = null)
     {
+        #ini kalo dari frontend
+        // $input = $this->request->getRawInput();
+        // $data1 = json_decode(json_encode($input), true);
+        // $data2 = key((array)$data1);
+        // $data = json_decode($data2, true);
+
+        #testing from backend
         if (!$this->model->find($id)) {
             return $this->fail('id not found');
         }
@@ -208,8 +221,14 @@ class Surveillance extends ResourceController
 
     public function handover($id = null)
     {
-        $item = new SurveillanceModel();
-        $existItem = $item->find($id);
+        #ini kalo dari frontend
+        // $input = $this->request->getRawInput();
+        // $data1 = json_decode(json_encode($input), true);
+        // $data2 = key((array)$data1);
+        // $data = json_decode($data2, true);
+
+        #testing from backend
+        $existItem = $this->model->find($id);
         if (!$existItem) {
             return $this->fail('id not found');
         }

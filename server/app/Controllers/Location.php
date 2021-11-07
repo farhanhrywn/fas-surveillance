@@ -36,20 +36,28 @@ class Location extends ResourceController
 
     public function create()
     {
-        helper(['form']);
-        $input = $this->request->getRawInput();
+        // helper(['form']);
+        $input = $this->request->getPost();
         $validate = $this->validation->run($input, 'registLocation'); //nama validasinya (app/config/validation)
         $error = $this->validation->getErrors();
         if ($error) {
             return $this->fail($error);
         }
 
+        // $data = [
+        //     'nama_lokasi' => $this->request->getVar('nama_lokasi'),
+        //     'alamat_lokasi' => $this->request->getVar('alamat_lokasi'),
+        //     'password' => password_hash($this->request->getVar('password'), PASSWORD_BCRYPT),
+        //     'create_by' => $this->request->getVar('create_by'),
+        //     'create_date' => $this->datetime,
+        //     'status' => 1,
+        // ];
         $data = [
-            'nama_lokasi' => $this->request->getVar('nama_lokasi'),
-            'alamat_lokasi' => $this->request->getVar('alamat_lokasi'),
-            'password' => password_hash($this->request->getVar('password'), PASSWORD_BCRYPT),
-            'create_by' => $this->request->getVar('create_by'),
-            'create_date' => $this->datetime,
+            'nama_lokasi' => $input['nama_lokasi'],
+            'alamat_lokasi' => $input['alamat_lokasi'],
+            'password' => $input['password'],
+            'create_by' => $input['create_by'],
+            'update_date' => $this->datetime,
             'status' => 1,
         ];
 

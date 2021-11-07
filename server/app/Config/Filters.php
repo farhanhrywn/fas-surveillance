@@ -70,8 +70,8 @@ class Filters extends BaseConfig
             'before' => [
                 'Location/*',
                 'Location/',
-                'Surveillance/*',
-                'Surveillance/',
+                // 'Surveillance/*',
+                // 'Surveillance/',
             ]
         ]
     ];

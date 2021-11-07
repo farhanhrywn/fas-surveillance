@@ -81,20 +81,106 @@ class Validation
     #Surveillance |is_unique[surveillance.item] 'is_unique' => 'Item is already inserted'
     public $surveillanceValCreate = [
         'item' => [
-            'rules' => 'required|max_length[100]',
+            'rules' => 'max_length[100]',
             'errors' => [
-                'required' => 'You must fill item',
+                'max_length' => 'maximum characters = 100',
             ],
         ],
         'location' => [
             'rules' => 'required'
         ],
         'pn' => [
+            'rules' => 'max_length[20]|min_length[4]',
+            'errors' => [
+                'max_length' => 'maximum characters = 20',
+                'min_length' => 'mimimum characters = 4'
+            ],
+        ],
+        'sn' => [
+            'rules' => 'max_length[20]|min_length[4]', // '|is_unique[surveillance.sn]',
+            'errors' => [
+                'max_length' => 'Max character is 20',
+                'min_length' => 'Min character is 4',
+            ],
+        ],
+        'qty' => [
+            'rules' => 'numeric',
+            'errors' => [
+                'number' => 'Quantity must be a number'
+            ],
+        ],
+        // 'type' => [
+        //     'rules' => 'required',
+        //     'errors' => [
+        //         'required' => 'You must fill type'
+        //     ],
+        // ],
+        // 'condition' => [
+        //     'rules' => 'required',
+        //     'errors' => [
+        //         'required' => 'You must fill condition'
+        //     ],
+        // ],
+        'phone' => [
+            'rules' => 'numeric',
+            'errors' => [
+                'number' => 'Phone must be a number'
+            ],
+        ],
+        'tools_date_in' => [
+            'rules' => 'Date',
+            'errors' => [
+                'Date' => 'You must fill tools in',
+            ],
+        ],
+        'plan' => [
+            'rules' => 'max_length[50]',
+            'errors' => [
+                'max_length' => 'maximum characters = 50',
+            ],
+        ],
+        'steelbox' => [
+            'rules' => 'max_length[20]',
+            'errors' => [
+                'max_length' => 'maximum characters = 20',
+            ],
+        ],
+        // 'sheet' => [
+        //     'rules' => 'required',
+        //     'errors' => [
+        //         'required' => 'You must fill Category',
+        //     ],
+        // ],
+        // 'status' => [
+        //     'rules' => 'required',
+        //     'errors' => [
+        //         'required' => 'You must fill Status',
+        //     ],
+        // ],
+        'maintenance_by' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'You must fill PIC',
+            ],
+        ],
+    ];
+
+    public $surveillanceValUpdate = [
+        'item' => [
+            'rules' => 'required|max_length[100]',
+            'errors' => [
+                'required' => 'You must fill item',
+            ],
+        ],
+        // 'location' => [
+        //     'rules' => 'required'
+        // ],
+        'pn' => [
             'rules' => 'required|max_length[20]|min_length[4]',
             'errors' => [
                 'required' => 'You must fill pn',
                 'max_length' => 'maximum characters = 20',
-                'min_length' => 'mimimum characters = 20'
+                'min_length' => 'mimimum characters = 4'
             ],
         ],
         'sn' => [
@@ -144,9 +230,9 @@ class Validation
             ],
         ],
         'steelbox' => [
-            'rules' => 'required|max_length[20]',
+            'rules' => 'max_length[20]',
             'errors' => [
-                'required' => 'You must fill steelbox',
+                // 'required' => 'You must fill steelbox',
                 'max_length' => 'maximum characters = 20',
             ],
         ],
@@ -166,65 +252,6 @@ class Validation
             'rules' => 'required',
             'errors' => [
                 'required' => 'You must fill PIC',
-            ],
-        ],
-    ];
-
-    public $surveillanceValUpdate = [
-        'item' => [
-            'rules' => 'required|max_length[100]',
-            'errors' => [
-                'required' => 'You must fill item',
-            ],
-        ],
-        'location' => [
-            'rules' => 'required'
-        ],
-        'pn' => [
-            'rules' => 'required|max_length[20]|min_length[4]',
-            'errors' => [
-                'required' => 'You must fill pn',
-                'max_length' => 'maximum characters = 20',
-                'min_length' => 'mimimum characters = 20'
-            ],
-        ],
-        'sn' => [
-            'rules' => 'max_length[20]|min_length[4]', //'|is_unique[surveillance.sn,id_surv,{id_surv}]',
-            'errors' => [
-                'required' => 'You must fill item',
-                // 'is_unique' => 'SN cannot same with another item'
-            ],
-        ],
-        'qty' => [
-            'rules' => 'required|numeric',
-            'errors' => [
-                'required' => 'You must fill quantity',
-                'number' => 'Quantity must be a number'
-            ],
-        ],
-        'type' => [
-            'rules' => 'required',
-            'errors' => [
-                'required' => 'You must fill jenis'
-            ],
-        ],
-        'condition' => [
-            'rules' => 'required',
-            'errors' => [
-                'required' => 'You must fill condition'
-            ],
-        ],
-        'phone' => [
-            'rules' => 'required|numeric',
-            'errors' => [
-                'required' => 'You must fill phone number',
-                'number' => 'Phone must be a number'
-            ],
-        ],
-        'plan' => [
-            'rules' => 'required',
-            'errors' => [
-                'required' => 'You must fill phone number',
             ],
         ],
     ];
