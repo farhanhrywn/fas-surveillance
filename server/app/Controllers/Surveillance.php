@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\SurveillanceModel;
 use CodeIgniter\RESTful\ResourceController;
+use CodeIgniter\HTTP\Response;
 use CodeIgniter\I18n\Time;
 use DateTime;
 
@@ -49,24 +50,27 @@ class Surveillance extends ResourceController
     public function create()
     {
         #ini kalo dari frontend
-        // $input = $this->request->getPost();
-        // $data1 = json_decode(json_encode($input), true);
-        // $data2 = key((array)$data1);
-        // $data = json_decode($data2, true);
+        $input = $this->request->getPost();
+        $data1 = json_decode(json_encode($input), true);
+        $data2 = key((array)$data1);
+        $data = json_decode($data2, true);
 
         #testing from backend
-        $data = $this->request->getPost();
-        $validate = $this->validation->run($data, 'surveillanceValCreate'); //nama validasinya (app/config/validation)
-        $error = $this->validation->getErrors();
-        if ($error) {
-            return $this->fail($error);
-        }
+        // $data = $this->request->getPost();
+        // $validate = $this->validation->run($data, 'surveillanceValCreate'); //nama validasinya (app/config/validation)
+        // $error = $this->validation->getErrors();
+        // if ($error) {
+        //     return $this->fail($error);
+        // }
+
+        $strItem = str_replace('_', ' ', $data['item']);
 
         $item = new \App\Entities\Surveillance();
         $item->fill($data);
+        $item->item = $strItem;
         $item->maintenance_date = $this->datetime;
         // $item->status = 1;
-        // $item->location = 1;
+        $item->location = 1;
 
         $created = $this->model->save($item);
         if ($created) {

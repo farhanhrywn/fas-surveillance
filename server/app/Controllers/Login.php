@@ -44,8 +44,8 @@ class Login extends ResourceController
         if (!$teknisi) return $this->failNotFound('Nama Lokasi not Found');
         //return $this->respond($this->request->getVar('password'));
 
-        $verify = password_verify($this->request->getVar('password'), $teknisi['password']); //ini kalo passwordnya udah di hash
-        //$verify = $this->checkPass($this->request->getVar('password'), $teknisi['password']);
+        // $verify = password_verify($this->request->getVar('password'), $teknisi['password']); //ini kalo passwordnya udah di hash
+        $verify = $this->checkPass($this->request->getVar('password'), $teknisi['password']);
         if (!$verify) return $this->failNotFound('Wrong Password');
 
 
@@ -57,11 +57,15 @@ class Login extends ResourceController
         $payload = array(
             "iat" => $requestTime, //1356999524,
             "nbf" => $expiredTime, //1357000000,
-            "uid" => $teknisi['id_lokasi'],
+            "loc_id" => $teknisi['id_lokasi'],
             "lokasi" => $teknisi['nama_lokasi'],
         );
         $token = JWT::encode($payload, $key);
-        return $this->respond($token);
+        $response = [
+            'data' => $payload,
+            'token' => $token,
+        ];
+        return $this->respond($response);
     }
 
     public function checkPass($param1 = null, $param2 = null)

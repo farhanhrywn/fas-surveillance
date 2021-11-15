@@ -58,8 +58,6 @@ $routes->post('loginWH', 'Login::loginWH');
 $routes->get('Location', 'Location::index');
 $routes->get('/Location/show/(:num)', 'Location::show/$1');
 
-
-
 $routes->resource('Role');
 $routes->resource('User');
 $routes->resource('Location');
