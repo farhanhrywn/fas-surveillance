@@ -92,7 +92,8 @@ export default function AssetTable () {
     axios({
       url: '/asset',
       method: 'POST',
-      data: {...item, id: assetData[assetData.length - 1].id + 1, location: 1}
+      // data: {...item, id: assetData[assetData.length - 1].id + 1, location: 1}
+      data: {...item, location: 1}
     })
     .then(({ data }) => {
       Swal.fire({
