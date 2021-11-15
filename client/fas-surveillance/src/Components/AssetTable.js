@@ -93,7 +93,7 @@ export default function AssetTable () {
       url: '/asset',
       method: 'POST',
       // data: {...item, id: assetData[assetData.length - 1].id + 1, location: 1}
-      data: {...item, location: 1}
+      data: JSON.stringify({ ...item, maintenance_by: 'dev' })
     })
     .then(({ data }) => {
       Swal.fire({
