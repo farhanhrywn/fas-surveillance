@@ -57,6 +57,10 @@ export default function AssetTable () {
     )
   }
 
+  const showHandoverModal = () => {
+    console.log(true)
+  }
+
   const actionField = (assetId) => {
     return (
       <td>
@@ -65,7 +69,7 @@ export default function AssetTable () {
             <CIcon icon={Icon.cilPencil} width={20} />
           </CCol>
           <CCol md="3">
-            <CIcon icon={Icon.cilNoteAdd} width={20} />
+            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={showHandoverModal}/>
           </CCol>
           <CCol md="3">
             <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} />
@@ -88,7 +92,8 @@ export default function AssetTable () {
     axios({
       url: '/asset',
       method: 'POST',
-      data: {...item, id: assetData[assetData.length - 1].id + 1, location: 1}
+      // data: {...item, id: assetData[assetData.length - 1].id + 1, location: 1}
+      data: {...item, location: 1}
     })
     .then(({ data }) => {
       Swal.fire({
