@@ -6,7 +6,7 @@ const styles = {
     color: '#FFFFFF',
     fontSize: 48,
     fontFamily: 'Open Sans, sans-serif',
-    fontWeight: 800
+    fontWeight: 800,
   },
   headerRight: {
     color: '#FFFFFF',
