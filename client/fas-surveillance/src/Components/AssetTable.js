@@ -88,7 +88,6 @@ export default function AssetTable () {
   }
 
   const saveItem = (item) => {
-    console.log(item)
     axios({
       url: '/asset',
       method: 'POST',

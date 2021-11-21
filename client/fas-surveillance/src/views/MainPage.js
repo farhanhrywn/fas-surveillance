@@ -10,6 +10,7 @@ import {
   CLabel
 } from '@coreui/react'
 import AssetTable from "../Components/AssetTable";
+import Header from "../Components/Header"
 
 const styles = {
   headerTitle: {
@@ -22,6 +23,7 @@ const styles = {
 export default function MainPage () {
     return (
         <>
+        <Header />
           <CContainer>
             <CTabs activeTab="home">
               <CNav variant="tabs" className="mt-5">
