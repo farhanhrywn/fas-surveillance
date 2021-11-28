@@ -31,21 +31,37 @@ class Login extends ResourceController
     {
         helper(['form']);
 
-        $input = $this->request->getPost();
-        $validate = $this->validation->run($input, 'loginTeknisi'); //nama validasinya (app/config/validation)
-        $error = $this->validation->getErrors();
-        if ($error) {
-            return $this->fail($error);
+        $in = $this->request->getPost();
+        // $validate = $this->validation->run($input, 'loginTeknisi'); //nama validasinya (app/config/validation)
+        // $error = $this->validation->getErrors();
+        // if ($error) {
+        //     return $this->fail($error);
+        // }
+        $data3 = json_decode(key((array)json_decode(json_encode($in), true)), true);
+        $input = str_replace('_', ' ', $data3);
+
+        if (!$this->validation->run($input, 'loginTeknisi')) {
+            return $this->respond([
+                'status' => 400,
+                'error' => true,
+                'data' => $this->validation->getErrors()
+            ], 400);
         }
 
         $model = new LocationModel();
-
-        $teknisi = $model->Where('alamat_lokasi', $this->request->getVar('nama_lokasi'))->first();
-        if (!$teknisi) return $this->failNotFound('Nama Lokasi not Found');
+        // return $this->respond($input);
+        // $teknisi = $model->Where('id_lokasi', $this->request->getVar('id_lokasi'))->first();
+        $teknisi = $model->Where('id_lokasi', $input['id_lokasi'])->first();
+        if (!$teknisi) return $this->failNotFound('ID Lokasi not Found');
         //return $this->respond($this->request->getVar('password'));
 
+        // $verify = $input['password'] == 'password'
+        //     ? password_verify($input['password'], $teknisi['password'])
+        //     : $this->checkPass($this->request->getVar('password'), $teknisi['password']);
+
         // $verify = password_verify($this->request->getVar('password'), $teknisi['password']); //ini kalo passwordnya udah di hash
-        $verify = $this->checkPass($this->request->getVar('password'), $teknisi['password']);
+        $verify = password_verify($input['password'], $teknisi['password']);
+        // $verify = $this->checkPass($this->request->getVar('password'), $teknisi['password']);
         if (!$verify) return $this->failNotFound('Wrong Password');
 
 

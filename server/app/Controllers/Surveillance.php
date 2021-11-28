@@ -51,26 +51,27 @@ class Surveillance extends ResourceController
     {
         #ini kalo dari frontend
         $input = $this->request->getPost();
-        $data1 = json_decode(json_encode($input), true);
-        $data2 = key((array)$data1);
-        $data = json_decode($data2, true);
+        // $data1 = json_decode(json_encode($input), true);
+        // $data2 = key((array)json_decode(json_encode($input), true));
+        $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
+        $data = str_replace('_', ' ', $data3);
+        // return $this->respond($data);
 
-        #testing from backend
-        // $data = $this->request->getPost();
-        // $validate = $this->validation->run($data, 'surveillanceValCreate'); //nama validasinya (app/config/validation)
-        // $error = $this->validation->getErrors();
-        // if ($error) {
-        //     return $this->fail($error);
-        // }
+        if (!$this->validation->run($data, 'surveillanceValCreate')) {
+            return $this->respond([
+                'status' => 400,
+                'error' => true,
+                'data' => $this->validation->getErrors()
+            ], 400);
+        }
 
-        $strItem = str_replace('_', ' ', $data['item']);
+        // $strItem = str_replace('_', ' ', $data['item']);
 
         $item = new \App\Entities\Surveillance();
         $item->fill($data);
-        $item->item = $strItem;
         $item->maintenance_date = $this->datetime;
-        // $item->status = 1;
-        $item->location = 1;
+        $item->status = 1;
+        // $item->location = 1;
 
         $created = $this->model->save($item);
         if ($created) {
@@ -117,26 +118,21 @@ class Surveillance extends ResourceController
     public function update($id = null)
     {
         #ini kalo dari frontend
-        // $input = $this->request->getRawInput();
-        // $data1 = json_decode(json_encode($input), true);
-        // $data2 = key((array)$data1);
-        // $data = json_decode($data2, true);
+        $input = $this->request->getPost();
+        $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
+        $data = str_replace('_', ' ', $data3);
 
         #testing from backend
         if (!$this->model->find($id)) {
             return $this->fail('id not found');
         }
-
         $data = $this->request->getRawInput();
-
         $data['id_surv'] = $id;
         $validate = $this->validation->run($data, 'surveillanceValCreate');
         $errors = $this->validation->getErrors();
-
         if ($errors) {
             return $this->fail($errors);
         }
-
         $surv = new \App\Entities\Surveillance();
         $surv->fill($data);
         $surv->maintenance_date = $this->datetime;
@@ -169,10 +165,8 @@ class Surveillance extends ResourceController
         if (!$input) {
             return $this->fail('id not found');
         }
-
         $model = new SurveillanceModel();
         $data = $model->getDetail($id);
-
         return $this->respond($data);
     }
 
@@ -225,23 +219,22 @@ class Surveillance extends ResourceController
 
     public function handover($id = null)
     {
-        #ini kalo dari frontend
-        // $input = $this->request->getRawInput();
-        // $data1 = json_decode(json_encode($input), true);
-        // $data2 = key((array)$data1);
-        // $data = json_decode($data2, true);
-
-        #testing from backend
+        //validasi
         $existItem = $this->model->find($id);
         if (!$existItem) {
             return $this->fail('id not found');
         }
 
+        #ini kalo dari frontend
         $input = $this->request->getPost();
-        $input['id_surv'] = $id;
+        $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
+        $data = str_replace('_', ' ', $data3);
 
+
+        $data['id_surv'] = $id;
+        return  $this->respond($data);
         $surv = new \App\Entities\Surveillance();
-        $surv->fill($input);
+        $surv->fill($data);
         $surv->maintenance_date = $this->datetime;
 
         //cek apakah param handover_file ada isinya?
@@ -263,7 +256,6 @@ class Surveillance extends ResourceController
             }
             $surv->remark_file = $file->getName();
         }
-
         $action = $this->model->save($surv);
         if ($action) {
             $code = 200;
@@ -317,3 +309,17 @@ class Surveillance extends ResourceController
             //     }
             //     $surv->remark_file = $file->getName();
             // }
+
+
+/*
+validation form dari function create
+
+        #testing from backend
+        // $data = $this->request->getPost();
+        // $validate = $this->validation->run($data, 'surveillanceValCreate'); //nama validasinya (app/config/validation)
+        // $error = $this->validation->getErrors();
+        // if ($error) {
+        //     return $this->fail($error);
+        // }
+
+*/
