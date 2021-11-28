@@ -86,9 +86,9 @@ class Validation
                 'max_length' => 'maximum characters = 100',
             ],
         ],
-        'location' => [
-            'rules' => 'required'
-        ],
+        // 'location' => [
+        //     'rules' => 'required'
+        // ],
         'pn' => [
             'rules' => 'max_length[20]|min_length[4]',
             'errors' => [
@@ -330,7 +330,7 @@ class Validation
 
     #teknisi login 
     public $loginTeknisi = [
-        'nama_lokasi' => [
+        'id_lokasi' => [
             'rules' => 'required',
             'errors' => [
                 'required' => 'Location Name must fill',
@@ -344,12 +344,12 @@ class Validation
                 'max_length' => 'Maximal length is 20 characters',
             ]
         ],
-        'phone' => [
-            'rules' => 'required|numeric',
-            'errors' => [
-                'required' => 'You must fill phone number',
-                'number' => 'Phone must be a number'
-            ],
-        ]
+        // 'phone' => [
+        //     'rules' => 'numeric',
+        //     'errors' => [
+        //         // 'required' => 'You must fill phone number',
+        //         'number' => 'Phone must be a number'
+        //     ],
+        // ]
     ];
 }
