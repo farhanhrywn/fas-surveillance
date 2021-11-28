@@ -20,7 +20,7 @@ import Swal from 'sweetalert2'
 import assetType from '../assetType.json'
 
 const fields = [
-  { key: 'id', label: 'No' },
+  { key: 'id_surv', label: 'No' },
   { key: 'item', label: 'Name' },
   { key: 'pn', label: 'PN' },
   { key: 'sn', label: 'SN' },
@@ -37,8 +37,8 @@ export default function AssetTable () {
 
   const fetchDataAsset = (locationId) => {
     axios({
-      // url: `/Surveillance/${locationId}`
-      url: '/asset',
+      url: `/Surveillance/${locationId}`,
+      // url: '/asset',
       method: 'GET'
     })
     .then(({ data }) => {
@@ -89,10 +89,10 @@ export default function AssetTable () {
 
   const saveItem = (item) => {
     axios({
-      url: '/asset',
+      url: '/Surveillance/create',
       method: 'POST',
       // data: {...item, id: assetData[assetData.length - 1].id + 1, location: 1}
-      data: JSON.stringify({ ...item, maintenance_by: 'dev' })
+      data: JSON.stringify({ ...item, maintenance_by: localStorage.getItem('pic_name'), location: localStorage.getItem('loc_id')})
     })
     .then(({ data }) => {
       Swal.fire({
@@ -101,7 +101,7 @@ export default function AssetTable () {
         timer: 2000,
         showConfirmButton: false
       })
-      fetchDataAsset()
+      fetchDataAsset(localStorage.getItem('loc_id'))
       hideModal()
     })
     .catch((err) => {
@@ -110,6 +110,7 @@ export default function AssetTable () {
   }
 
   useEffect(() => {
+    let locationId = localStorage.getItem('loc_id')
     fetchDataAsset(locationId)
   },[locationId])
 
