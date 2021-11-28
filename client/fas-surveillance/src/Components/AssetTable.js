@@ -13,6 +13,7 @@ import {
 import CIcon from '@coreui/icons-react'
 import * as Icon from '@coreui/icons'
 import FormAdd from './formAdd'
+import FormHandover from './formHandover'
 import moment from 'moment'
 import axios from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
@@ -33,12 +34,13 @@ const fields = [
 export default function AssetTable () {
   const [assetData, setAssetData] = useState([])
   const [isModalOpen, setModalOpen] = useState(false)
+  const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const locationId = localStorage.getItem('location_id')
 
   const fetchDataAsset = (locationId) => {
     axios({
-      url: `/Surveillance/${locationId}`,
-      // url: '/asset',
+      // url: `/Surveillance/${locationId}`,
+      url: '/asset',
       method: 'GET'
     })
     .then(({ data }) => {
@@ -58,7 +60,7 @@ export default function AssetTable () {
   }
 
   const showHandoverModal = () => {
-    console.log(true)
+    setModalHandoverOpen(true)
   }
 
   const actionField = (assetId) => {
@@ -85,6 +87,7 @@ export default function AssetTable () {
 
   const hideModal = () => {
     setModalOpen(false)
+    setModalHandoverOpen(false)
   }
 
   const saveItem = (item) => {
@@ -102,6 +105,26 @@ export default function AssetTable () {
         showConfirmButton: false
       })
       fetchDataAsset(localStorage.getItem('loc_id'))
+      hideModal()
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
+
+  const saveHandover = (item) => {
+    axios({
+      url: `/Surveillance/handover/${localStorage.getItem('loc_id')}`,
+      method: 'POST',
+      data: JSON.stringify({ ...item, maintenance_by: localStorage.getItem('pic_name'), location: localStorage.getItem('loc_id')})
+    })
+    .then(({ data }) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Sukses menambahkan handover',
+        timer: 2000,
+        showConfirmButton: false
+      })
       hideModal()
     })
     .catch((err) => {
@@ -165,6 +188,16 @@ export default function AssetTable () {
         </Modal.Header>
         <Modal.Body>
           <FormAdd onSubmit={saveItem} onCancel={hideModal}/>
+        </Modal.Body>
+      </Modal>
+
+      {/* Modal Component for handover item */}
+      <Modal show={isModalHandoverOpen} size="xl" centered>
+        <Modal.Header>
+          <Modal.Title>Handover Notes</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <FormHandover onSubmit={saveHandover} onCancel={hideModal}/>
         </Modal.Body>
       </Modal>
     </>
