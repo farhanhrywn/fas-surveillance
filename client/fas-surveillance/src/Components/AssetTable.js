@@ -35,6 +35,7 @@ export default function AssetTable () {
   const [assetData, setAssetData] = useState([])
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
+  const [idSurv, setIdSurv] = useState('')
   const locationId = localStorage.getItem('location_id')
 
   const fetchDataAsset = (locationId) => {
@@ -59,8 +60,9 @@ export default function AssetTable () {
     )
   }
 
-  const showHandoverModal = () => {
+  const showHandoverModal = (assetId) => {
     setModalHandoverOpen(true)
+    setIdSurv(assetId)
   }
 
   const actionField = (assetId) => {
@@ -71,7 +73,7 @@ export default function AssetTable () {
             <CIcon icon={Icon.cilPencil} width={20} />
           </CCol>
           <CCol md="3">
-            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={showHandoverModal}/>
+            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => showHandoverModal(assetId)}/>
           </CCol>
           <CCol md="3">
             <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} />
@@ -116,7 +118,13 @@ export default function AssetTable () {
     axios({
       url: `/Surveillance/handover/${localStorage.getItem('loc_id')}`,
       method: 'POST',
-      data: JSON.stringify({ ...item, maintenance_by: localStorage.getItem('pic_name'), location: localStorage.getItem('loc_id')})
+      data: JSON.stringify({ 
+        ...item,
+        id_surv: idSurv,
+        maintenance_by: localStorage.getItem('pic_name'),
+        location: localStorage.getItem('loc_id'),
+        phone: localStorage.getItem('pic_phone')
+      })
     })
     .then(({ data }) => {
       Swal.fire({
@@ -173,7 +181,7 @@ export default function AssetTable () {
                 striped
                 scopedSlots={{
                   'cert_date': (asset) => convertDate(asset),
-                  'action': (asset, index) => actionField(asset.id)
+                  'action': (asset, index) => actionField(asset.id_surv)
                 }}
               />
             </CCardBody>
