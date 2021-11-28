@@ -25,23 +25,32 @@ const Login = () => {
     id_lokasi: '',
     password: ''
   })
+  const [locations, setLocations] = useState([])
 
   const getListLocation = () => {
-    try {
-      
-    } catch (error) {
-      
-    }
+    axios({
+      url: '/Location',
+      method: 'GET'
+    })
+    .then (({ data }) => {
+      setLocations(data)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   }
 
   const userLogin = () => {
       axios({
-        url: '/pasien/login',
+        url: '/loginLoc',
         method: 'POST',
-        data: form
+        data: JSON.stringify(form)
       })
-      .then((data) => {
-        // localStorage.setItem('user_id', data.id)
+      .then(({data}) => {
+        console.log(data)
+        localStorage.setItem('pic_name', picName)
+        localStorage.setItem('pic_phone', picPhoneNumber)
+        localStorage.setItem('loc_id', data.data.loc_id)
         localStorage.setItem('token', data.token)
         Swal.fire({
           title: 'Login Success',
@@ -49,12 +58,8 @@ const Login = () => {
           showConfirmButton: false,
           timer: 2000
         })
-        router.push('/dashboard')
+        router.push('/home')
       })
-      // console.log(form, picPhoneNumber, picName)
-      // localStorage.setItem('PicName', picName)
-      // localStorage.setItem('PicPhoneNumber', picPhoneNumber)
-      // router.push('/home')
       .catch ((err) => {
         console.log(err)
       })
@@ -89,9 +94,11 @@ const Login = () => {
                   <CLabel>Location</CLabel>
                   <CSelect name="id_lokasi" onChange={updateForm}>
                     <option value="">Select location</option>
-                    <option value="1">location 1</option>
-                    <option value="2">location 2</option>
-                    <option value="3">location 3</option>
+                    {
+                      locations.map((location) => (
+                        <option key={location.id_lokasi} value={location.id_lokasi}>{location.alamat_lokasi}</option>
+                      ))
+                    }
                   </CSelect>
                 </CFormGroup>
                 <CFormGroup>
