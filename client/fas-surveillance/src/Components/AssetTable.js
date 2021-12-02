@@ -40,8 +40,8 @@ export default function AssetTable () {
 
   const fetchDataAsset = (locationId) => {
     axios({
-      // url: `/Surveillance/${locationId}`,
-      url: '/asset',
+      url: `/Surveillance/${locationId}`,
+      // url: '/asset',
       method: 'GET'
     })
     .then(({ data }) => {
@@ -115,16 +115,18 @@ export default function AssetTable () {
   }
 
   const saveHandover = (item) => {
-    axios({
-      url: `/Surveillance/handover/${localStorage.getItem('loc_id')}`,
+     axios({
+      url: `/Surveillance/handover/${idSurv}`,
       method: 'POST',
-      data: JSON.stringify({ 
-        ...item,
-        id_surv: idSurv,
-        maintenance_by: localStorage.getItem('pic_name'),
-        location: localStorage.getItem('loc_id'),
-        phone: localStorage.getItem('pic_phone')
-      })
+      data: JSON.stringify(
+        { 
+          ...item,
+          id_surv: idSurv,
+          maintenance_by: localStorage.getItem('pic_name'),
+          location: localStorage.getItem('loc_id'),
+          phone: localStorage.getItem('pic_phone')
+        }
+      )
     })
     .then(({ data }) => {
       Swal.fire({

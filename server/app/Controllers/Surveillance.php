@@ -6,6 +6,7 @@ use App\Models\SurveillanceModel;
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\HTTP\Response;
 use CodeIgniter\I18n\Time;
+use CodeIgniter\HTTP\Files\UploadedFile;
 use DateTime;
 
 class Surveillance extends ResourceController
@@ -105,9 +106,9 @@ class Surveillance extends ResourceController
             return 'error';
         }
         // cek sesuai rules
-        if (!$this->validate($rules)) {
-            return 'error';
-        }
+        // if (!$this->validate($rules)) {
+        //     return 'error';
+        // }
         $namaFileBaru = $file->getRandomName();
         $file->move($this->PATH_UPLOADED, $namaFileBaru);
         return $file;
@@ -187,6 +188,7 @@ class Surveillance extends ResourceController
                 'data' => 'status item must be installed or backload',
             ], 200);
         }
+
         $action = $this->model->delete($id);
         if ($action) {
             $code = 200;
@@ -227,18 +229,18 @@ class Surveillance extends ResourceController
 
         #ini kalo dari frontend
         $input = $this->request->getPost();
+        $input['id_surv'] = $id;
         $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
         $data = str_replace('_', ' ', $data3);
 
+        // return $this->respond($this->request->getFile('remarkFile'));
 
-        $data['id_surv'] = $id;
-        return  $this->respond($data);
         $surv = new \App\Entities\Surveillance();
         $surv->fill($data);
         $surv->maintenance_date = $this->datetime;
 
         //cek apakah param handover_file ada isinya?
-        if ($this->request->getFile('remark_file')) {
+        if ($this->request->getFile('remarkFile')) {
             #2
             $old_file = $existItem->remark_file;
             //file dengan id item tersebut ada ga?
@@ -246,7 +248,7 @@ class Surveillance extends ResourceController
                 //kalo ada diapus dulu biar file ga numpuk di db
                 unlink($this->PATH_UPLOADED . $old_file);
             }
-            $file = $this->uploadFile($this->request->getFile('remark_file'));
+            $file = $this->uploadFile($this->request->getFile('remarkFile'));
             if ($file == 'error') {
                 return $this->respond([
                     'status' => 400,
@@ -256,6 +258,7 @@ class Surveillance extends ResourceController
             }
             $surv->remark_file = $file->getName();
         }
+        return $this->respond($surv);
         $action = $this->model->save($surv);
         if ($action) {
             $code = 200;
