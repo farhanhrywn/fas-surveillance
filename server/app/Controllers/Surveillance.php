@@ -119,7 +119,9 @@ class Surveillance extends ResourceController
     public function update($id = null)
     {
         #ini kalo dari frontend
-        $input = $this->request->getPost();
+        // $input = $this->request->getPost();
+        $input = $this->request->getRawInput();
+        $data['id_surv'] = $id;
         $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
         $data = str_replace('_', ' ', $data3);
 
@@ -127,13 +129,24 @@ class Surveillance extends ResourceController
         if (!$this->model->find($id)) {
             return $this->fail('id not found');
         }
-        $data = $this->request->getRawInput();
-        $data['id_surv'] = $id;
-        $validate = $this->validation->run($data, 'surveillanceValCreate');
-        $errors = $this->validation->getErrors();
-        if ($errors) {
-            return $this->fail($errors);
+
+        // $validate = $this->validation->run($data, 'surveillanceValCreate');
+        // $errors = $this->validation->getErrors();
+        // if ($errors) {
+        //     return $this->fail($errors);
+        // }
+
+        // return $this->respond($data, 400);
+
+        if (!$this->validation->run($data, 'surveillanceValCreate')) {
+            return $this->respond([
+                'status' => 400,
+                'error' => true,
+                'data' => $this->validation->getErrors()
+            ], 400);
         }
+
+
         $surv = new \App\Entities\Surveillance();
         $surv->fill($data);
         $surv->maintenance_date = $this->datetime;

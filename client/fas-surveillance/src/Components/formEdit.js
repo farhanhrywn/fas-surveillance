@@ -51,7 +51,8 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
 
   const getAssetById = (assetId) => {
     axios({
-      url: `/asset?id_surv=${assetId}`,
+      // url: `/asset?id_surv=${assetId}`,
+      url: `/Surveillance/detail/${assetId}`,
       method: 'GET'
     })
     .then(({ data }) => {
@@ -175,7 +176,7 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
               <CLabel htmlFor="hf-email">Date In <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
             </CCol>
             <CCol xs="12" md="6">
-              <CInput type="date" name="date_in" onChange={changeForm} value={moment(asset.tools_date_in).format('YYYY-MM-DD')} />
+              <CInput type="date" name="tools_date_in" onChange={changeForm} value={moment(asset.tools_date_in).format('YYYY-MM-DD')} />
             </CCol>
           </CFormGroup>
           <CFormGroup row>

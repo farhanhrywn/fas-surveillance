@@ -76,6 +76,8 @@ class SurveillanceModel extends Model
             Surveillance.maintenance_by,
             Surveillance.phone,
             Surveillance.maintenance_date,
+            Surveillance.plan,
+            Surveillance.steelbox,
             Surveillance.status
             ')
             ->join('Location', 'Location.id_lokasi=Surveillance.location', 'left')

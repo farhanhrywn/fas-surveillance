@@ -157,8 +157,8 @@ export default function AssetTable () {
 
   const saveItem = (item) => {
     axios({
-      url: '/Surveillance/create',
-      method: 'POST',
+      url: `/Surveillance/${item.id_surv}`,
+      method: 'PUT',
       data: JSON.stringify({
         ...item,
         maintenance_by: localStorage.getItem('pic_name'),

@@ -37,7 +37,7 @@ $routes->get('/', 'Home::index');
 //$routes->get('/Surveillance', 'Surveillance::index', ['filter' => 'auth']);
 $routes->get('/Surveillance/(:num)', 'Surveillance::indexByLocation/$1');
 $routes->get('/Surveillance/(:num)/(:num)', 'Surveillance::indexByLocation/$1/$2');
-$routes->get('/Surveillance/detail/(:num)', 'Surveillance::show/$1');
+$routes->get('/Surveillance/detail/(:num)', 'Surveillance::show/$1'); //get by ID
 $routes->get('/Surveillance/download/(:num)', 'Surveillance::download/$1');
 
 //surveillance - ubah status jadi handover
