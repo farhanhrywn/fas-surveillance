@@ -1,0 +1,11 @@
+[
+  {"value": "New", "label": "New"},
+  {"value": "Pulled", "label": "Pulled"},
+  {"value": "Running", "label": "Running"},
+  {"value": "Move", "label": "Move"},
+  {"value": "Backup", "label": "Backup"},
+  {"value": "Stand By", "label": "Stand By"},
+  {"value": "Need Backload", "label": "Need Backload"},
+  {"value": "Installed", "label": "Installed"},
+  {"value": "Backload", "label": "Backload"}
+]

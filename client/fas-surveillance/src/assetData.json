@@ -2,24 +2,24 @@
   "asset": [
     {
       "id_surv": "1",
-      "item": "location_9",
+      "type": "Pump",
+      "item": "a",
       "location": "1",
-      "pn": "1234",
-      "sn": "SLB-15351",
-      "qty": "1",
-      "category": "qwer",
-      "jenis": "tools",
+      "plan": "a",
+      "pn": "a",
+      "sn": "a",
+      "qty": "0",
+      "sheet": "pressure related eqp",
+      "steelbox": "a",
       "condition": "good",
-      "cert_date": "2020-10-23 00:00:00",
-      "handover_notes": "test update id 1",
-      "handover_file": "1635123874_328405e9b373ed0d0265.png",
-      "maintenance_by": "dev",
-      "phone": "234523452",
-      "maintenance_date": "2021-10-26 01:12:49",
-      "status": "Active"
+      "cert_date": "2021-11-19 00:00:00",
+      "tools_date_in": "2021-11-19 00:00:00",
+      "maintenance_by": "tessar",
+      "phone": "0983495839548",
+      "status": "Pulled"
     },
     {
-      "id": "2",
+      "id_surv": "2",
       "item": "Spreader: Lifting Equipment Clamp, Chain Length 33",
       "location": "1",
       "pn": "100367280",
@@ -37,14 +37,14 @@
       "status": "Active"
     },
     {
-      "id": "5",
+      "id_surv": "5",
       "item": "Tang Buaya",
       "location": "1",
       "pn": "902437",
       "sn": "SLB-15390",
       "qty": "1",
       "category": "tools",
-      "jenis": "Installation Kit",
+      "type": "Installation Kit",
       "condition": "good",
       "cert_date": "2020-05-22 00:00:00",
       "handover_notes": null,
@@ -55,7 +55,7 @@
       "status": "Active"
     },
     {
-      "id": "10",
+      "id_surv": "10",
       "item": "test file 4",
       "location": "1",
       "pn": "1234",
@@ -73,7 +73,7 @@
       "status": "Active"
     },
     {
-      "id": "11",
+      "id_surv": "11",
       "item": "Tang Buaya 2 ",
       "location": "1",
       "pn": "902437",
@@ -91,7 +91,7 @@
       "status": "Active"
     },
     {
-      "id": "12",
+      "id_surv": "12",
       "item": "Tang Buaya 21",
       "location": "1",
       "pn": "902437",
@@ -109,7 +109,7 @@
       "status": "Active"
     },
     {
-      "id": "13",
+      "id_surv": "13",
       "item": "form-data",
       "location": "1",
       "pn": "1234",
@@ -127,7 +127,7 @@
       "status": "Active"
     },
     {
-      "id": "14",
+      "id_surv": "14",
       "item": "item baru",
       "location": "1",
       "pn": "1234",
@@ -145,7 +145,7 @@
       "status": "Active"
     },
     {
-      "id": "15",
+      "id_surv": "15",
       "item": "item baru2",
       "location": "1",
       "pn": "1234",
@@ -163,7 +163,7 @@
       "status": "Active"
     },
     {
-      "id": "16",
+      "id_surv": "16",
       "item": "item baru 3",
       "location": "1",
       "pn": "1234",
@@ -181,7 +181,7 @@
       "status": "Active"
     },
     {
-      "id": "19",
+      "id_surv": "19",
       "item": "item baru file",
       "location": "1",
       "pn": "1234",
@@ -199,7 +199,7 @@
       "status": "Active"
     },
     {
-      "id": "20",
+      "id_surv": "20",
       "item": "item baru file 2",
       "location": "1",
       "pn": "1234",
@@ -226,7 +226,7 @@
       "condition": "good",
       "cert_date": "2021-09-22",
       "phone": "02112345",
-      "id": 21,
+      "id_surv": 21,
       "location": 1
     },
     {
@@ -239,7 +239,7 @@
       "condition": "bad",
       "cert_date": "2021-09-22",
       "phone": "02112345",
-      "id": 22,
+      "id_surv": 22,
       "location": 1
     }
   ]
