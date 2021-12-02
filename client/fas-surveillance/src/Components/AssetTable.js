@@ -14,6 +14,7 @@ import CIcon from '@coreui/icons-react'
 import * as Icon from '@coreui/icons'
 import FormAdd from './formAdd'
 import FormHandover from './formHandover'
+import FormEdit from './formEdit'
 import moment from 'moment'
 import axios from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
@@ -35,6 +36,7 @@ export default function AssetTable () {
   const [assetData, setAssetData] = useState([])
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
+  const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
   const locationId = localStorage.getItem('location_id')
 
@@ -65,12 +67,27 @@ export default function AssetTable () {
     setIdSurv(assetId)
   }
 
+  const showModal = () => {
+    setModalOpen(true)
+  }
+
+  const showEditModal = (assetId) => {
+    setModalEditOpen(true)
+    setIdSurv(assetId)
+  }
+
+  const hideModal = () => {
+    setModalOpen(false)
+    setModalHandoverOpen(false)
+    setModalEditOpen(false)
+  }
+
   const actionField = (assetId) => {
     return (
       <td>
         <CRow>
           <CCol md="3">
-            <CIcon icon={Icon.cilPencil} width={20} />
+            <CIcon icon={Icon.cilPencil} width={20} onClick={() => showEditModal(assetId)} />
           </CCol>
           <CCol md="3">
             <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => showHandoverModal(assetId)}/>
@@ -83,21 +100,17 @@ export default function AssetTable () {
     )
   }
 
-  const showModal = () => {
-    setModalOpen(true)
-  }
-
-  const hideModal = () => {
-    setModalOpen(false)
-    setModalHandoverOpen(false)
-  }
-
-  const saveItem = (item) => {
+  const createItem = (item) => {
     axios({
       url: '/Surveillance/create',
       method: 'POST',
       // data: {...item, id: assetData[assetData.length - 1].id + 1, location: 1}
-      data: JSON.stringify({ ...item, maintenance_by: localStorage.getItem('pic_name'), location: localStorage.getItem('loc_id')})
+      data: JSON.stringify({ 
+        ...item,
+        maintenance_by: localStorage.getItem('pic_name'),
+        location: localStorage.getItem('loc_id'),
+        phone: localStorage.getItem('pic_phone')
+      })
     })
     .then(({ data }) => {
       Swal.fire({
@@ -135,6 +148,32 @@ export default function AssetTable () {
         timer: 2000,
         showConfirmButton: false
       })
+      hideModal()
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
+
+  const saveItem = (item) => {
+    axios({
+      url: '/Surveillance/create',
+      method: 'POST',
+      data: JSON.stringify({
+        ...item,
+        maintenance_by: localStorage.getItem('pic_name'),
+        location: localStorage.getItem('loc_id'),
+        phone: localStorage.getItem('pic_phone')
+      })
+    })
+    .then(({ data }) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Sukses edit asset',
+        timer: 2000,
+        showConfirmButton: false
+      })
+      fetchDataAsset(localStorage.getItem('loc_id'))
       hideModal()
     })
     .catch((err) => {
@@ -197,7 +236,7 @@ export default function AssetTable () {
           <Modal.Title>Add New Item</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <FormAdd onSubmit={saveItem} onCancel={hideModal}/>
+          <FormAdd onSubmit={createItem} onCancel={hideModal}/>
         </Modal.Body>
       </Modal>
 
@@ -208,6 +247,16 @@ export default function AssetTable () {
         </Modal.Header>
         <Modal.Body>
           <FormHandover onSubmit={saveHandover} onCancel={hideModal}/>
+        </Modal.Body>
+      </Modal>
+
+      {/* Modal component for edit item */}
+      <Modal show={isModalEditOpen} size="xl" centered>
+        <Modal.Header>
+          <Modal.Title>Edit Item</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <FormEdit onSubmit={saveItem} onCancel={hideModal} assetId={idSurv}/>
         </Modal.Body>
       </Modal>
     </>
