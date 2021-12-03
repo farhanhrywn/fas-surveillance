@@ -76,25 +76,55 @@ export default function AssetTable () {
     setIdSurv(assetId)
   }
 
+  const showRemoveModal = (assetId) => {
+    Swal.fire({
+      title: 'Are you sure to remove this item ?',
+      // text: "You won't be able to revert this item!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios({
+          url: `/Surveillance/${assetId}`,
+          method: 'DELETE'
+        })
+        .then(({ data }) => {
+          Swal.fire(
+            'Deleted!',
+            'Sukses remove item',
+            'success'
+          )
+          fetchDataAsset(localStorage.getItem('loc_id'))
+        })
+      }
+    })
+  }
+
   const hideModal = () => {
     setModalOpen(false)
     setModalHandoverOpen(false)
     setModalEditOpen(false)
   }
 
-  const actionField = (assetId) => {
+  const actionField = (asset) => {
     return (
       <td>
         <CRow>
           <CCol md="3">
-            <CIcon icon={Icon.cilPencil} width={20} onClick={() => showEditModal(assetId)} />
+            <CIcon icon={Icon.cilPencil} width={20} onClick={() => showEditModal(asset.id_surv)} />
           </CCol>
           <CCol md="3">
-            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => showHandoverModal(assetId)}/>
+            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => showHandoverModal(asset.id_surv)}/>
           </CCol>
-          <CCol md="3">
-            <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} />
-          </CCol>
+          {
+            (asset.status === 'Installed' || asset.status === 'Backload') &&
+            <CCol md="3">
+              <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
+            </CCol>
+          }
         </CRow>
     </td>
     )
@@ -222,7 +252,7 @@ export default function AssetTable () {
                 striped
                 scopedSlots={{
                   'cert_date': (asset) => convertDate(asset),
-                  'action': (asset, index) => actionField(asset.id_surv)
+                  'action': (asset, index) => actionField(asset)
                 }}
               />
             </CCardBody>
