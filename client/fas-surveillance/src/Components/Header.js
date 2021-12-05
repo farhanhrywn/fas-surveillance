@@ -34,7 +34,7 @@ export default function Header () {
           <span className="navbar-text mr-3" style={styles.headerRight}>
             {localStorage.getItem('pic_name')}, {localStorage.getItem('loc_name')}
           </span>
-          <button class="btn btn-danger my-2 my-sm-0" onClick={logout}>Search</button>
+          <button class="btn btn-danger my-2 my-sm-0" onClick={logout}>Logout</button>
         </nav>
       </>
   )
