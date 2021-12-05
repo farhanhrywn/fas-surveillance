@@ -51,6 +51,7 @@ const Login = () => {
         localStorage.setItem('pic_name', picName)
         localStorage.setItem('pic_phone', picPhoneNumber)
         localStorage.setItem('loc_id', data.data.loc_id)
+        localStorage.setItem('loc_name', data.data.lokasi)
         localStorage.setItem('token', data.token)
         Swal.fire({
           title: 'Login Success',
