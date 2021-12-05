@@ -34,6 +34,7 @@ const fields = [
 
 export default function AssetTable () {
   const [assetData, setAssetData] = useState([])
+  const [filteredAsset, setFilteredAsset] = useState([])
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
@@ -48,6 +49,7 @@ export default function AssetTable () {
     })
     .then(({ data }) => {
       setAssetData(data)
+      setFilteredAsset(data)
     })
     .catch((err) => {
       console.log(err)
@@ -211,6 +213,10 @@ export default function AssetTable () {
     })
   }
 
+  const filterAsset = (event) => {
+    setFilteredAsset(assetData.filter((asset) => asset.type === event.target.value))
+  }
+
   useEffect(() => {
     let locationId = localStorage.getItem('loc_id')
     fetchDataAsset(locationId)
@@ -229,7 +235,7 @@ export default function AssetTable () {
               <CLabel>Type :</CLabel>
             </CCol>
             <CCol md="8">
-              <CSelect>
+              <CSelect onChange={filterAsset}>
                 <option value="">Select the type</option>
                 {
                   assetType.map(type => (
@@ -246,7 +252,7 @@ export default function AssetTable () {
           <CCard>
             <CCardBody>
               <CDataTable
-                items={assetData}
+                items={filteredAsset}
                 fields={fields}
                 hover
                 striped

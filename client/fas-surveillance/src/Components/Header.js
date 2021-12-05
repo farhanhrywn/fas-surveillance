@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router'
 
 const styles = {
   headerLeft: {
@@ -16,17 +17,25 @@ const styles = {
   }
 }
 
+
 export default function Header () {
-    return (
-        <>
-          <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#4F8FCC'}}>    
-            <div className="collapse navbar-collapse">
-              <p className="text-uppercase" style={styles.headerLeft}>Surveillance</p>
-            </div>
-            <span className="navbar-text" style={styles.headerRight}>
-              Cipinang, Farhan
-            </span>
-          </nav>
-        </>
-    )
+  const router = useHistory()
+  const logout = () => {
+    localStorage.clear()
+    router.push('/')
+  }
+
+  return (
+      <>
+        <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#4F8FCC'}}>    
+          <div className="collapse navbar-collapse">
+            <p className="text-uppercase" style={styles.headerLeft}>Surveillance</p>
+          </div>
+          <span className="navbar-text mr-3" style={styles.headerRight}>
+            {localStorage.getItem('pic_name')}, {localStorage.getItem('loc_name')}
+          </span>
+          <button class="btn btn-danger my-2 my-sm-0" onClick={logout}>Search</button>
+        </nav>
+      </>
+  )
 }
