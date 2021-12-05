@@ -212,7 +212,11 @@ export default function AssetTable () {
   }
 
   const filterAsset = (event) => {
-    setFilteredAsset(assetData.filter((asset) => asset.type === event.target.value))
+    if(event.target.value === '') {
+      setFilteredAsset(assetData)
+    } else {
+      setFilteredAsset(assetData.filter((asset) => asset.type === event.target.value))
+    }
   }
 
   useEffect(() => {
