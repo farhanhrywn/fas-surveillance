@@ -36,9 +36,10 @@ $routes->get('/', 'Home::index');
 #Surveillance Page
 //$routes->get('/Surveillance', 'Surveillance::index', ['filter' => 'auth']);
 $routes->get('/Surveillance/(:num)', 'Surveillance::indexByLocation/$1');
-$routes->get('/Surveillance/(:num)/(:num)', 'Surveillance::indexByLocation/$1/$2');
+$routes->get('/Surveillance/(:num)/(:alpha)', 'Surveillance::indexByLocation/$1/$2');
 $routes->get('/Surveillance/detail/(:num)', 'Surveillance::show/$1'); //get by ID
 $routes->get('/Surveillance/download/(:num)', 'Surveillance::download/$1');
+$routes->get('/Surveillance/getBackload/(:num)', 'Surveillance::getDataBackload/$1');
 
 //surveillance - ubah status jadi handover
 //$routes->put('/Surveillance/handover/(:num)', 'Surveillance::handover/$1');

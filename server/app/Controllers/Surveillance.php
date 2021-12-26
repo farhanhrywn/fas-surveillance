@@ -31,14 +31,31 @@ class Surveillance extends ResourceController
         return $this->indexByLocation($lokasi = null, $idTools = null);
     }
 
-    public function indexByLocation($lokasi = null, $idTools = null)
+    public function getDataBackload($lokasi = null)
+    {
+        $status = 'backload';
+        //tapi kalo id tools nya null dia bakal nampil seluruh tools yg ada di lokasi tsb (view all tools in spesific location)
+        $arrParam = ['location' => $lokasi, 'status =' => $status];
+
+        $model = new SurveillanceModel();
+        $data = $model->where($arrParam)->findAll();
+        if ($data) {
+            return $this->respond($data);
+        }
+        return false;
+    }
+
+    public function indexByLocation($lokasi = null, $type = null)
     {
         #indexnya bakal nampilin tools sesuai lokasinya biar ga berat (select all)
         //$data = $this->model->getWhere(['location' => $lokasi])->getResult();
         //param buat detil tools yg ada di lokasi tsb
-        $arrParam = ['location' => $lokasi, 'id_surv' => $idTools];
-        //tapi kalo id tools nya null dia bakal nampil seluruh tools yg ada di lokasi tsb (view all tools in spesific location)
-        if (is_null($idTools)) $arrParam = ['location' => $lokasi];
+        $status = 'backload';
+        // $type = 'TOOLS';
+        #tapi kalo id tools nya null dia bakal nampil seluruh tools yg ada di lokasi tsb (view all tools in spesific location)
+        // $arrParam = ['location' => $lokasi, 'id_surv' => $idTools];
+        $arrParam = ['location' => $lokasi, 'type' => $type, 'status!=' => $status];
+        if (is_null($type) || $type == '') $arrParam = ['location' => $lokasi, 'status!=' => $status];
 
         $model = new SurveillanceModel();
         $data = $model->where($arrParam)->findAll();
