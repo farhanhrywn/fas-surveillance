@@ -7,7 +7,11 @@ use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\HTTP\Response;
 use CodeIgniter\I18n\Time;
 use CodeIgniter\HTTP\Files\UploadedFile;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 use DateTime;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Surveillance extends ResourceController
 {
@@ -16,6 +20,7 @@ class Surveillance extends ResourceController
     protected $datetime;
     protected $PATH_UPLOADED = './assets/upload/';
     protected $validation;
+    protected $email;
 
     public function __construct()
     {
@@ -23,12 +28,13 @@ class Surveillance extends ResourceController
         date_default_timezone_set('Asia/Jakarta');
         $this->datetime = date('Y-m-d H:i:s');
         $validation =  \Config\Services::validation();
+        $email = \Config\Services::email();
     }
 
     public function index()
     {
         //return $this->respond($this->model->findAll());
-        return $this->indexByLocation($lokasi = null, $idTools = null);
+        return $this->indexByLocation($lokasi = null, $type = null);
     }
 
     public function getDataBackload($lokasi = null)
@@ -47,7 +53,7 @@ class Surveillance extends ResourceController
 
     public function indexByLocation($lokasi = null, $type = null)
     {
-        #indexnya bakal nampilin tools sesuai lokasinya biar ga berat (select all)
+        #indexnya bakal nampilin tools yg bukan backload sesuai lokasinya 
         //$data = $this->model->getWhere(['location' => $lokasi])->getResult();
         //param buat detil tools yg ada di lokasi tsb
         $status = 'backload';
@@ -318,6 +324,107 @@ class Surveillance extends ResourceController
             return $this->fail('id not found');
         }
         return $this->response->download('./assets/upload/' . $data->remark_file, null);
+    }
+
+    public function sendEmail()
+    {
+        // $input = $this->request->getPost();
+        // $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
+        // $data = str_replace('_', ' ', $data3);
+
+        // $dataToSend = 
+        $email = \Config\Services::email();
+        $email->initialize($this->emailConfig());
+        $email->setFrom('tesarradiputro@gmail.com', 'TEssar');
+        $email->setTo('jendelapagi1@gmail.com', 'jendela');
+        $email->setSubject('[Fas-Slb] - Contact Us');
+        $email->setMessage('Testing isi emailnya dari method kedua');
+
+        $sending = $email->send();
+        if ($sending) {
+            return $this->respond([
+                'status' => 200,
+                'error' => false,
+                'data' => 'email sent',
+            ], 200);
+        } else return $this->respond([
+            'status' => 400,
+            'error' => true,
+            'data' => print_r($email->printDebugger(['headers'])),
+        ], 200);
+    }
+
+    public function emailConfig()
+    {
+        $config['protocol'] = "smtp";
+        $config['SMTPHost'] = "smtp.gmail.com";
+        $config['SMTPPort'] = "587";
+        $config['SMTPUser'] = "tesarradiputro@gmail.com";
+        $config['SMTPPass'] = "85904875";
+        $config['SMTPCrypto'] = "tls"; //very important line, don't remove it
+        $config['SMTPTimeout'] = "5"; //google hint
+        $config['mailtype'] = "text";
+        $config['charset']  = "utf-8";
+        $config['newline'] = "\r\n";
+        return $config;
+    }
+
+    public function export_to_excel($id_loc = null, $status = null)
+    {
+        $model = new SurveillanceModel();
+        $survModel = $model->listJoinAsset($id_loc, $status);
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->setActiveSheetIndex(0)
+            ->setCellValue('A1', 'No')
+            ->setCellValue('B1', 'Type')
+            ->setCellValue('C1', 'Item')
+            ->setCellValue('D1', 'PN')
+            ->setCellValue('E1', 'SN')
+            ->setCellValue('F1', 'Qty')
+            ->setCellValue('G1', 'Condition')
+            ->setCellValue('H1', 'Status')
+            ->setCellValue('I1', 'Remark')
+            ->setCellValue('J1', 'Cert Data')
+            ->setCellValue('K1', 'Arrival Date')
+            ->setCellValue('L1', 'Steelbox')
+            ->setCellValue('M1', 'Location')
+            ->setCellValue('N1', 'Plan')
+            ->setCellValue('O1', 'Category') //sheet
+            ->setCellValue('P1', 'Last Maintenance'); //maintenance_by + phone
+
+        $column = 2;
+
+        foreach ($survModel as $data) {
+            $spreadsheet->setActiveSheetIndex(0)
+                ->setCellValue('A' . $column, $column)
+                ->setCellValue('B' . $column, $data['type'])
+                ->setCellValue('C' . $column, $data['item'])
+                ->setCellValue('D' . $column, $data['pn'])
+                ->setCellValue('E' . $column, $data['sn'])
+                ->setCellValue('F' . $column, $data['qty'])
+                ->setCellValue('G' . $column, $data['condition'])
+                ->setCellValue('I' . $column, $data['remark'])
+                ->setCellValue('J' . $column, $data['cert_date'])
+                ->setCellValue('K' . $column, $data['tools_date_in'])
+                ->setCellValue('L' . $column, $data['steelbox'])
+                ->setCellValue('M' . $column, $data['nama_lokasi'])
+                ->setCellValue('N' . $column, $data['plan'])
+                ->setCellValue('O' . $column, $data['sheet'])
+                ->setCellValue('P' . $column, $data['maintenance_by'] . ' - ' . $data['phone']);
+
+            $column++;
+            $lokasi = $data['nama_lokasi'];
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $filename = date('Y-m-d-His') . '-' .  $lokasi;
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename=' . $filename . '.xlsx');
+        header('Cache-Control: max-age=0');
+
+        $writer->save('php://output');
     }
 }
 

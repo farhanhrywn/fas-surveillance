@@ -86,4 +86,45 @@ class SurveillanceModel extends Model
 
         return $join;
     }
+
+    public function listJoinAsset($location = null, $status = null)
+    {
+        $arrParam = [
+            'Surveillance.location' => $location,
+            'Surveillance.status!=' => 'backload'
+        ];
+        if ($status == 'backload')
+            $arrParam = [
+                'Surveillance.location' => $location,
+                'Surveillance.status' => 'backload'
+            ];
+
+        $join = $this
+            ->select('
+            Surveillance.id_surv,
+            Surveillance.item,
+            Location.nama_lokasi,
+            Surveillance.pn,
+            Surveillance.sn,
+            Surveillance.qty,
+            Surveillance.sheet,
+            Surveillance.type,
+            Surveillance.condition,
+            Surveillance.cert_date,
+            Surveillance.tools_date_in,
+            Surveillance.remark,
+            Surveillance.remark_file,
+            Surveillance.maintenance_by,
+            Surveillance.phone,
+            Surveillance.maintenance_date,
+            Surveillance.plan,
+            Surveillance.steelbox,
+            Surveillance.status
+            ')
+            ->join('Location', 'Location.id_lokasi=Surveillance.location', 'left')
+            ->where($arrParam)
+            ->get()->getresultArray();
+
+        return $join;
+    }
 }
