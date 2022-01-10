@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-
+import { useDispatch } from 'react-redux'
 import {
   CCol,
   CRow,
@@ -18,12 +17,12 @@ import FormAdd from './formAdd'
 import FormHandover from './formHandover'
 import FormEdit from './formEdit'
 import moment from 'moment'
-import { api, apiForExport } from '../config/axios'
+import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
 import assetType from '../assetType.json'
-import { getAssetsBackloadByLocationId } from "../store";
 
+import { getAssetsBackloadByLocationId } from '../store'
 
 const fields = [
   { key: 'type', label: 'Type' },
@@ -34,13 +33,13 @@ const fields = [
   { key: 'steelbox', label: 'Steelbox' },
   { key: 'condition', label: 'Condition'},
   { key: 'plan', label: 'Plan'},
-  { key: 'remark', label: 'Remark', _style: { width: '20%'} },
-  { key: 'tools_date_in', label: 'Number of Days in Storage', _style: { width: '20%'} },
-  { key: 'maintenance_by', label: 'Update By', _style: { width: '10%' }},
-  { key: 'action', label: 'Action'}
+  { key: 'remark', label: 'Remark', _style: { width: '30%'} },
+  { key: 'tools_date_in', label: 'Number of Days in Storage', _style: { width: '40%'} },
+  { key: 'maintenance_by', label: 'Update By'},
+  { key: 'action', label: 'Action', _style: { width: '100%'}}
 ]
 
-export default function AssetTable () {
+export default function BackloadTable ({ backloadList }) {
   const dispatch = useDispatch()
   const [assetData, setAssetData] = useState([])
   const [filteredAsset, setFilteredAsset] = useState([])
@@ -48,11 +47,10 @@ export default function AssetTable () {
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
-  const locationId = localStorage.getItem('location_id')
 
   const fetchDataAsset = (locationId) => {
     api({
-      url: `/Surveillance/${locationId}`,
+      url: `/Surveillance/getBackload/${locationId}`,
       // url: '/asset',
       method: 'GET'
     })
@@ -179,13 +177,13 @@ export default function AssetTable () {
       })
     })
     .then(({ data }) => {
+      fetchDataAsset(localStorage.getItem('loc_id'))
       Swal.fire({
         icon: 'success',
         title: 'Sukses menambahkan asset',
         timer: 2000,
         showConfirmButton: false
       })
-      fetchDataAsset(localStorage.getItem('loc_id'))
       hideModal()
     })
     .catch((err) => {
@@ -237,8 +235,8 @@ export default function AssetTable () {
         timer: 2000,
         showConfirmButton: false
       })
-      fetchDataAsset(localStorage.getItem('loc_id'))
-      dispatch(getAssetsBackloadByLocationId(localStorage.getItem('loc_id')))
+      window.location.reload()
+
       hideModal()
     })
     .catch((err) => {
@@ -255,49 +253,28 @@ export default function AssetTable () {
   }
 
   const exportToExcel = () => {
-      const link = document.createElement('a');
+    const link = document.createElement('a');
 
-      link.href = `${process.env.REACT_APP_API_URL_PROD_EXPORT}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/notbackload`;
-      
-      document.body.appendChild(link);
+    link.href = `${process.env.REACT_APP_API_URL_PROD_EXPORT}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/backload`;
+    
+    document.body.appendChild(link);
 
-      link.click();
+    link.click();
 
-      link.remove();
-  }
+    link.remove();
+}
 
-  useEffect(() => {
-    let locationId = localStorage.getItem('loc_id')
-    fetchDataAsset(locationId)
-    dispatch(getAssetsBackloadByLocationId(localStorage.getItem('loc_id')))
-  },[locationId])
+  // useEffect(() => {
+  //   let locationId = localStorage.getItem('loc_id')
+  //   fetchDataAsset(locationId)
+  // },[])
 
 
   return (
     <>
-      <CRow className="mt-5 justify-content-between">
+      <CRow className="mt-5">
         <CCol md="4">
-          <CButton block color="primary" onClick={showModal}>Add Item</CButton>
-        </CCol>
-        <CCol md="4">
-          <CButton block color="primary" onClick={exportToExcel}>Export</CButton>
-        </CCol>
-        <CCol md="4">
-          <CRow>
-            <CCol md="3" className="ml-3">
-              <CLabel>Type :</CLabel>
-            </CCol>
-            <CCol md="8">
-              <CSelect onChange={filterAsset}>
-                <option value="">Select the type</option>
-                {
-                  assetType.map(type => (
-                    <option value={type.value} key={type.value}>{type.label}</option>
-                  ))
-                }
-              </CSelect>
-            </CCol>
-          </CRow>
+          <CButton block color="primary" onClick={exportToExcel} disabled={!backloadList.length}>Export</CButton>
         </CCol>
       </CRow>
       <CRow className="mt-5">
@@ -305,7 +282,7 @@ export default function AssetTable () {
           <CCard>
             <CCardBody>
               <CDataTable
-                items={filteredAsset}
+                items={backloadList}
                 fields={fields}
                 size='500px'
                 hover

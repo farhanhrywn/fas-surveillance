@@ -13,7 +13,7 @@
       "steelbox": "a",
       "condition": "good",
       "cert_date": "2021-11-19 00:00:00",
-      "tools_date_in": "2021-11-19 00:00:00",
+      "tools_date_in": "2021-5-19 00:00:00",
       "maintenance_by": "tessar",
       "phone": "0983495839548",
       "status": "Installed"
@@ -34,7 +34,8 @@
       "maintenance_by": "Developer",
       "phone": "09823049580",
       "maintenance_date": "2021-10-21 20:22:28",
-      "status": "New"
+      "status": "New",
+      "tools_date_in": "2021-12-10 00:00:00"
     },
     {
       "id_surv": "5",
@@ -52,7 +53,8 @@
       "maintenance_by": "dev",
       "phone": "1234",
       "maintenance_date": "2021-10-23 05:26:02",
-      "status": "Backload"
+      "status": "Backload",
+      "tools_date_in": "2021-12-1 00:00:00"
     }
   ]
 }
