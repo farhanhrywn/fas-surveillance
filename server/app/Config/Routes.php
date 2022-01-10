@@ -36,13 +36,16 @@ $routes->get('/', 'Home::index');
 #Surveillance Page
 //$routes->get('/Surveillance', 'Surveillance::index', ['filter' => 'auth']);
 $routes->get('/Surveillance/(:num)', 'Surveillance::indexByLocation/$1');
-$routes->get('/Surveillance/(:num)/(:num)', 'Surveillance::indexByLocation/$1/$2');
-$routes->get('/Surveillance/detail/(:num)', 'Surveillance::show/$1');
-$routes->get('/Surveillance/download/(:num)', 'Surveillance::download/$1');
+$routes->get('/Surveillance/(:num)/(:alpha)', 'Surveillance::indexByLocation/$1/$2');
+$routes->get('/Surveillance/detail/(:num)', 'Surveillance::show/$1'); //get by ID
+$routes->get('/Surveillance/downloadRemarks/(:num)', 'Surveillance::download/$1');
+$routes->get('/Surveillance/getBackload/(:num)', 'Surveillance::getDataBackload/$1');
+$routes->get('/Surveillance/exportToExcel/(:num)/(:alpha)', 'Surveillance::export_to_excel/$1/$2'); //param kedua isi backload kalo mau backload, isi selain backload kalo mau ambil yg aktif
 
 //surveillance - ubah status jadi handover
 //$routes->put('/Surveillance/handover/(:num)', 'Surveillance::handover/$1');
 $routes->post('/Surveillance/handover/(:num)', 'Surveillance::handover/$1');
+$routes->get('/Surveillance/SendEmail', 'Surveillance::sendEmail');
 
 #User
 //warehouse register 

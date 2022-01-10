@@ -197,13 +197,15 @@ export default function AssetTable () {
     api({
       url: `/Surveillance/handover/${localStorage.getItem('loc_id')}`,
       method: 'POST',
-      data: JSON.stringify({ 
-        ...item,
-        id_surv: idSurv,
-        maintenance_by: localStorage.getItem('pic_name'),
-        location: localStorage.getItem('loc_id'),
-        phone: localStorage.getItem('pic_phone')
-      })
+      data: JSON.stringify(
+        { 
+          ...item,
+          id_surv: idSurv,
+          maintenance_by: localStorage.getItem('pic_name'),
+          location: localStorage.getItem('loc_id'),
+          phone: localStorage.getItem('pic_phone')
+        }
+      )
     })
     .then(({ data }) => {
       Swal.fire({

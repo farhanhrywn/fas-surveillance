@@ -90,17 +90,17 @@ class Validation
         //     'rules' => 'required'
         // ],
         'pn' => [
-            'rules' => 'max_length[20]|min_length[4]',
+            'rules' => 'max_length[20]|min_length[1]',
             'errors' => [
                 'max_length' => 'maximum characters = 20',
-                'min_length' => 'mimimum characters = 4'
+                'min_length' => 'mimimum characters = 1'
             ],
         ],
         'sn' => [
-            'rules' => 'max_length[20]|min_length[4]', // '|is_unique[surveillance.sn]',
+            'rules' => 'max_length[20]|min_length[1]', // '|is_unique[surveillance.sn]',
             'errors' => [
                 'max_length' => 'Max character is 20',
-                'min_length' => 'Min character is 4',
+                'min_length' => 'Min character is 1',
             ],
         ],
         'qty' => [
