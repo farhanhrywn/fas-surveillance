@@ -15,7 +15,7 @@ import {
   CSelect
 } from '@coreui/react'
 import Swal from 'sweetalert2'
-import axios from '../config/axios'
+import { api } from '../config/axios'
 
 const Login = () => {
   const router = useHistory()
@@ -26,9 +26,10 @@ const Login = () => {
     password: ''
   })
   const [locations, setLocations] = useState([])
+  const [fields, setFields] = useState([])
 
   const getListLocation = () => {
-    axios({
+    api({
       url: '/Location',
       method: 'GET'
     })
@@ -41,7 +42,7 @@ const Login = () => {
   }
 
   const userLogin = () => {
-      axios({
+      api({
         url: '/loginLoc',
         method: 'POST',
         data: JSON.stringify(form)
@@ -70,6 +71,10 @@ const Login = () => {
     setForm({...form, [event.target.name]: event.target.value})
   }
 
+  const filterFields = (event) => {
+    setFields(locations.filter(location => location.alamat_lokasi === event.target.value))
+  }
+
   useEffect(() => {
     getListLocation()
   },[])
@@ -93,11 +98,19 @@ const Login = () => {
                 </CFormGroup>
                 <CFormGroup>
                   <CLabel>Location</CLabel>
-                  <CSelect name="id_lokasi" onChange={updateForm}>
+                  <CSelect onChange={filterFields}>
                     <option value="">Select location</option>
+                    <option value="KAL Operation">KAL Operation</option>
+                    <option value="JOP Operation">JOP Operation</option>
+                  </CSelect>
+                </CFormGroup>
+                <CFormGroup>
+                  <CLabel>Field</CLabel>
+                  <CSelect name="id_lokasi" onChange={updateForm}>
+                    <option value="">Select field</option>
                     {
-                      locations.map((location) => (
-                        <option key={location.id_lokasi} value={location.id_lokasi}>{location.alamat_lokasi}</option>
+                      fields.map((location) => (
+                        <option key={location.id_lokasi} value={location.id_lokasi}>{location.nama_lokasi}</option>
                       ))
                     }
                   </CSelect>
