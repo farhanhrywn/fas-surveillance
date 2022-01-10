@@ -1,6 +1,16 @@
 import axios from "axios"
 
-export default axios.create({
-  baseURL: process.env.REACT_APP_API_URL
-  // baseURL: 'http://localhost:3002'
+const api = axios.create({
+  // baseURL: process.env.REACT_APP_API_URL
+  baseURL: process.env.REACT_APP_API_URL_PROD
 })
+
+const apiForExport = axios.create({
+  // baseURL: process.env.REACT_APP_API_URL
+  baseURL: process.env.REACT_APP_API_URL_PROD_EXPORT
+})
+
+export {
+  api,
+  apiForExport
+}
