@@ -80,33 +80,33 @@ const Login = () => {
   },[])
 
   return (
-    <>
-        <CContainer className="align-items-center mt-5">
-          <CCard>
-            <CCardHeader style={{ backgroundColor: '#4F8FCC', alignItems: 'center'}}>
-              Surveillance
+    <div style={{ background: '#F3F9FF'}}>
+        <CContainer className="align-items-center login__container vh-100">
+          <CCard className="w-100 custom-card">
+            <CCardHeader className="custom-card__header" style={{ background: 'linear-gradient(180deg, rgba(79, 143, 204, 0.44) 0%, rgba(79, 143, 204, 0) 100%)', color: '#425466', textAlign: 'center'}}>
+              <h2 style={{ letterSpacing: '0.26em'}}>SURVEILENCE</h2>
             </CCardHeader>
-            <CCardBody>
+            <CCardBody className="custom-card__body">
               <CForm>
                 <CFormGroup>
-                  <CLabel htmlFor="nf-email">PIC Name</CLabel>
-                  <CInput type="text" onChange={(e) => setPicName(e.target.value)}/>
+                  <CLabel className="label__size" htmlFor="nf-email">PIC Name</CLabel>
+                  <CInput className="custom-input__background" type="text" onChange={(e) => setPicName(e.target.value)}/>
                 </CFormGroup>
                 <CFormGroup>
-                  <CLabel htmlFor="nf-password">Phone Number</CLabel>
-                  <CInput type="text" onChange={(e) => setPicPhoneNumber(e.target.value)} />
+                  <CLabel className="label__size" htmlFor="nf-password">Phone Number</CLabel>
+                  <CInput className="custom-input__background" type="text" onChange={(e) => setPicPhoneNumber(e.target.value)} />
                 </CFormGroup>
                 <CFormGroup>
-                  <CLabel>Location</CLabel>
-                  <CSelect onChange={filterFields}>
+                  <CLabel className="label__size">Location</CLabel>
+                  <CSelect className="custom-input__background" onChange={filterFields}>
                     <option value="">Select location</option>
                     <option value="KAL Operation">KAL Operation</option>
                     <option value="JOP Operation">JOP Operation</option>
                   </CSelect>
                 </CFormGroup>
                 <CFormGroup>
-                  <CLabel>Field</CLabel>
-                  <CSelect name="id_lokasi" onChange={updateForm}>
+                  <CLabel className="label__size">Field</CLabel>
+                  <CSelect className="custom-input__background" name="id_lokasi" onChange={updateForm}>
                     <option value="">Select field</option>
                     {
                       fields.map((location) => (
@@ -116,17 +116,17 @@ const Login = () => {
                   </CSelect>
                 </CFormGroup>
                 <CFormGroup>
-                  <CLabel htmlFor="nf-password">Password</CLabel>
-                  <CInput type="password" name="password" onChange={updateForm} />
+                  <CLabel className="label__size" htmlFor="nf-password">Password</CLabel>
+                  <CInput className="custom-input__background" type="password" name="password" onChange={updateForm} />
                 </CFormGroup>
               </CForm>
             </CCardBody>
-            <CCardFooter>
-              <CButton block size="md" color="primary" onClick={userLogin}>Login</CButton>
+            <CCardFooter className="custom-card__footer">
+              <CButton block size="lg" color="primary" onClick={userLogin}>Login</CButton>
             </CCardFooter>
           </CCard>
         </CContainer>
-    </>
+    </div>
   )
 }
 

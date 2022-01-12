@@ -4,6 +4,7 @@ import MainPage from './views/MainPage';
 import Login from './views/Login';
 import { Provider } from 'react-redux'
 import store from './store';
+import LandingPage from './views/LandingPage';
 
 function App() {
   return (
@@ -12,6 +13,9 @@ function App() {
         <Switch>
           <Route exact path='/'>
             <Login />
+          </Route>
+          <Route exact path='/landing'>
+            <LandingPage />
           </Route>
           <Route exact path='/home'>
             <MainPage />
