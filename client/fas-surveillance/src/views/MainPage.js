@@ -29,25 +29,25 @@ export default function MainPage () {
   return (
       <>
       <Header />
-        <CContainer>
+        <div className="mx-5">
           <CTabs activeTab="home">
             <CNav variant="tabs" className="mt-5">
               <CNavItem>
-                <CNavLink data-tab="home">
+                <CNavLink className="custom-nav__item" data-tab="home">
                   <CContainer>
                     <CLabel style={styles.headerTitle}>Asset Surveillance</CLabel>
                   </CContainer>
                 </CNavLink>
               </CNavItem>
               <CNavItem>
-                <CNavLink data-tab="profile">
+                <CNavLink className="custom-nav__item" data-tab="profile">
                   <CContainer>
                     <CLabel style={styles.headerTitle}>Request Tools</CLabel>
                   </CContainer>
                 </CNavLink>
               </CNavItem>
               <CNavItem>
-                <CNavLink data-tab="backload">
+                <CNavLink className="custom-nav__item" data-tab="backload">
                   <CContainer>
                     <CLabel style={styles.headerTitle}>Backload Items</CLabel>
                   </CContainer>
@@ -55,18 +55,18 @@ export default function MainPage () {
               </CNavItem>
             </CNav>
             <CTabContent>
-              <CTabPane data-tab="home">
+              <CTabPane className={`p-5 border border-top-0 custom-border__radius`} data-tab="home">
                 <AssetTable />
               </CTabPane>
-              <CTabPane data-tab="profile">
+              <CTabPane className={`p-5 border border-top-0 custom-border__radius`} data-tab="profile">
                 Coming Soon
               </CTabPane>
-              <CTabPane data-tab="backload">
+              <CTabPane className={`p-5 border border-top-0 custom-border__radius`} data-tab="backload">
                 <BackloadTable backloadList={backloadList} />
               </CTabPane>
             </CTabContent>
           </CTabs>
-        </CContainer>
+        </div>
 
       </>
   )

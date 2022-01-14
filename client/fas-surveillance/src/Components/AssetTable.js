@@ -10,6 +10,7 @@ import {
   CCard,
   CCardBody,
   CDataTable,
+  CBadge,
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
@@ -81,6 +82,19 @@ export default function AssetTable () {
     )
   }
 
+  const badgeStatus = (asset) => {
+
+    switch (asset.status) {
+      case 'Pulled':
+        return <CBadge color='info'>{asset.status}</CBadge>
+      case 'New':
+        return <CBadge color='success'>{asset.status}</CBadge>
+      default:
+        return <CBadge color='danger'>{asset.status}</CBadge>
+    }
+    
+  }
+
   const calculateDateIn = (asset) => {
     let assetDuration = moment(asset.tools_date_in).from(moment())
 
@@ -147,21 +161,21 @@ export default function AssetTable () {
 
   const actionField = (asset) => {
     return (
-      <td>
-        <CRow>
-          <CCol md="3">
+      <td style={{ verticalAlign: 'middle'}}>
+        <div className='d-flex'>
+          <div className='btn border mx-1 rounded'>
             <CIcon icon={Icon.cilPencil} width={20} onClick={() => showEditModal(asset.id_surv)} />
-          </CCol>
-          <CCol md="3">
+          </div>
+          <div className='btn border mx-1 rounded'>
             <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => showHandoverModal(asset.id_surv)}/>
-          </CCol>
+          </div>
           {
             (asset.status === 'Installed' || asset.status === 'Backload') &&
-            <CCol md="3">
+            <div className='btn border mx-1 rounded'>
               <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
-            </CCol>
+            </div>
           }
-        </CRow>
+        </div>
     </td>
     )
   }
@@ -277,54 +291,53 @@ export default function AssetTable () {
 
   return (
     <>
-      <CRow className="mt-5 justify-content-between">
-        <CCol md="4">
-          <CButton block color="primary" onClick={showModal}>Add Item</CButton>
+      <CRow className="justify-content-between">
+        <CCol md="4" style={{position: 'relative'}}>
+          <div className={'d-flex'} style={{position: 'absolute', bottom: 0, width: '100%'}}>
+            <CButton block color="primary" onClick={showModal} className={'mr-3'}>Add Item</CButton>
+            <CButton block color="primary" onClick={exportToExcel} className={'mt-0'}>Export</CButton>
+          </div>
         </CCol>
         <CCol md="4">
-          <CButton block color="primary" onClick={exportToExcel}>Export</CButton>
-        </CCol>
-        <CCol md="4">
-          <CRow>
-            <CCol md="3" className="ml-3">
-              <CLabel>Type :</CLabel>
-            </CCol>
-            <CCol md="8">
-              <CSelect onChange={filterAsset}>
-                <option value="">Select the type</option>
-                {
-                  assetType.map(type => (
-                    <option value={type.value} key={type.value}>{type.label}</option>
-                  ))
-                }
-              </CSelect>
-            </CCol>
-          </CRow>
+          <div className={'d-flex justify-content-end'}>
+              <div className={'d-flex align-items-center'}>
+                <span style={{width:60}}>Type :</span>
+                <CSelect onChange={filterAsset} className={'custom-input__background'}>
+                  <option value="">Select the type</option>
+                  {
+                    assetType.map(type => (
+                      <option value={type.value} key={type.value}>{type.label}</option>
+                    ))
+                  }
+                </CSelect>
+              </div>
+          </div>
         </CCol>
       </CRow>
       <CRow className="mt-5">
         <CCol xl={12}>
-          <CCard>
-            <CCardBody>
-              <CDataTable
-                items={filteredAsset}
-                fields={fields}
-                size='500px'
-                hover
-                striped
-                scopedSlots={{
-                  'cert_date': (asset) => convertDate(asset),
-                  'action': (asset, index) => actionField(asset),
-                  'tools_date_in': (asset) => calculateDateIn(asset)
-                }}
-              />
-            </CCardBody>
-          </CCard>
+          <CDataTable
+            items={filteredAsset}
+            fields={fields}
+            size='500px'
+            hover
+            striped
+            scopedSlots={{
+              'cert_date': (asset) => convertDate(asset),
+              'status': (asset) => (
+                <td style={{ verticalAlign: 'middle'}}>
+                  {badgeStatus(asset)}
+                </td>
+              ),
+              'action': (asset, index) => actionField(asset),
+              'tools_date_in': (asset) => calculateDateIn(asset)
+            }}
+          />
         </CCol>
       </CRow>
 
       {/* Modal component for add new item */}
-      <Modal show={isModalOpen} size="xl" centered>
+      <Modal show={isModalOpen} centered>
         <Modal.Header>
           <Modal.Title>Add New Item</Modal.Title>
         </Modal.Header>
@@ -334,7 +347,7 @@ export default function AssetTable () {
       </Modal>
 
       {/* Modal Component for handover item */}
-      <Modal show={isModalHandoverOpen} size="xl" centered>
+      <Modal show={isModalHandoverOpen} centered>
         <Modal.Header>
           <Modal.Title>Handover Notes</Modal.Title>
         </Modal.Header>
@@ -344,7 +357,7 @@ export default function AssetTable () {
       </Modal>
 
       {/* Modal component for edit item */}
-      <Modal show={isModalEditOpen} size="xl" centered>
+      <Modal show={isModalEditOpen} centered>
         <Modal.Header>
           <Modal.Title>Edit Item</Modal.Title>
         </Modal.Header>
