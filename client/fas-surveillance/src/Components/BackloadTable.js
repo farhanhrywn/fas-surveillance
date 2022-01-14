@@ -279,22 +279,18 @@ export default function BackloadTable ({ backloadList }) {
       </CRow>
       <CRow className="mt-5">
         <CCol xl={12}>
-          <CCard>
-            <CCardBody>
-              <CDataTable
-                items={backloadList}
-                fields={fields}
-                size='500px'
-                hover
-                striped
-                scopedSlots={{
-                  'cert_date': (asset) => convertDate(asset),
-                  'action': (asset, index) => actionField(asset),
-                  'tools_date_in': (asset) => calculateDateIn(asset)
-                }}
-              />
-            </CCardBody>
-          </CCard>
+          <CDataTable
+            items={backloadList}
+            fields={fields}
+            size='500px'
+            hover
+            striped
+            scopedSlots={{
+              'cert_date': (asset) => convertDate(asset),
+              'action': (asset, index) => actionField(asset),
+              'tools_date_in': (asset) => calculateDateIn(asset)
+            }}
+          />
         </CCol>
       </CRow>
 

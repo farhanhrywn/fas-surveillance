@@ -4,9 +4,32 @@
   box-shadow: 0px 14px 24px #badafb;
 }
 
+.square__div {
+  position: absolute;
+  background: rgba(79, 143, 204, 0.05);
+}
+
+.custom-border__radius {
+  border-radius: 0px 0px 10px 10px;
+}
+
+.custom-nav__item:hover .custom-border__radius {
+  border-radius: 0px;
+}
+
 .custom-card__header {
   padding-top: 20px;
   border-bottom: 0;
+}
+
+.nav-item .custom-nav__item {
+  border-radius: 10px 10px 0px 0px;
+  padding: 15px;
+}
+
+.nav-item .custom-nav__item:hover {
+  background: #e9ecef52;
+  padding: 15px;
 }
 
 .custom-card__body {
@@ -21,6 +44,14 @@
 
 .custom-input__background {
   background: #f6f9fc;
+}
+
+.text-color__primary {
+  color: #4f8fcc;
+}
+
+.text-font__offside {
+  font-family: "Offside", cursive;
 }
 
 .login__container {
