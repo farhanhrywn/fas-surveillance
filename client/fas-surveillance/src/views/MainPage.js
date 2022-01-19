@@ -28,7 +28,7 @@ export default function MainPage () {
 
   return (
       <>
-      <Header />
+      <Header className="bg-primary" />
         <div className="mx-5">
           <CTabs activeTab="home">
             <CNav variant="tabs" className="mt-5">

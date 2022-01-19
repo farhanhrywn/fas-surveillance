@@ -1,29 +1,48 @@
-import React from 'react'
-import images from '../assets/images/landing_page.svg'
+import { CCarousel, CCarouselCaption, CCarouselControl, CCarouselIndicators, CCarouselInner, CCarouselItem } from '@coreui/react'
+import React, { useState } from 'react'
+import Header from '../Components/Header';
+import { importImg } from '../helper';
+
+const carouselImg = importImg(require.context('../assets/images', false, /.png/));
+const keys = Object.keys(carouselImg);
+
+const diplayCarousel = () => {
+
+  const component = [];
+
+  keys.map((value, i) => {
+    component.push( <CCarouselItem key={i}>
+      <img className="d-block w-100" src={carouselImg[keys[i]].default} alt="slide 1"/>
+    </CCarouselItem>)
+  })
+
+  return component
+}
+
 
 const LandingPage = ({first_name, location}) => {
+
+  const [activeIndex, setActiveIndex] = useState(0)
+
+
   return (
     <div className='text-center text-color__primary vh-100' style={{ overflow: "hidden" }}>
-      <div className='square__div' style={{  width: 410, height: 410 , transform: 'rotate(32.13deg)', left: '-105px'}}/>
-      <div className='square__div' style={{  width: 150, height: 150 , transform: 'rotate(32.13deg)', top: '-20px', right: '55px'}}/>
+      <Header className="bg-black position-fixed w-100 backdrop-blur" />
+
 
       <div className='d-flex align-items-center flex-column'>
 
-        <h2 style={{ letterSpacing: '0.26em', marginTop: 30, marginBottom: 30, fontWeight: 800}}>SURVEILENCE</h2>
-        <h3>Welcome {first_name},</h3>
-        <h5>@ {location}</h5>
-
-        <img src={images} alt='landing_page' style={{ marginBottom: 50, marginTop: 50 }} />
-
-        <p className='text-font__offside' style={{ fontSize: 30, color: 'rgba(2, 2, 2, 0.6)' }}>
-          Welcome to fas-slb app.
-          <span className='d-block'>
-            Let’s update your job here !
-          </span>
-        </p>
+        <CCarousel className='w-100 background__gradient' activeIndex={activeIndex}>
+          <CCarouselIndicators/>
+          <CCarouselInner>
+            {diplayCarousel()}
+          </CCarouselInner>
+          <CCarouselControl direction="prev"/>
+          <CCarouselControl direction="next"/>
+        </CCarousel>
           
       </div>
-      <div style={{ position: 'absolute', width: '100%', bottom: 50}}>© 2021 Heri Purnomo</div>
+      <div style={{ position: 'absolute', width: '100%', bottom: 50, color: 'white', zIndex: 2 }}>© 2021 Heri Purnomo</div>
       <div className='square__div' style={{  width: 300, height: 300 , transform: 'rotate(32.13deg)', bottom: '150px', right: '200px'}}/>
 
     </div>
