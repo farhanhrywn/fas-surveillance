@@ -62,3 +62,41 @@
 .label__size {
   font-size: 14px;
 }
+
+.background__gradient:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.47) 0%,
+    rgba(0, 0, 0, 0.00489583) 43.23%,
+    rgba(0, 0, 0, 0) 50%,
+    rgba(0, 0, 0, 1) 98.44%
+  );
+  z-index: 1;
+}
+
+.backdrop-blur {
+  backdrop-filter: blur(12px) contrast(60%);
+}
+
+.bg-black {
+  background: #2a2a2a6e !important;
+}
+
+.active img {
+  z-index: -1;
+  width: 100%;
+  object-fit: cover;
+  height: 100vh;
+}
+
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+  width: 30px;
+  height: 30px;
+}

@@ -294,8 +294,8 @@ export default function AssetTable () {
       <CRow className="justify-content-between">
         <CCol md="4" style={{position: 'relative'}}>
           <div className={'d-flex'} style={{position: 'absolute', bottom: 0, width: '100%'}}>
-            <CButton block color="primary" onClick={showModal} className={'mr-3'}>Add Item</CButton>
-            <CButton block color="primary" onClick={exportToExcel} className={'mt-0'}>Export</CButton>
+            <CButton block size='lg' color="primary" onClick={showModal} className={'mr-3'}>Add Item</CButton>
+            <CButton block size='lg' color="primary" onClick={exportToExcel} className={'mt-0'}>Export</CButton>
           </div>
         </CCol>
         <CCol md="4">
