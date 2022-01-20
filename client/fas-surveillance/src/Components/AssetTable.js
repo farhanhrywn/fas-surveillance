@@ -36,6 +36,7 @@ const fields = [
   { key: 'condition', label: 'Condition'},
   { key: 'plan', label: 'Plan'},
   { key: 'remark', label: 'Remark', _style: { width: '20%'} },
+  { key: 'cert_date', label: 'Certification Date' },
   { key: 'tools_date_in', label: 'Number of Days in Storage', _style: { width: '20%'} },
   { key: 'maintenance_by', label: 'Update By', _style: { width: '10%' }},
   { key: 'action', label: 'Action'}
@@ -57,6 +58,7 @@ export default function AssetTable () {
       method: 'GET'
     })
     .then(({ data }) => {
+      console.log(data)
       setAssetData(data)
       setFilteredAsset(data)
     })
@@ -281,6 +283,21 @@ export default function AssetTable () {
       link.remove();
   }
 
+  const checkValue = (asset, params) => {
+    if(!asset[params]) {
+      return (
+        <td>
+          N/A
+        </td>
+      )
+    }
+    return (
+        <td>
+          {asset[params]}
+        </td>
+    )
+  }
+
   useEffect(() => {
     let locationId = localStorage.getItem('loc_id')
     fetchDataAsset(locationId)
@@ -323,6 +340,7 @@ export default function AssetTable () {
             hover
             striped
             scopedSlots={{
+              'type': (asset) => checkValue(asset, 'type'),
               'cert_date': (asset) => convertDate(asset),
               'status': (asset) => (
                 <td style={{ verticalAlign: 'middle'}}>
@@ -330,7 +348,8 @@ export default function AssetTable () {
                 </td>
               ),
               'action': (asset, index) => actionField(asset),
-              'tools_date_in': (asset) => calculateDateIn(asset)
+              'tools_date_in': (asset) => calculateDateIn(asset),
+              'remark': (asset) => checkValue(asset, 'remark')
             }}
           />
         </CCol>
