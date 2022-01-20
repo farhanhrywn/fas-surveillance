@@ -13,6 +13,7 @@ import {
 } from '@coreui/react'
 import AssetTable from "../Components/AssetTable";
 import BackloadTable from "../Components/BackloadTable";
+import RequestTable from "../Components/RequestTable";
 import Header from "../Components/Header"
 
 const styles = {
@@ -25,6 +26,7 @@ const styles = {
 
 export default function MainPage () {
   const backloadList = useSelector((state) => state.assetsBackload)
+  const requestList = useSelector((state) => state.assetsRequest)
 
   return (
       <>
@@ -59,7 +61,7 @@ export default function MainPage () {
                 <AssetTable />
               </CTabPane>
               <CTabPane className={`p-5 border border-top-0 custom-border__radius`} data-tab="profile">
-                Coming Soon
+                <RequestTable requestList={requestList}/>
               </CTabPane>
               <CTabPane className={`p-5 border border-top-0 custom-border__radius`} data-tab="backload">
                 <BackloadTable backloadList={backloadList} />

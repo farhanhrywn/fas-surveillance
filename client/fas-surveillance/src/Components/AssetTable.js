@@ -19,11 +19,11 @@ import FormAdd from './formAdd'
 import FormHandover from './formHandover'
 import FormEdit from './formEdit'
 import moment from 'moment'
-import { api, apiForExport } from '../config/axios'
+import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
 import assetType from '../assetType.json'
-import { getAssetsBackloadByLocationId } from "../store";
+import { getAssetsBackloadByLocationId, getAssetRequest } from "../store";
 
 
 const fields = [
@@ -36,6 +36,7 @@ const fields = [
   { key: 'condition', label: 'Condition'},
   { key: 'plan', label: 'Plan'},
   { key: 'remark', label: 'Remark', _style: { width: '20%'} },
+  { key: 'cert_date', label: 'Certification Date' },
   { key: 'tools_date_in', label: 'Number of Days in Storage', _style: { width: '20%'} },
   { key: 'maintenance_by', label: 'Update By', _style: { width: '10%' }},
   { key: 'action', label: 'Action'}
@@ -54,10 +55,10 @@ export default function AssetTable () {
   const fetchDataAsset = (locationId) => {
     api({
       url: `/Surveillance/${locationId}`,
-      // url: '/asset',
       method: 'GET'
     })
     .then(({ data }) => {
+      console.log(data)
       setAssetData(data)
       setFilteredAsset(data)
     })
@@ -273,7 +274,7 @@ export default function AssetTable () {
   const exportToExcel = () => {
       const link = document.createElement('a');
 
-      link.href = `${process.env.REACT_APP_API_URL_PROD_EXPORT}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/notbackload`;
+      link.href = `${process.env.REACT_APP_API_URL_PROD}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/notbackload`;
       
       document.body.appendChild(link);
 
@@ -282,10 +283,26 @@ export default function AssetTable () {
       link.remove();
   }
 
+  const checkValue = (asset, params) => {
+    if(!asset[params]) {
+      return (
+        <td>
+          N/A
+        </td>
+      )
+    }
+    return (
+        <td>
+          {asset[params]}
+        </td>
+    )
+  }
+
   useEffect(() => {
     let locationId = localStorage.getItem('loc_id')
     fetchDataAsset(locationId)
     dispatch(getAssetsBackloadByLocationId(localStorage.getItem('loc_id')))
+    dispatch(getAssetRequest(localStorage.getItem('loc_id')))
   },[locationId])
 
 
@@ -323,6 +340,7 @@ export default function AssetTable () {
             hover
             striped
             scopedSlots={{
+              'type': (asset) => checkValue(asset, 'type'),
               'cert_date': (asset) => convertDate(asset),
               'status': (asset) => (
                 <td style={{ verticalAlign: 'middle'}}>
@@ -330,7 +348,8 @@ export default function AssetTable () {
                 </td>
               ),
               'action': (asset, index) => actionField(asset),
-              'tools_date_in': (asset) => calculateDateIn(asset)
+              'tools_date_in': (asset) => calculateDateIn(asset),
+              'remark': (asset) => checkValue(asset, 'remark')
             }}
           />
         </CCol>
