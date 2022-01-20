@@ -4,6 +4,7 @@ import thunk from "redux-thunk";
 
 const initialState = {
   assetsBackload: [],
+  assetsRequest: [],
   error: null
 }
 
@@ -29,10 +30,33 @@ export const getAssetsBackloadByLocationId = (locationId) => {
   }
 }
 
+export const getAssetRequest = (locationId) => {
+  return (dispatch) => {
+    api({
+      url: `Request/${locationId}/all`,
+      method: 'GET'
+    })
+    .then(({ data }) => {
+      dispatch({
+        type: 'SET_ASSETS_REQUEST',
+        payload: data
+      })
+    })
+    .catch((err) => {
+      dispatch({
+        type: 'SET_ERROR_MSG',
+        payload: err
+      })
+    })
+  }
+}
+
 const reducer = (state = initialState, action) => {
   switch ( action.type ) {
     case 'SET_ASSETS_BACKLOAD':
       return { ...state, assetsBackload: action.payload }
+    case 'SET_ASSETS_REQUEST':
+      return { ...state, assetsRequest: action.payload }
     case 'SET_ERROR_MSG':
       return { ...state, error: action.payload }
     default:

@@ -19,11 +19,11 @@ import FormAdd from './formAdd'
 import FormHandover from './formHandover'
 import FormEdit from './formEdit'
 import moment from 'moment'
-import { api, apiForExport } from '../config/axios'
+import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
 import assetType from '../assetType.json'
-import { getAssetsBackloadByLocationId } from "../store";
+import { getAssetsBackloadByLocationId, getAssetRequest } from "../store";
 
 
 const fields = [
@@ -54,7 +54,6 @@ export default function AssetTable () {
   const fetchDataAsset = (locationId) => {
     api({
       url: `/Surveillance/${locationId}`,
-      // url: '/asset',
       method: 'GET'
     })
     .then(({ data }) => {
@@ -273,7 +272,7 @@ export default function AssetTable () {
   const exportToExcel = () => {
       const link = document.createElement('a');
 
-      link.href = `${process.env.REACT_APP_API_URL_PROD_EXPORT}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/notbackload`;
+      link.href = `${process.env.REACT_APP_API_URL_PROD}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/notbackload`;
       
       document.body.appendChild(link);
 
@@ -286,6 +285,7 @@ export default function AssetTable () {
     let locationId = localStorage.getItem('loc_id')
     fetchDataAsset(locationId)
     dispatch(getAssetsBackloadByLocationId(localStorage.getItem('loc_id')))
+    dispatch(getAssetRequest(localStorage.getItem('loc_id')))
   },[locationId])
 
 

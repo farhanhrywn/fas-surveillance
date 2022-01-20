@@ -84,7 +84,7 @@ const Login = () => {
         <CContainer className="align-items-center login__container vh-100">
           <CCard className="w-100 custom-card">
             <CCardHeader className="custom-card__header" style={{ background: 'linear-gradient(180deg, rgba(79, 143, 204, 0.44) 0%, rgba(79, 143, 204, 0) 100%)', color: '#425466', textAlign: 'center'}}>
-              <h2 style={{ letterSpacing: '0.26em'}}>SURVEILENCE</h2>
+              <h2 style={{ letterSpacing: '0.26em'}}>SURVEILANCE</h2>
             </CCardHeader>
             <CCardBody className="custom-card__body">
               <CForm>

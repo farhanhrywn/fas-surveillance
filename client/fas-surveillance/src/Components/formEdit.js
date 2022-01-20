@@ -15,7 +15,7 @@ import {
 } from '@coreui/react'
 import assetType from '../assetType.json'
 import assetStatus from '../assetStatus.json'
-import { api } from "../config/axios";
+import { api, apiForExport } from "../config/axios";
 import moment from "moment";
 
 
@@ -60,7 +60,7 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
     setAssetsType(assetType.filter(asset => asset.type === result.type))
   }
 
-  const getAssetById = (assetId) => {
+  const getRequestById = (assetId) => {
     api({
       url: `/Surveillance/detail/${assetId}`,
       method: 'GET'
@@ -90,7 +90,7 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
 
   useEffect(() => {
     isFormValid()
-    getAssetById(assetId)
+    getRequestById(assetId)
   },[form])
 
 
