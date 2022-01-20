@@ -61,10 +61,18 @@ $routes->post('loginWH', 'Login::loginWH');
 $routes->get('Location', 'Location::index');
 $routes->get('/Location/show/(:num)', 'Location::show/$1');
 
+#Request
+$routes->get('Request', 'Request::index'); //index for all
+$routes->get('/Request/detail/(:num)', 'Request::show/$1'); //get by ID for update request teknisi
+$routes->get('/Request/(:num)/(:alpha)', 'Request::listRequestByLocation/$1/$2'); //view per lokasi + filter status request - for teknisi
+//api update request status - [ spv & wh ]
+//view request by req_to + filter lokasi - [ spv & wh ]
+//count request for notification [ count request where status_seen = waiting ]
+
 $routes->resource('Role');
 $routes->resource('User');
 $routes->resource('Location');
-# $routes->resource('Request');
+$routes->resource('Request');
 $routes->resource('Surveillance');
 
 /*

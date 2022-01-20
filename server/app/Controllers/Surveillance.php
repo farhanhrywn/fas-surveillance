@@ -94,7 +94,7 @@ class Surveillance extends ResourceController
         $item = new \App\Entities\Surveillance();
         $item->fill($data);
         $item->maintenance_date = $this->datetime;
-        $item->status = 1;
+        // $item->status = 1;
         // $item->location = 1;
 
         $created = $this->model->save($item);
@@ -266,13 +266,13 @@ class Surveillance extends ResourceController
         #ini kalo dari frontend
         $input = $this->request->getPost();
         $input['id_surv'] = $id;
-        $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
-        $data = str_replace('_', ' ', $data3);
+        // $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
+        // $data = str_replace('_', ' ', $data3);
 
         // return $this->respond($this->request->getFile('remarkFile'));
 
         $surv = new \App\Entities\Surveillance();
-        $surv->fill($data);
+        $surv->fill($input);
         $surv->maintenance_date = $this->datetime;
 
         //cek apakah param handover_file ada isinya?
@@ -294,7 +294,7 @@ class Surveillance extends ResourceController
             }
             $surv->remark_file = $file->getName();
         }
-        return $this->respond($surv);
+        // return $this->respond($surv);
         $action = $this->model->save($surv);
         if ($action) {
             $code = 200;
@@ -390,7 +390,6 @@ class Surveillance extends ResourceController
             ->setCellValue('L1', 'Steelbox')
             ->setCellValue('M1', 'Location')
             ->setCellValue('N1', 'Plan')
-            ->setCellValue('O1', 'Category') //sheet
             ->setCellValue('P1', 'Last Maintenance'); //maintenance_by + phone
 
         $column = 2;
