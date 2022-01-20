@@ -44,7 +44,9 @@ class Surveillance extends ResourceController
         $arrParam = ['location' => $lokasi, 'status =' => $status];
 
         $model = new SurveillanceModel();
-        $data = $model->where($arrParam)->findAll();
+        $data = $model->where($arrParam)
+            ->orderBy('maintenance_date', 'DESC')
+            ->findAll();
         if ($data) {
             return $this->respond($data);
         }
@@ -64,7 +66,9 @@ class Surveillance extends ResourceController
         if (is_null($type) || $type == '') $arrParam = ['location' => $lokasi, 'status!=' => $status];
 
         $model = new SurveillanceModel();
-        $data = $model->where($arrParam)->findAll();
+        $data = $model->where($arrParam)
+            ->orderBy('maintenance_date', 'DESC')
+            ->findAll();
         if ($data) {
             return $this->respond($data);
         }
@@ -77,8 +81,10 @@ class Surveillance extends ResourceController
         $input = $this->request->getPost();
         // $data1 = json_decode(json_encode($input), true);
         // $data2 = key((array)json_decode(json_encode($input), true));
+
         $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
         $data = str_replace('_', ' ', $data3);
+
         // return $this->respond($data);
 
         if (!$this->validation->run($data, 'surveillanceValCreate')) {

@@ -16,7 +16,7 @@ class SurveillanceModel extends Model
         'pn',
         'sn',
         'qty',
-        'sheet',
+        'sheet', //category
         'steelbox',
         'condition',
         'cert_date',
