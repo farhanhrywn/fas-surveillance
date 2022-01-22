@@ -246,10 +246,10 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
           </CFormGroup>
         </CCol>
       </CRow>
-      <div className="d-flex" style={{ justifyContent: 'right'}}>
-        <Button className="mr-3" variant="light" size="lg" onClick={onCancel}>Cancel</Button>
-        <Button variant="primary" size="lg" onClick={() => saveForm()}>Save</Button>
-      </div>
+      <CRow style={{ justifyContent: 'center'}}>
+        <Button className="mr-3" variant="primary" size="lg" onClick={() => onSubmit(asset)}>Save</Button>
+        <Button variant="danger" size="lg" onClick={onCancel}>Cancel</Button>
+      </CRow>
     </>
   )
 }
