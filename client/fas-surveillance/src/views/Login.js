@@ -15,7 +15,7 @@ import {
   CSelect
 } from '@coreui/react'
 import Swal from 'sweetalert2'
-import axios from '../config/axios'
+import { api } from '../config/axios'
 
 const Login = () => {
   const router = useHistory()
@@ -26,9 +26,10 @@ const Login = () => {
     password: ''
   })
   const [locations, setLocations] = useState([])
+  const [fields, setFields] = useState([])
 
   const getListLocation = () => {
-    axios({
+    api({
       url: '/Location',
       method: 'GET'
     })
@@ -41,7 +42,7 @@ const Login = () => {
   }
 
   const userLogin = () => {
-      axios({
+      api({
         url: '/loginLoc',
         method: 'POST',
         data: JSON.stringify(form)
@@ -70,50 +71,62 @@ const Login = () => {
     setForm({...form, [event.target.name]: event.target.value})
   }
 
+  const filterFields = (event) => {
+    setFields(locations.filter(location => location.alamat_lokasi === event.target.value))
+  }
+
   useEffect(() => {
     getListLocation()
   },[])
 
   return (
-    <>
-        <CContainer className="align-items-center mt-5">
-          <CCard>
-            <CCardHeader style={{ backgroundColor: '#4F8FCC', alignItems: 'center'}}>
-              Surveillance
+    <div style={{ background: '#F3F9FF'}}>
+        <CContainer className="align-items-center login__container vh-100">
+          <CCard className="w-100 custom-card">
+            <CCardHeader className="custom-card__header" style={{ background: 'linear-gradient(180deg, rgba(79, 143, 204, 0.44) 0%, rgba(79, 143, 204, 0) 100%)', color: '#425466', textAlign: 'center'}}>
+              <h2 style={{ letterSpacing: '0.26em'}}>SURVEILANCE</h2>
             </CCardHeader>
-            <CCardBody>
+            <CCardBody className="custom-card__body">
               <CForm>
                 <CFormGroup>
-                  <CLabel htmlFor="nf-email">PIC Name</CLabel>
-                  <CInput type="text" onChange={(e) => setPicName(e.target.value)}/>
+                  <CLabel className="label__size" htmlFor="nf-email">PIC Name</CLabel>
+                  <CInput className="custom-input__background" type="text" onChange={(e) => setPicName(e.target.value)}/>
                 </CFormGroup>
                 <CFormGroup>
-                  <CLabel htmlFor="nf-password">Phone Number</CLabel>
-                  <CInput type="text" onChange={(e) => setPicPhoneNumber(e.target.value)} />
+                  <CLabel className="label__size" htmlFor="nf-password">Phone Number</CLabel>
+                  <CInput className="custom-input__background" type="text" onChange={(e) => setPicPhoneNumber(e.target.value)} />
                 </CFormGroup>
                 <CFormGroup>
-                  <CLabel>Location</CLabel>
-                  <CSelect name="id_lokasi" onChange={updateForm}>
+                  <CLabel className="label__size">Location</CLabel>
+                  <CSelect className="custom-input__background" onChange={filterFields}>
                     <option value="">Select location</option>
+                    <option value="KAL Operation">KAL Operation</option>
+                    <option value="JOP Operation">JOP Operation</option>
+                  </CSelect>
+                </CFormGroup>
+                <CFormGroup>
+                  <CLabel className="label__size">Field</CLabel>
+                  <CSelect className="custom-input__background" name="id_lokasi" onChange={updateForm}>
+                    <option value="">Select field</option>
                     {
-                      locations.map((location) => (
-                        <option key={location.id_lokasi} value={location.id_lokasi}>{location.alamat_lokasi}</option>
+                      fields.map((location) => (
+                        <option key={location.id_lokasi} value={location.id_lokasi}>{location.nama_lokasi}</option>
                       ))
                     }
                   </CSelect>
                 </CFormGroup>
                 <CFormGroup>
-                  <CLabel htmlFor="nf-password">Password</CLabel>
-                  <CInput type="password" name="password" onChange={updateForm} />
+                  <CLabel className="label__size" htmlFor="nf-password">Password</CLabel>
+                  <CInput className="custom-input__background" type="password" name="password" onChange={updateForm} />
                 </CFormGroup>
               </CForm>
             </CCardBody>
-            <CCardFooter>
-              <CButton block size="md" color="primary" onClick={userLogin}>Login</CButton>
+            <CCardFooter className="custom-card__footer">
+              <CButton block size="lg" color="primary" onClick={userLogin}>Login</CButton>
             </CCardFooter>
           </CCard>
         </CContainer>
-    </>
+    </div>
   )
 }
 

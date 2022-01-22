@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+
 import {
   CCol,
   CRow,
@@ -8,6 +10,7 @@ import {
   CCard,
   CCardBody,
   CDataTable,
+  CBadge,
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
@@ -16,51 +19,90 @@ import FormAdd from './formAdd'
 import FormHandover from './formHandover'
 import FormEdit from './formEdit'
 import moment from 'moment'
-import axios from '../config/axios'
+import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
 import assetType from '../assetType.json'
+import { 
+  getAssetsBackloadByLocationId,
+  getAssetRequest,
+  fetchDataAsset,
+  filterAssetByType,
+  saveHandoverAsset
+} from "../store";
+
 
 const fields = [
-  { key: 'id_surv', label: 'No' },
-  { key: 'item', label: 'Name' },
+  { key: 'type', label: 'Type' },
   { key: 'pn', label: 'PN' },
   { key: 'sn', label: 'SN' },
-  { key: 'cert_date', label: 'Certification Date' },
-  { key: 'location', label: 'Location' },
+  { key: 'item', label: 'Description' },
+  { key: 'status', label: 'Status' },
+  { key: 'steelbox', label: 'Steelbox' },
   { key: 'condition', label: 'Condition'},
+  { key: 'plan', label: 'Plan'},
+  { key: 'remark', label: 'Remark', _style: { width: '20%'} },
+  { key: 'cert_date', label: 'Certification Date' },
+  { key: 'tools_date_in', label: 'Number of Days in Storage', _style: { width: '20%'} },
+  { key: 'maintenance_by', label: 'Update By', _style: { width: '10%' }},
   { key: 'action', label: 'Action'}
 ]
 
 export default function AssetTable () {
+  const dispatch = useDispatch()
+  const assetList = useSelector((state) => state.assets)
+  const filteredAssetList = useSelector((state) => state.filteredAssets)
   const [assetData, setAssetData] = useState([])
-  const [filteredAsset, setFilteredAsset] = useState([])
+  const [filteredAsset, setFilteredAsset] = useState(assetList)
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
-  const locationId = localStorage.getItem('location_id')
-
-  const fetchDataAsset = (locationId) => {
-    axios({
-      url: `/Surveillance/${locationId}`,
-      // url: '/asset',
-      method: 'GET'
-    })
-    .then(({ data }) => {
-      setAssetData(data)
-      setFilteredAsset(data)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-  }
+  const [locationId, setLocationId] = useState('')
 
   const convertDate = (asset) => {
+    let date = moment(asset.cert_date).format('DD MMM YYYY')
+    if(date === 'Invalid date') {
+      return (
+        <td>
+          -
+        </td>
+      )
+    }
     return (
         <td>
-          {moment(asset.cert_date).format('DD MMM YYYY')}
+          {date}
         </td>
+    )
+  }
+
+  const badgeStatus = (asset) => {
+
+    switch (asset.status) {
+      case 'Pulled':
+        return <CBadge color='info'>{asset.status}</CBadge>
+      case 'New':
+        return <CBadge color='success'>{asset.status}</CBadge>
+      default:
+        return <CBadge color='danger'>{asset.status}</CBadge>
+    }
+    
+  }
+
+  const calculateDateIn = (asset) => {
+    let assetDuration = moment(asset.tools_date_in).from(moment())
+
+    if( assetDuration === 'Invalid date' ) {
+      return (
+        <td>
+          -
+        </td>
+      )
+    }
+    return (
+      <td>
+        {assetDuration}
+      </td>
     )
   }
 
@@ -89,7 +131,7 @@ export default function AssetTable () {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        axios({
+        api({
           url: `/Surveillance/${assetId}`,
           method: 'DELETE'
         })
@@ -99,7 +141,7 @@ export default function AssetTable () {
             'Sukses remove item',
             'success'
           )
-          fetchDataAsset(localStorage.getItem('loc_id'))
+          // fetchDataAsset(localStorage.getItem('loc_id'))
         })
       }
     })
@@ -113,27 +155,24 @@ export default function AssetTable () {
 
   const actionField = (asset) => {
     return (
-      <td>
-        <CRow>
-          <CCol md="3">
+      <td style={{ verticalAlign: 'middle'}}>
+        <div className='d-flex'>
+          <div className='btn border mx-1 rounded'>
             <CIcon icon={Icon.cilPencil} width={20} onClick={() => showEditModal(asset.id_surv)} />
-          </CCol>
-          <CCol md="3">
+          </div>
+          <div className='btn border mx-1 rounded'>
             <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => showHandoverModal(asset.id_surv)}/>
-          </CCol>
-          {
-            (asset.status === 'Installed' || asset.status === 'Backload') &&
-            <CCol md="3">
-              <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
-            </CCol>
-          }
-        </CRow>
-    </td>
+          </div>
+          <div className='btn border mx-1 rounded'>
+            <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
+          </div>
+        </div>
+      </td>
     )
   }
 
   const createItem = (item) => {
-    axios({
+    api({
       url: '/Surveillance/create',
       method: 'POST',
       // data: {...item, id: assetData[assetData.length - 1].id + 1, location: 1}
@@ -151,7 +190,7 @@ export default function AssetTable () {
         timer: 2000,
         showConfirmButton: false
       })
-      fetchDataAsset(localStorage.getItem('loc_id'))
+      // fetchDataAsset(localStorage.getItem('loc_id'))
       hideModal()
     })
     .catch((err) => {
@@ -160,37 +199,22 @@ export default function AssetTable () {
   }
 
   const saveHandover = (item) => {
-     axios({
-      url: `/Surveillance/handover/${idSurv}`,
-      method: 'POST',
-      data: JSON.stringify(
-        { 
-          ...item,
-          id_surv: idSurv,
-          maintenance_by: localStorage.getItem('pic_name'),
-          location: localStorage.getItem('loc_id'),
-          phone: localStorage.getItem('pic_phone')
-        }
-      )
-    })
-    .then(({ data }) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Sukses menambahkan handover',
-        timer: 2000,
-        showConfirmButton: false
-      })
-      hideModal()
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+    let payload = {
+      ...item,
+      id_surv: idSurv,
+      maintenance_by: localStorage.getItem('pic_name'),
+      location: localStorage.getItem('loc_id'),
+      phone: localStorage.getItem('pic_phone')
+    }
+
+    dispatch(saveHandoverAsset(payload))
+    hideModal()
   }
 
   const saveItem = (item) => {
-    axios({
-      url: `/Surveillance/${item.id_surv}`,
-      method: 'PUT',
+    api({
+      url: `/Surveillance/update/${item.id_surv}`,
+      method: 'POST',
       data: JSON.stringify({
         ...item,
         maintenance_by: localStorage.getItem('pic_name'),
@@ -205,7 +229,9 @@ export default function AssetTable () {
         timer: 2000,
         showConfirmButton: false
       })
-      fetchDataAsset(localStorage.getItem('loc_id'))
+      // fetchDataAsset(localStorage.getItem('loc_id'))
+      window.location.reload()
+      // dispatch(getAssetsBackloadByLocationId(localStorage.getItem('loc_id')))
       hideModal()
     })
     .catch((err) => {
@@ -214,64 +240,96 @@ export default function AssetTable () {
   }
 
   const filterAsset = (event) => {
-    if(event.target.value === '') {
-      setFilteredAsset(assetData)
-    } else {
-      setFilteredAsset(assetData.filter((asset) => asset.type === event.target.value))
+    dispatch(filterAssetByType(event.target.value, assetList))
+  }
+
+  const exportToExcel = () => {
+      const link = document.createElement('a');
+
+      link.href = `${process.env.REACT_APP_API_URL_PROD}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/notbackload`;
+      
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+  }
+
+  const checkValue = (asset, params) => {
+    if(!asset[params]) {
+      return (
+        <td>
+          N/A
+        </td>
+      )
     }
+    return (
+        <td>
+          {asset[params]}
+        </td>
+    )
   }
 
   useEffect(() => {
     let locationId = localStorage.getItem('loc_id')
-    fetchDataAsset(locationId)
-  },[locationId])
+
+    dispatch(fetchDataAsset(locationId))
+    dispatch(getAssetsBackloadByLocationId(locationId))
+    dispatch(getAssetRequest(locationId))
+  },[])
 
 
   return (
     <>
-      <CRow className="mt-5 justify-content-between">
-        <CCol md="4">
-          <CButton block color="primary" onClick={showModal}>Add Item</CButton>
+      <CRow className="justify-content-between">
+        <CCol md="4" style={{position: 'relative'}}>
+          <div className={'d-flex'} style={{position: 'absolute', bottom: 0, width: '100%'}}>
+            <CButton block size='lg' color="primary" onClick={showModal} className={'mr-3'}>Add Item</CButton>
+            <CButton block size='lg' color="primary" onClick={exportToExcel} className={'mt-0'}>Export</CButton>
+          </div>
         </CCol>
         <CCol md="4">
-          <CRow>
-            <CCol md="3" className="ml-3">
-              <CLabel>Type :</CLabel>
-            </CCol>
-            <CCol md="8">
-              <CSelect onChange={filterAsset}>
-                <option value="">Select the type</option>
-                {
-                  assetType.map(type => (
-                    <option value={type.value}>{type.label}</option>
-                  ))
-                }
-              </CSelect>
-            </CCol>
-          </CRow>
+          <div className={'d-flex justify-content-end'}>
+              <div className={'d-flex align-items-center'}>
+                <span style={{width:60}}>Type :</span>
+                <CSelect onChange={filterAsset} className={'custom-input__background'}>
+                  <option value="">Select the type</option>
+                  {
+                    assetType.map(type => (
+                      <option value={type.value} key={type.value}>{type.label}</option>
+                    ))
+                  }
+                </CSelect>
+              </div>
+          </div>
         </CCol>
       </CRow>
       <CRow className="mt-5">
         <CCol xl={12}>
-          <CCard>
-            <CCardBody>
-              <CDataTable
-                items={filteredAsset}
-                fields={fields}
-                hover
-                striped
-                scopedSlots={{
-                  'cert_date': (asset) => convertDate(asset),
-                  'action': (asset, index) => actionField(asset)
-                }}
-              />
-            </CCardBody>
-          </CCard>
+          <CDataTable
+            items={filteredAssetList}
+            fields={fields}
+            size='500px'
+            hover
+            striped
+            scopedSlots={{
+              'type': (asset) => checkValue(asset, 'type'),
+              'cert_date': (asset) => convertDate(asset),
+              'status': (asset) => (
+                <td style={{ verticalAlign: 'middle'}}>
+                  {badgeStatus(asset)}
+                </td>
+              ),
+              'action': (asset, index) => actionField(asset),
+              'tools_date_in': (asset) => calculateDateIn(asset),
+              'remark': (asset) => checkValue(asset, 'remark')
+            }}
+          />
         </CCol>
       </CRow>
 
       {/* Modal component for add new item */}
-      <Modal show={isModalOpen} size="xl" centered>
+      <Modal show={isModalOpen} centered>
         <Modal.Header>
           <Modal.Title>Add New Item</Modal.Title>
         </Modal.Header>
@@ -281,17 +339,17 @@ export default function AssetTable () {
       </Modal>
 
       {/* Modal Component for handover item */}
-      <Modal show={isModalHandoverOpen} size="xl" centered>
+      <Modal show={isModalHandoverOpen} centered>
         <Modal.Header>
           <Modal.Title>Handover Notes</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <FormHandover onSubmit={saveHandover} onCancel={hideModal}/>
+          <FormHandover onSubmit={saveHandover} onCancel={hideModal} assetId={idSurv}/>
         </Modal.Body>
       </Modal>
 
       {/* Modal component for edit item */}
-      <Modal show={isModalEditOpen} size="xl" centered>
+      <Modal show={isModalEditOpen} centered>
         <Modal.Header>
           <Modal.Title>Edit Item</Modal.Title>
         </Modal.Header>
