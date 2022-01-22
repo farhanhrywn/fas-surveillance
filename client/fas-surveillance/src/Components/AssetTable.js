@@ -50,22 +50,7 @@ export default function AssetTable () {
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
-  const locationId = localStorage.getItem('location_id')
-
-  const fetchDataAsset = (locationId) => {
-    api({
-      url: `/Surveillance/${locationId}`,
-      method: 'GET'
-    })
-    .then(({ data }) => {
-      console.log(data)
-      setAssetData(data)
-      setFilteredAsset(data)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-  }
+  const [locationId, setLocationId] = useState('')
 
   const convertDate = (asset) => {
     let date = moment(asset.cert_date).format('DD MMM YYYY')
@@ -148,7 +133,7 @@ export default function AssetTable () {
             'Sukses remove item',
             'success'
           )
-          fetchDataAsset(localStorage.getItem('loc_id'))
+          // fetchDataAsset(localStorage.getItem('loc_id'))
         })
       }
     })
@@ -177,7 +162,7 @@ export default function AssetTable () {
             </div>
           }
         </div>
-    </td>
+      </td>
     )
   }
 
@@ -200,7 +185,7 @@ export default function AssetTable () {
         timer: 2000,
         showConfirmButton: false
       })
-      fetchDataAsset(localStorage.getItem('loc_id'))
+      // fetchDataAsset(localStorage.getItem('loc_id'))
       hideModal()
     })
     .catch((err) => {
@@ -254,8 +239,9 @@ export default function AssetTable () {
         timer: 2000,
         showConfirmButton: false
       })
-      fetchDataAsset(localStorage.getItem('loc_id'))
-      dispatch(getAssetsBackloadByLocationId(localStorage.getItem('loc_id')))
+      // fetchDataAsset(localStorage.getItem('loc_id'))
+      window.location.reload()
+      // dispatch(getAssetsBackloadByLocationId(localStorage.getItem('loc_id')))
       hideModal()
     })
     .catch((err) => {
@@ -300,10 +286,26 @@ export default function AssetTable () {
 
   useEffect(() => {
     let locationId = localStorage.getItem('loc_id')
+
+    const fetchDataAsset = (locationId) => {
+      api({
+        url: `/Surveillance/${locationId}`,
+        method: 'GET'
+      })
+      .then(({ data }) => {
+        console.log(data)
+        setAssetData(data)
+        setFilteredAsset(data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    }
+
     fetchDataAsset(locationId)
-    dispatch(getAssetsBackloadByLocationId(localStorage.getItem('loc_id')))
-    dispatch(getAssetRequest(localStorage.getItem('loc_id')))
-  },[locationId])
+    dispatch(getAssetsBackloadByLocationId(locationId))
+    dispatch(getAssetRequest(locationId))
+  },[])
 
 
   return (
@@ -371,7 +373,7 @@ export default function AssetTable () {
           <Modal.Title>Handover Notes</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <FormHandover onSubmit={saveHandover} onCancel={hideModal}/>
+          <FormHandover onSubmit={saveHandover} onCancel={hideModal} assetId={idSurv}/>
         </Modal.Body>
       </Modal>
 

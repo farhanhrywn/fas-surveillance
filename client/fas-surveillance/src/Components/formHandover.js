@@ -14,11 +14,13 @@ import {
   CInvalidFeedback,
   CValidFeedback
 } from '@coreui/react'
+import { api } from "../config/axios";
 import assetType from '../assetType.json'
 
 
-export default function FormHandover ({ onSubmit, onCancel }) {
+export default function FormHandover ({ onSubmit, onCancel, assetId }) {
   const router = useHistory()
+  const [asset, setAsset] = useState({})
   const [form, setForm] = useState({
     remark: '',
     remark_file: {}
@@ -48,8 +50,21 @@ export default function FormHandover ({ onSubmit, onCancel }) {
   }
 
   useEffect(() => {
-    isFormValid()
-  },[form])
+    const getRequestById = (assetId) => {
+      api({
+        url: `/Surveillance/detail/${assetId}`,
+        method: 'GET'
+      })
+      .then(({ data }) => {
+        setAsset(data[0])
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    }
+
+    getRequestById(assetId)
+  },[assetId])
 
 
   return (
@@ -58,7 +73,7 @@ export default function FormHandover ({ onSubmit, onCancel }) {
         <CCol md="12">
           <CFormGroup row>
             <CCol md="3">
-              <CLabel htmlFor="hf-email">Attach File <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
+              <CLabel htmlFor="hf-email">Attach File </CLabel>
             </CCol>
             <CCol xs="12" md="9">
               <CInputFile type="file" name="remark_file" onChange={changeForm} />
@@ -69,7 +84,7 @@ export default function FormHandover ({ onSubmit, onCancel }) {
               <CLabel htmlFor="input-name">Remark <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
             </CCol>
             <CCol xs="12" md="9">
-              <CTextarea rows={10} type="text" name="remark" required onChange={changeForm} />
+              <CTextarea rows={10} type="text" name="remark" required onChange={changeForm} value={asset.remark} placeholder="Please fill your remark or N/A if unavailable"/>
             </CCol>
           </CFormGroup>
         </CCol>
