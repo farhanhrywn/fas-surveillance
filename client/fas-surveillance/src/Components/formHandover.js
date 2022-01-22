@@ -20,7 +20,7 @@ import assetType from '../assetType.json'
 
 export default function FormHandover ({ onSubmit, onCancel, assetId }) {
   const router = useHistory()
-  const [asset, setAsset] = useState({})
+  // const [asset, setAsset] = useState({})
   const [form, setForm] = useState({
     remark: '',
     remark_file: {}
@@ -56,7 +56,7 @@ export default function FormHandover ({ onSubmit, onCancel, assetId }) {
         method: 'GET'
       })
       .then(({ data }) => {
-        setAsset(data[0])
+        setForm(data[0])
       })
       .catch((err) => {
         console.log(err)
@@ -84,7 +84,7 @@ export default function FormHandover ({ onSubmit, onCancel, assetId }) {
               <CLabel htmlFor="input-name">Remark <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
             </CCol>
             <CCol xs="12" md="9">
-              <CTextarea rows={10} type="text" name="remark" required onChange={changeForm} value={asset.remark} placeholder="Please fill your remark or N/A if unavailable"/>
+              <CTextarea rows={10} type="text" name="remark" required onChange={changeForm} value={form.remark} placeholder="Please fill your remark or N/A if unavailable"/>
             </CCol>
           </CFormGroup>
         </CCol>
