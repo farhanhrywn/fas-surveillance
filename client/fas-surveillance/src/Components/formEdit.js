@@ -196,7 +196,7 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
         </CCol>
       </CRow>
       <CRow style={{ justifyContent: 'center'}}>
-        <Button className="mr-3" variant="primary" size="lg" onClick={() => onSubmit(asset)}>Add Item</Button>
+        <Button className="mr-3" variant="primary" size="lg" onClick={() => onSubmit(asset)}>Save</Button>
         <Button variant="danger" size="lg" onClick={onCancel}>Cancel</Button>
       </CRow>
     </>
