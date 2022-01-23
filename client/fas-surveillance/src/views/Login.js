@@ -60,7 +60,7 @@ const Login = () => {
           showConfirmButton: false,
           timer: 2000
         })
-        router.push('/home')
+        router.push('/landing')
       })
       .catch ((err) => {
         console.log(err)
