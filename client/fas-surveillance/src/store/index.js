@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware, compose } from "redux";
 import { api } from '../config/axios'
 import thunk from "redux-thunk";
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 
 
 const initialState = {
@@ -75,6 +75,12 @@ export const fetchDataAsset = (locationId) => {
         payload: err
       })
     })
+    .finally(() => {
+      dispatch({
+        type: 'SET_LOADING',
+        payload: false
+      })
+    })
   }
 }
 
@@ -107,7 +113,7 @@ export const saveHandoverAsset = (item, locationId) => {
       Swal.fire({
         icon: 'success',
         title: 'Sukses menambahkan handover',
-        timer: 4500,
+        timer: 2000,
         showConfirmButton: false
       })
       dispatch({
@@ -135,7 +141,7 @@ export const saveEditAsset = (item) => {
       Swal.fire({
         icon: 'success',
         title: 'Sukses edit asset',
-        timer: 5000,
+        timer: 2000,
         showConfirmButton: false
       })
       dispatch({
@@ -174,6 +180,33 @@ export const deleteAsset = (assetId) => {
       dispatch({
         type: 'SET_ERROR_MSG',
         payload: err
+      })
+    })
+  }
+}
+
+export const getDetailAsset = (id) => {
+  return (dispatch) => {
+    api({
+      url: `/Surveillance/detail/${id}`,
+      method: 'GET'
+    })
+    .then(({ data }) => {
+      dispatch({
+        type: 'SET_ASSET_DETAIL',
+        payload: data[0]
+      })
+    })
+    .catch((err) => {
+      dispatch({
+        type: 'SET_ERROR_MSG',
+        payload: err
+      })
+    })
+    .finally(() => {
+      dispatch({
+        type: 'SET_LOADING',
+        payload: false
       })
     })
   }

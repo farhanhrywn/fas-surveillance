@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import {
   CCol,
   CRow,
@@ -51,6 +51,7 @@ const fields = [
 ]
 
 export default function AssetTable () {
+  const router = useHistory()
   const dispatch = useDispatch()
   const { assets, filteredAssets, loading } = useSelector((state) => state)
   const [isModalOpen, setModalOpen] = useState(false)
@@ -148,10 +149,10 @@ export default function AssetTable () {
       <td style={{ verticalAlign: 'middle'}}>
         <div className='d-flex'>
           <div className='btn border mx-1 rounded'>
-            <CIcon icon={Icon.cilPencil} width={20} onClick={() => showEditModal(asset.id_surv)} />
+            <CIcon icon={Icon.cilPencil} width={20} onClick={() => router.push(`/edit/item/${asset.id_surv}`)} />
           </div>
           <div className='btn border mx-1 rounded'>
-            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => showHandoverModal(asset.id_surv)}/>
+            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => router.push(`edit/handover/${asset.id_surv}`)}/>
           </div>
           <div className='btn border mx-1 rounded'>
             <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
@@ -265,7 +266,7 @@ export default function AssetTable () {
       <CRow className="justify-content-between">
         <CCol md="4" style={{position: 'relative'}}>
           <div className={'d-flex'} style={{position: 'absolute', bottom: 0, width: '100%'}}>
-            <CButton block size='lg' color="primary" onClick={showModal} className={'mr-3'}>Add Item</CButton>
+            <CButton block size='lg' color="primary" onClick={() => router.push('/add/item')} className={'mr-3'}>Add Item</CButton>
             <CButton block size='lg' color="primary" onClick={exportToExcel} className={'mt-0'}>Export</CButton>
           </div>
         </CCol>
