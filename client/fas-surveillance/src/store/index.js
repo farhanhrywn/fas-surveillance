@@ -152,6 +152,33 @@ export const saveEditAsset = (item) => {
   }
 }
 
+export const deleteAsset = (assetId) => {
+  return ( dispatch ) => {
+    api({
+      url: `/Surveillance/${assetId}`,
+      method: 'DELETE'
+    })
+    .then(({ data }) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Sukses remove item', 
+        timer: 3000,
+        showConfirmButton: false
+      })
+      dispatch({
+        type: 'SET_DELETE_UNIT',
+        payload: assetId
+      })
+    })
+    .catch((err) => {
+      dispatch({
+        type: 'SET_ERROR_MSG',
+        payload: err
+      })
+    })
+  }
+}
+
 const reducer = (state = initialState, action) => {
   switch ( action.type ) {
     case 'SET_LOADING':
@@ -176,6 +203,9 @@ const reducer = (state = initialState, action) => {
       return { ...state, assets: assetList, filteredAssets: assetList}
     case 'SET_ASSET_DETAIL':
       return { ...state, assetDetail: action.payload }
+    case 'SET_DELETE_UNIT':
+      let newAssetList = state.assets.filter((asset) => asset.id_surv !== action.payload)
+      return { ...state, assets: newAssetList, filteredAssets: newAssetList }
     case 'SET_ERROR_MSG':
       return { ...state, error: action.payload }
     default:
