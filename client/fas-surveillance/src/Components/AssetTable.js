@@ -123,6 +123,7 @@ export default function AssetTable () {
     Swal.fire({
       title: 'Are you sure to remove this item ?',
       icon: 'warning',
+      timer: 2000,
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
@@ -130,10 +131,6 @@ export default function AssetTable () {
     }).then((result) => {
       if (result.isConfirmed) {
         dispatch(deleteAsset(assetId))
-        setTimeout(() => {
-          dispatch(fetchDataAsset(localStorage.getItem('loc_id')))
-          window.location.reload()
-        },[3000])
       }
     })
   }

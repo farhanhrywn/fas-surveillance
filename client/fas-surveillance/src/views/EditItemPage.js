@@ -22,6 +22,7 @@ import {
 } from "@coreui/react";
 import Header from "../Components/Header";
 import assetType from "../assetType.json";
+import assetStatus from "../assetStatus.json";
 import { api } from "../config/axios";
 import moment from "moment";
 import { saveEditAsset } from "../store";
@@ -81,7 +82,7 @@ export default function EditItem () {
       location: localStorage.getItem('loc_id'),
       phone: localStorage.getItem('pic_phone')
     }
-
+    
     dispatch(saveEditAsset(payload))
 
     router.push('/home')
@@ -139,8 +140,11 @@ export default function EditItem () {
                           <CLabel htmlFor="hf-email">Status <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
                           <CSelect type="text" name="status" onChange={changeForm} value={asset.status}>
                             <option value="">Please Select..</option>
-                            <option value="New">New</option>
-                            <option value="Used Item">Used item</option>
+                            {
+                              assetStatus.map(type => (
+                                <option value={type.value} key={type.value}>{type.label}</option>
+                              ))
+                            }
                           </CSelect>
                       </CFormGroup>
                       <CFormGroup row className="my-0">
