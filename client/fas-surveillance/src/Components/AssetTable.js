@@ -28,7 +28,8 @@ import {
   getAssetRequest,
   fetchDataAsset,
   filterAssetByType,
-  saveHandoverAsset
+  saveHandoverAsset,
+  saveEditAsset
 } from "../store";
 
 
@@ -50,15 +51,11 @@ const fields = [
 
 export default function AssetTable () {
   const dispatch = useDispatch()
-  const assetList = useSelector((state) => state.assets)
-  const filteredAssetList = useSelector((state) => state.filteredAssets)
-  const [assetData, setAssetData] = useState([])
-  const [filteredAsset, setFilteredAsset] = useState(assetList)
+  const { assets, filteredAssets, loading } = useSelector((state) => state)
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
-  const [locationId, setLocationId] = useState('')
 
   const convertDate = (asset) => {
     let date = moment(asset.cert_date).format('DD MMM YYYY')
@@ -123,7 +120,6 @@ export default function AssetTable () {
   const showRemoveModal = (assetId) => {
     Swal.fire({
       title: 'Are you sure to remove this item ?',
-      // text: "You won't be able to revert this item!",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -207,40 +203,32 @@ export default function AssetTable () {
       phone: localStorage.getItem('pic_phone')
     }
 
-    dispatch(saveHandoverAsset(payload))
-    hideModal()
+    dispatch(saveHandoverAsset(payload, localStorage.getItem('loc_id')))
+
+    setTimeout(() => {
+      window.location.reload()
+      hideModal()
+    },[5000])
   }
 
   const saveItem = (item) => {
-    api({
-      url: `/Surveillance/update/${item.id_surv}`,
-      method: 'POST',
-      data: JSON.stringify({
-        ...item,
-        maintenance_by: localStorage.getItem('pic_name'),
-        location: localStorage.getItem('loc_id'),
-        phone: localStorage.getItem('pic_phone')
-      })
-    })
-    .then(({ data }) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Sukses edit asset',
-        timer: 2000,
-        showConfirmButton: false
-      })
-      // fetchDataAsset(localStorage.getItem('loc_id'))
+    let payload = {
+      ...item,
+      maintenance_by: localStorage.getItem('pic_name'),
+      location: localStorage.getItem('loc_id'),
+      phone: localStorage.getItem('pic_phone')
+    }
+
+    dispatch(saveEditAsset(payload))
+
+    setTimeout(() => {
       window.location.reload()
-      // dispatch(getAssetsBackloadByLocationId(localStorage.getItem('loc_id')))
       hideModal()
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+    },[5000])
   }
 
   const filterAsset = (event) => {
-    dispatch(filterAssetByType(event.target.value, assetList))
+    dispatch(filterAssetByType(event.target.value, assets))
   }
 
   const exportToExcel = () => {
@@ -274,10 +262,9 @@ export default function AssetTable () {
     let locationId = localStorage.getItem('loc_id')
 
     dispatch(fetchDataAsset(locationId))
-    dispatch(getAssetsBackloadByLocationId(locationId))
-    dispatch(getAssetRequest(locationId))
+    // dispatch(getAssetsBackloadByLocationId(locationId))
+    // dispatch(getAssetRequest(locationId))
   },[])
-
 
   return (
     <>
@@ -307,7 +294,7 @@ export default function AssetTable () {
       <CRow className="mt-5">
         <CCol xl={12}>
           <CDataTable
-            items={filteredAssetList}
+            items={filteredAssets}
             fields={fields}
             size='500px'
             hover

@@ -9,7 +9,9 @@ const initialState = {
   assetsRequest: [],
   assets: [],
   filteredAssets: [],
-  error: null
+  assetDetail: {},
+  error: null,
+  loading: true
 }
 
 export const getAssetsBackloadByLocationId = (locationId) => {
@@ -37,7 +39,7 @@ export const getAssetsBackloadByLocationId = (locationId) => {
 export const getAssetRequest = (locationId) => {
   return (dispatch) => {
     api({
-      url: `Request/${locationId}/all`,
+      url: `/Request/${locationId}/all`,
       method: 'GET'
     })
     .then(({ data }) => {
@@ -94,10 +96,10 @@ export const filterAssetByType = (type, assetList) => {
   }
 }
 
-export const saveHandoverAsset = (item) => {
+export const saveHandoverAsset = (item, locationId) => {
   return (dispatch) => {
     api({
-      url: `/Surveillance/handover/${localStorage.getItem('loc_id')}`,
+      url: `/Surveillance/handover/${locationId}`,
       method: 'POST',
       data: JSON.stringify(item)
     })
@@ -105,7 +107,35 @@ export const saveHandoverAsset = (item) => {
       Swal.fire({
         icon: 'success',
         title: 'Sukses menambahkan handover',
-        timer: 2000,
+        timer: 4500,
+        showConfirmButton: false
+      })
+      dispatch({
+        type: 'SET_EDIT_HANDOVER',
+        payload: item
+      })
+    })
+    .catch((err) => {
+      dispatch({
+        type: 'SET_ERROR_MSG',
+        payload: err
+      })
+    })
+  }
+}
+
+export const saveEditAsset = (item) => {
+  return (dispatch) => {
+    api({
+      url: `/Surveillance/update/${item.id_surv}`,
+      method: 'POST',
+      data: JSON.stringify(item)
+    })
+    .then(({ data }) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Sukses edit asset',
+        timer: 5000,
         showConfirmButton: false
       })
       dispatch({
@@ -124,6 +154,8 @@ export const saveHandoverAsset = (item) => {
 
 const reducer = (state = initialState, action) => {
   switch ( action.type ) {
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload }
     case 'SET_ASSETS_BACKLOAD':
       return { ...state, assetsBackload: action.payload }
     case 'SET_ASSETS_REQUEST':
@@ -142,6 +174,8 @@ const reducer = (state = initialState, action) => {
       }
 
       return { ...state, assets: assetList, filteredAssets: assetList}
+    case 'SET_ASSET_DETAIL':
+      return { ...state, assetDetail: action.payload }
     case 'SET_ERROR_MSG':
       return { ...state, error: action.payload }
     default:
