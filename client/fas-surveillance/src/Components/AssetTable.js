@@ -29,7 +29,8 @@ import {
   fetchDataAsset,
   filterAssetByType,
   saveHandoverAsset,
-  saveEditAsset
+  saveEditAsset,
+  deleteAsset
 } from "../store";
 
 
@@ -127,18 +128,11 @@ export default function AssetTable () {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        api({
-          url: `/Surveillance/${assetId}`,
-          method: 'DELETE'
-        })
-        .then(({ data }) => {
-          Swal.fire(
-            'Deleted!',
-            'Sukses remove item',
-            'success'
-          )
-          // fetchDataAsset(localStorage.getItem('loc_id'))
-        })
+        dispatch(deleteAsset(assetId))
+        setTimeout(() => {
+          dispatch(fetchDataAsset(localStorage.getItem('loc_id')))
+          window.location.reload()
+        },[3000])
       }
     })
   }
