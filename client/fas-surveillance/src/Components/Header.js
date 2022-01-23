@@ -46,10 +46,16 @@ export default function Header ({ className }) {
           <CNavbarBrand className="text-uppercase" style={styles.headerLeft}>
             Surveillance
           </CNavbarBrand>
+          <CNavbarNav className="ml-auto">
+            <CNavLink to={'/landing'}>Home</CNavLink>
+            <CNavLink to={'/home'}>Asset</CNavLink>
+          </CNavbarNav>
           <CCollapse show={isOpen} navbar>
             <CNavbarNav className="ml-auto">
-              <CNavLink>Home</CNavLink>
-              <CNavLink>Link</CNavLink>
+              <span className="navbar-text mr-3 text-uppercase">
+                {localStorage.getItem('pic_name')}, {localStorage.getItem('loc_name')}
+              </span>
+              <button className="btn btn-danger my-2 my-sm-0" onClick={logout}>Logout</button>
             </CNavbarNav>
           </CCollapse>
         </CNavbar>
