@@ -105,9 +105,9 @@ export const filterAssetByType = (type, assetList) => {
 export const saveHandoverAsset = (item, locationId) => {
   return (dispatch) => {
     api({
-      url: `/Surveillance/handover/${locationId}`,
+      url: `/Surveillance/handover/${item.id_surv}`,
       method: 'POST',
-      data: JSON.stringify(item)
+      data: item
     })
     .then(({ data }) => {
       Swal.fire({
@@ -130,12 +130,12 @@ export const saveHandoverAsset = (item, locationId) => {
   }
 }
 
-export const saveEditAsset = (item) => {
+export const saveEditAsset = (item, router) => {
   return (dispatch) => {
     api({
       url: `/Surveillance/update/${item.id_surv}`,
       method: 'POST',
-      data: JSON.stringify(item)
+      data: item
     })
     .then(({ data }) => {
       Swal.fire({
@@ -148,8 +148,10 @@ export const saveEditAsset = (item) => {
         type: 'SET_EDIT_HANDOVER',
         payload: item
       })
+      router.push('/home')
     })
     .catch((err) => {
+      console.log(err)
       dispatch({
         type: 'SET_ERROR_MSG',
         payload: err

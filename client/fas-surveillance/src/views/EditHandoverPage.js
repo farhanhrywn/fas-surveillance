@@ -67,6 +67,7 @@ export default function EditHandover () {
   }
 
   const submitForm = () => {
+    // let formData = new FormData()
     let payload = {
       ...asset,
       maintenance_by: localStorage.getItem('pic_name'),
@@ -74,6 +75,9 @@ export default function EditHandover () {
       phone: localStorage.getItem('pic_phone')
     }
 
+    // for( const key in payload ) {
+    //   formData.append(key, payload[key])
+    // }
     dispatch(saveHandoverAsset(payload, localStorage.getItem('loc_id')))
 
     router.push('/home')
@@ -102,7 +106,7 @@ export default function EditHandover () {
                       <CFormGroup row>
                         <CLabel col md="2" htmlFor="file-input">Remark File :</CLabel>
                         <CCol xs="12" md="10">
-                          <CInputFile type="file" name="remark_file"/>
+                          <CInputFile type="file" name="remark_file" onChange={changeForm}/>
                         </CCol>
                       </CFormGroup>
                       <CFormGroup row>

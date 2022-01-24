@@ -65,7 +65,7 @@ export default function AddItem () {
     setCertDate(event.target.value)
   }
 
-  const submitForm = () => {
+  const submitForm = async () => {
     let payload = {
       ...form,
       cert_date: certDate,
@@ -74,10 +74,10 @@ export default function AddItem () {
       phone: localStorage.getItem('pic_phone')
     }
 
-    api({
+    await api({
       url: '/Surveillance/create',
       method: 'POST',
-      data: JSON.stringify(payload)
+      data: payload
     })
     .then(({ data }) => {
       Swal.fire({
