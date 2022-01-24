@@ -54,6 +54,8 @@ export default function AssetTable () {
   const router = useHistory()
   const dispatch = useDispatch()
   const { assets, filteredAssets, loading } = useSelector((state) => state)
+  // const [assets, setAssets] = useState([])
+  // const [filteredAssets, setFilteredAssets] = useState([])
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
@@ -253,8 +255,24 @@ export default function AssetTable () {
   useEffect(() => {
     let locationId = localStorage.getItem('loc_id')
 
+    // const fetchDataAsset = async () => {
+    //   await api({
+    //     url: `/Surveillance/${locationId}`,
+    //     method: 'GET'
+    //   })
+    //   .then(({ data }) => {
+    //     setAssets(data)
+    //     setFilteredAssets(data)
+    //   })
+    //   .catch((err) => {
+    //     console.log(err)
+    //   })
+    // }
+
+    // fetchDataAsset()
+
     dispatch(fetchDataAsset(locationId))
-    // dispatch(getAssetsBackloadByLocationId(locationId))
+    dispatch(getAssetsBackloadByLocationId(locationId))
     // dispatch(getAssetRequest(locationId))
   },[])
 

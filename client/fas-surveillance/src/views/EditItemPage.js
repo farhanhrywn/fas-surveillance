@@ -26,6 +26,7 @@ import assetStatus from "../assetStatus.json";
 import { api } from "../config/axios";
 import moment from "moment";
 import { saveEditAsset } from "../store";
+import Swal from "sweetalert2";
 
 const styles = {
   headerTitle: {
@@ -82,10 +83,7 @@ export default function EditItem () {
       location: localStorage.getItem('loc_id'),
       phone: localStorage.getItem('pic_phone')
     }
-    
-    dispatch(saveEditAsset(payload))
-
-    router.push('/home')
+    dispatch(saveEditAsset(payload, router))
   }
 
 
