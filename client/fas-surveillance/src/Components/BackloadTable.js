@@ -294,6 +294,15 @@ export default function BackloadTable ({ backloadList }) {
     
   }
 
+  const getName = (asset) => {
+    let date = moment(asset.maintenance_date).format('DD MMM YYYY')
+    return (
+      <td>
+        {`${asset.maintenance_by} - ${date}`}
+      </td>
+    )
+  }
+
 
 
   // useEffect(() => {
@@ -323,6 +332,7 @@ export default function BackloadTable ({ backloadList }) {
               'action': (asset, index) => actionField(asset),
               'tools_date_in': (asset) => calculateDateIn(asset),
               'remark': (asset) => checkValue(asset, 'remark'),
+              'maintenance_by': (asset) => getName(asset),
               'status': (asset) => (
                 <td style={{ verticalAlign: 'middle'}}>
                   {badgeStatus(asset)}
