@@ -65,6 +65,15 @@ export default function AddItem () {
     setCertDate(event.target.value)
   }
 
+  const isFormValid = () => {
+    let arrValueForm = Object.values(form)
+    let isValueEmpty = arrValueForm.some(val => val === '' || val === undefined)
+    if(isValueEmpty) {
+      return true
+    }
+    return false
+  }
+
   const submitForm = async () => {
     let payload = {
       ...form,
@@ -206,7 +215,7 @@ export default function AddItem () {
                           <CButton color="danger" size="lg" block onClick={() => router.push('/home')}>Cancel</CButton>
                         </CCol>
                         <CCol md="6">
-                          <CButton color="primary" size="lg" block onClick={() => submitForm()}>Submit</CButton>
+                          <CButton color="primary" size="lg" block onClick={() => submitForm()} disabled={isFormValid()}>Submit</CButton>
                         </CCol>
                       </CRow>
                     </CCardBody>
