@@ -16,6 +16,7 @@ import {
 } from '@coreui/react'
 import Swal from 'sweetalert2'
 import { api } from '../config/axios'
+import bgImages from '../assets/images/bg-login.jpg';
 
 const Login = () => {
   const router = useHistory()
@@ -80,24 +81,24 @@ const Login = () => {
   },[])
 
   return (
-    <div style={{ background: '#F3F9FF'}}>
+    <div style={{ background: `url(${bgImages})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}>
         <CContainer className="align-items-center login__container vh-100">
           <CCard className="w-100 custom-card">
-            <CCardHeader className="custom-card__header" style={{ background: 'linear-gradient(180deg, rgba(79, 143, 204, 0.44) 0%, rgba(79, 143, 204, 0) 100%)', color: '#425466', textAlign: 'center'}}>
-              <h2 style={{ letterSpacing: '0.26em'}}>SURVEILANCE</h2>
+            <CCardHeader className="custom-card__header" style={{ color: '#fff', textAlign: 'center'}}>
+              <h2 style={{ letterSpacing: '0.26em'}}>SURVEILENCE</h2>
             </CCardHeader>
             <CCardBody className="custom-card__body">
               <CForm>
                 <CFormGroup>
-                  <CLabel className="label__size" htmlFor="nf-email">PIC Name</CLabel>
+                  <CLabel className="label__custom" htmlFor="nf-email">PIC Name</CLabel>
                   <CInput className="custom-input__background" type="text" onChange={(e) => setPicName(e.target.value)}/>
                 </CFormGroup>
                 <CFormGroup>
-                  <CLabel className="label__size" htmlFor="nf-password">Phone Number</CLabel>
+                  <CLabel className="label__custom" htmlFor="nf-password">Phone Number</CLabel>
                   <CInput className="custom-input__background" type="text" onChange={(e) => setPicPhoneNumber(e.target.value)} />
                 </CFormGroup>
                 <CFormGroup>
-                  <CLabel className="label__size">Location</CLabel>
+                  <CLabel className="label__custom">Location</CLabel>
                   <CSelect className="custom-input__background" onChange={filterFields}>
                     <option value="">Select location</option>
                     <option value="KAL Operation">KAL Operation</option>
@@ -105,7 +106,7 @@ const Login = () => {
                   </CSelect>
                 </CFormGroup>
                 <CFormGroup>
-                  <CLabel className="label__size">Field</CLabel>
+                  <CLabel className="label__custom">Field</CLabel>
                   <CSelect className="custom-input__background" name="id_lokasi" onChange={updateForm}>
                     <option value="">Select field</option>
                     {
@@ -116,7 +117,7 @@ const Login = () => {
                   </CSelect>
                 </CFormGroup>
                 <CFormGroup>
-                  <CLabel className="label__size" htmlFor="nf-password">Password</CLabel>
+                  <CLabel className="label__custom" htmlFor="nf-password">Password</CLabel>
                   <CInput className="custom-input__background" type="password" name="password" onChange={updateForm} />
                 </CFormGroup>
               </CForm>
