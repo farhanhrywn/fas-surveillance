@@ -202,6 +202,15 @@ export default function RequestTable ({ requestList }) {
     setForm({ ...form, [event.target.name]: event.target.value })
   }
 
+  const isFormValid = () => {
+    let arrValueForm = Object.values(form)
+    let isValueEmpty = arrValueForm.some(val => val === '' || val === undefined)
+    if(isValueEmpty) {
+      return true
+    }
+    return false
+  }
+
   // useEffect(() => {
   //   let locationId = localStorage.getItem('loc_id')
   //   fetchDataAsset(locationId)
@@ -234,7 +243,7 @@ export default function RequestTable ({ requestList }) {
           </CFormGroup>
         </CCol>
         <CCol md="2">
-          <CButton block color="primary" onClick={() => createRequest(form)} style={{ marginTop: 32 }}>Add Request</CButton>
+          <CButton block color="primary" onClick={() => createRequest(form)} style={{ marginTop: 32 }} disabled={isFormValid()}>Add Request</CButton>
         </CCol>
       </CRow>
       <CRow className="mt-5">
