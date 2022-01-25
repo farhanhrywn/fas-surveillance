@@ -61,9 +61,9 @@ export default function AssetTable () {
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
 
-  const convertDate = (asset) => {
-    let date = moment(asset.cert_date).format('DD MMM YYYY')
-    if(date === 'Invalid date') {
+  const convertDate = (date) => {
+    let newDate = moment(date).format('DD MMM YYYY')
+    if(newDate === 'Invalid date') {
       return (
         <td>
           -
@@ -72,7 +72,7 @@ export default function AssetTable () {
     }
     return (
         <td>
-          {date}
+          {newDate}
         </td>
     )
   }
@@ -244,11 +244,20 @@ export default function AssetTable () {
           N/A
         </td>
       )
-    }
+    } 
     return (
-        <td>
-          {asset[params]}
-        </td>
+      <td>
+        {asset[params]}
+      </td>
+    )
+  }
+
+  const getName = (asset) => {
+    let date = moment(asset.maintenance_date).format('DD MMM YYYY')
+    return (
+      <td>
+        {`${asset.maintenance_by} - ${date}`}
+      </td>
     )
   }
 
@@ -273,7 +282,7 @@ export default function AssetTable () {
 
     dispatch(fetchDataAsset(locationId))
     dispatch(getAssetsBackloadByLocationId(locationId))
-    // dispatch(getAssetRequest(locationId))
+    dispatch(getAssetRequest(locationId))
   },[])
 
   return (
@@ -311,7 +320,7 @@ export default function AssetTable () {
             striped
             scopedSlots={{
               'type': (asset) => checkValue(asset, 'type'),
-              'cert_date': (asset) => convertDate(asset),
+              'cert_date': (asset) => convertDate(asset.cert_date),
               'status': (asset) => (
                 <td style={{ verticalAlign: 'middle'}}>
                   {badgeStatus(asset)}
@@ -319,7 +328,8 @@ export default function AssetTable () {
               ),
               'action': (asset, index) => actionField(asset),
               'tools_date_in': (asset) => calculateDateIn(asset),
-              'remark': (asset) => checkValue(asset, 'remark')
+              'remark': (asset) => checkValue(asset, 'remark'),
+              'maintenance_by': (asset) => getName(asset)
             }}
           />
         </CCol>
