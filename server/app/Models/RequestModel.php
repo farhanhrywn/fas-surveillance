@@ -11,7 +11,7 @@ class RequestModel extends Model
     protected $primaryKey           = 'id_req';
     protected $useAutoIncrement     = true;
     protected $insertID             = 0;
-    protected $returnType           = 'array';
+    protected $returnType           = 'App\Entities\Request'; //'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
     protected $allowedFields        = [
@@ -52,4 +52,39 @@ class RequestModel extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
+
+
+    public function finById($id = null)
+    {
+        $data = $this->find($id);
+        if ($data) {
+            return $data;
+        }
+        return false;
+    }
+
+    public function getDetail($id = null)
+    {
+        $input = $this->find($id);
+        $join = $this
+            ->select('
+            Request.id_req,
+            Request.item,
+            Location.nama_lokasi,
+            Request.qty,
+            Request.req_to,
+            Request.create_by,
+            Request.create_date,
+            Request.phone,
+            Request.req_status,
+            Request.seen_status,
+            Request.update_by,
+            Request.update_date
+            ')
+            ->join('Location', 'Location.id_lokasi=Request.location', 'left')
+            ->where(['Request.id_req' => $input->id_req])
+            ->get()->getresultArray();
+
+        return $join;
+    }
 }

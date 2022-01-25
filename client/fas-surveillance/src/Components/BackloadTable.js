@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import {
   CCol,
   CRow,
@@ -8,6 +9,7 @@ import {
   CSelect,
   CCard,
   CCardBody,
+  CBadge,
   CDataTable,
 } from '@coreui/react'
 
@@ -33,14 +35,16 @@ const fields = [
   { key: 'steelbox', label: 'Steelbox' },
   { key: 'condition', label: 'Condition'},
   { key: 'plan', label: 'Plan'},
-  { key: 'remark', label: 'Remark', _style: { width: '30%'} },
-  { key: 'tools_date_in', label: 'Number of Days in Storage', _style: { width: '40%'} },
-  { key: 'maintenance_by', label: 'Update By'},
-  { key: 'action', label: 'Action', _style: { width: '100%'}}
+  { key: 'remark', label: 'Remark', _style: { width: '20%'} },
+  { key: 'cert_date', label: 'Certification Date' },
+  { key: 'tools_date_in', label: 'Number of Days in Storage', _style: { width: '20%'} },
+  { key: 'maintenance_by', label: 'Update By', _style: { width: '10%'}},
+  { key: 'action', label: 'Action'}
 ]
 
 export default function BackloadTable ({ backloadList }) {
   const dispatch = useDispatch()
+  const router = useHistory()
   const [assetData, setAssetData] = useState([])
   const [filteredAsset, setFilteredAsset] = useState([])
   const [isModalOpen, setModalOpen] = useState(false)
@@ -148,17 +152,14 @@ export default function BackloadTable ({ backloadList }) {
       <td>
         <CRow>
           <CCol md="3">
-            <CIcon icon={Icon.cilPencil} width={20} onClick={() => showEditModal(asset.id_surv)} />
+            <CIcon icon={Icon.cilPencil} width={20} onClick={() => router.push(`/edit/item/${asset.id_surv}`)} />
           </CCol>
           <CCol md="3">
-            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => showHandoverModal(asset.id_surv)}/>
+            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => router.push(`edit/handover/${asset.id_surv}`)}/>
           </CCol>
-          {
-            (asset.status === 'Installed' || asset.status === 'Backload') &&
-            <CCol md="3">
-              <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
-            </CCol>
-          }
+          <CCol md="3">
+            <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
+          </CCol>
         </CRow>
     </td>
     )
@@ -262,7 +263,47 @@ export default function BackloadTable ({ backloadList }) {
     link.click();
 
     link.remove();
-}
+  }
+
+  const checkValue = (asset, params) => {
+    if(!asset[params]) {
+      return (
+        <td>
+          N/A
+        </td>
+      )
+    }
+    return (
+        <td>
+          {asset[params]}
+        </td>
+    )
+  }
+
+
+  const badgeStatus = (asset) => {
+
+    switch (asset.status) {
+      case 'Pulled':
+        return <CBadge color='info'>{asset.status}</CBadge>
+      case 'New':
+        return <CBadge color='success'>{asset.status}</CBadge>
+      default:
+        return <CBadge color='danger'>{asset.status}</CBadge>
+    }
+    
+  }
+
+  const getName = (asset) => {
+    let date = moment(asset.maintenance_date).format('DD MMM YYYY')
+    return (
+      <td>
+        {`${asset.maintenance_by} - ${date}`}
+      </td>
+    )
+  }
+
+
 
   // useEffect(() => {
   //   let locationId = localStorage.getItem('loc_id')
@@ -286,9 +327,17 @@ export default function BackloadTable ({ backloadList }) {
             hover
             striped
             scopedSlots={{
+              'type': (asset) => checkValue(asset, 'type'),
               'cert_date': (asset) => convertDate(asset),
               'action': (asset, index) => actionField(asset),
-              'tools_date_in': (asset) => calculateDateIn(asset)
+              'tools_date_in': (asset) => calculateDateIn(asset),
+              'remark': (asset) => checkValue(asset, 'remark'),
+              'maintenance_by': (asset) => getName(asset),
+              'status': (asset) => (
+                <td style={{ verticalAlign: 'middle'}}>
+                  {badgeStatus(asset)}
+                </td>
+              ),
             }}
           />
         </CCol>

@@ -15,7 +15,7 @@ import {
 } from '@coreui/react'
 import assetType from '../assetType.json'
 import assetStatus from '../assetStatus.json'
-import { api } from "../config/axios";
+import { api, apiForExport } from "../config/axios";
 import moment from "moment";
 
 
@@ -60,20 +60,6 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
     setAssetsType(assetType.filter(asset => asset.type === result.type))
   }
 
-  const getAssetById = (assetId) => {
-    api({
-      url: `/Surveillance/detail/${assetId}`,
-      method: 'GET'
-    })
-    .then(({ data }) => {
-      setAsset(data[0])
-      getAssetType(data[0].type)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-  }
-
   const filterType = (event) => {
     setType(event.target.value)
     setAssetsType(assetType.filter(asset => asset.type === event.target.value))
@@ -84,14 +70,27 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
   }
 
   const saveForm = () => {
-    let payload = {...asset, cert_date: certDate}
-    onSubmit(payload)
+    onSubmit(asset)
   }
 
   useEffect(() => {
-    isFormValid()
-    getAssetById(assetId)
-  },[form])
+    const getRequestById = (assetId) => {
+      api({
+        url: `/Surveillance/detail/${assetId}`,
+        method: 'GET'
+      })
+      .then(({ data }) => {
+        console.log(data)
+        setAsset(data[0])
+        getAssetType(data[0].type)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    }
+
+    getRequestById(assetId)
+  },[])
 
 
   return (
@@ -121,7 +120,7 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
             </CCol>
             <CCol xs="12" md="9">
               <CInput type="text" name="sn" onChange={changeForm} value={asset.sn} />
-              <CFormText style={{ marginBottom: '1rem', fontSize: 10 }}>Fill n/a if Part Number unavailable</CFormText>
+              <CFormText style={{ marginBottom: '1rem', fontSize: 10 }}>Fill n/a if Serial Number unavailable</CFormText>
             </CCol>
           </CFormGroup>
           <CFormGroup row>
@@ -145,23 +144,7 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
             </CCol>
             <CCol xs="12" md="9">
               <CInput type="text" name="steelbox" onChange={changeForm} value={asset.steelbox}/>
-              <CFormText style={{ marginBottom: '1rem', fontSize: 10 }}>Fill n/a if Part Number unavailable</CFormText>
-            </CCol>
-          </CFormGroup>
-          <CFormGroup row>
-            <CCol md="3">
-              <CLabel htmlFor="hf-email">Category <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
-            </CCol>
-            <CCol xs="12" md="9">
-              <CSelect type="text" name="sheet" onChange={changeForm} value={asset.sheet}>
-                <option value="">Please Select..</option>
-                <option value="Mechanical Lift Cert Eqp">Mechanical Lift Cert Equipment</option>
-                <option value="Electrical Cert Eqp">Electrical Cert Equipment</option>
-                <option value="Pressure Related Eqp">Pressure Related Equipment</option>
-                <option value="Sensor Rih Eqp">Sensor Rih Equipment</option>
-                <option value="Installation Tool">Installation Tool</option>
-                <option value="Splicing Tools">Splicing Tool</option>
-              </CSelect>
+              <CFormText style={{ marginBottom: '1rem', fontSize: 10 }}>Fill n/a if Steelbox unavailable</CFormText>
             </CCol>
           </CFormGroup>
           <CFormGroup row>
@@ -233,7 +216,7 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
               <CLabel htmlFor="hf-email">Certification Date</CLabel>
             </CCol>
             <CCol xs="12" md="9">
-              <CInput type="date" name="cert_date" onChange={changeCertDate}  value={moment(asset.cert_date).format('YYYY-MM-DD')}/>
+              <CInput type="date" name="cert_date" onChange={changeForm}  value={moment(asset.cert_date).format('YYYY-MM-DD')}/>
             </CCol>
           </CFormGroup>
           <CFormGroup row>
@@ -246,10 +229,10 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
           </CFormGroup>
         </CCol>
       </CRow>
-      <div className="d-flex" style={{ justifyContent: 'right'}}>
-        <Button className="mr-3" variant="light" size="lg" onClick={onCancel}>Cancel</Button>
-        <Button variant="primary" size="lg" onClick={() => saveForm()}>Save</Button>
-      </div>
+      <CRow style={{ justifyContent: 'center'}}>
+        <Button className="mr-3" variant="primary" size="lg" onClick={() => onSubmit(asset)}>Save</Button>
+        <Button variant="danger" size="lg" onClick={onCancel}>Cancel</Button>
+      </CRow>
     </>
   )
 }

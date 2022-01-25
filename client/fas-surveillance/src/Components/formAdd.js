@@ -28,7 +28,7 @@ export default function FormAdd ({ onSubmit, onCancel }) {
     plan: '',
     qty: '',
     steelbox: '',
-    sheet: '',
+    status: '',
     type: '',
     condition: '',
     tools_date_in: ''
@@ -98,7 +98,7 @@ export default function FormAdd ({ onSubmit, onCancel }) {
             </CCol>
             <CCol xs="12" md="9">
               <CInput type="text" name="sn" onChange={changeForm} />
-              <CFormText style={{ marginBottom: '1rem', fontSize: 10 }}>Fill n/a if Part Number unavailable</CFormText>
+              <CFormText style={{ marginBottom: '1rem', fontSize: 10 }}>Fill n/a if Serial Number unavailable</CFormText>
             </CCol>
           </CFormGroup>
           <CFormGroup row>
@@ -122,22 +122,18 @@ export default function FormAdd ({ onSubmit, onCancel }) {
             </CCol>
             <CCol xs="12" md="9">
               <CInput type="text" name="steelbox" onChange={changeForm} />
-              <CFormText style={{ marginBottom: '1rem', fontSize: 10 }}>Fill n/a if Part Number unavailable</CFormText>
+              <CFormText style={{ marginBottom: '1rem', fontSize: 10 }}>Fill n/a if Steelbox unavailable</CFormText>
             </CCol>
           </CFormGroup>
           <CFormGroup row>
             <CCol md="3">
-              <CLabel htmlFor="hf-email">Category <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
+              <CLabel htmlFor="hf-email">Status <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
             </CCol>
             <CCol xs="12" md="9">
-              <CSelect type="text" name="sheet" onChange={changeForm}>
+              <CSelect type="text" name="status" onChange={changeForm}>
                 <option value="">Please Select..</option>
-                <option value="Mechanical Lift Cert Eqp">Mechanical Lift Cert Equipment</option>
-                <option value="Electrical Cert Eqp">Electrical Cert Equipment</option>
-                <option value="Pressure Related Eqp">Pressure Related Equipment</option>
-                <option value="Sensor Rih Eqp">Sensor Rih Equipment</option>
-                <option value="Installation Tool">Installation Tool</option>
-                <option value="Splicing Tools">Splicing Tool</option>
+                <option value="New">New</option>
+                <option value="Used Item">Used item</option>
               </CSelect>
             </CCol>
           </CFormGroup>
@@ -196,6 +192,7 @@ export default function FormAdd ({ onSubmit, onCancel }) {
             </CCol>
             <CCol xs="12" md="9">
               <CInput type="date" name="cert_date" onChange={changeCertDate} />
+              <CFormText style={{ marginBottom: '1rem', fontSize: 10 }}>Skip this step if cert date is unavailable</CFormText>
             </CCol>
           </CFormGroup>
           <CFormGroup row>

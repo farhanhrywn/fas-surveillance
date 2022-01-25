@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import {
   CCol,
   CRow,
@@ -19,11 +19,19 @@ import FormAdd from './formAdd'
 import FormHandover from './formHandover'
 import FormEdit from './formEdit'
 import moment from 'moment'
-import { api, apiForExport } from '../config/axios'
+import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
 import assetType from '../assetType.json'
-import { getAssetsBackloadByLocationId } from "../store";
+import { 
+  getAssetsBackloadByLocationId,
+  getAssetRequest,
+  fetchDataAsset,
+  filterAssetByType,
+  saveHandoverAsset,
+  saveEditAsset,
+  deleteAsset
+} from "../store";
 
 
 const fields = [
@@ -36,39 +44,26 @@ const fields = [
   { key: 'condition', label: 'Condition'},
   { key: 'plan', label: 'Plan'},
   { key: 'remark', label: 'Remark', _style: { width: '20%'} },
+  { key: 'cert_date', label: 'Certification Date' },
   { key: 'tools_date_in', label: 'Number of Days in Storage', _style: { width: '20%'} },
   { key: 'maintenance_by', label: 'Update By', _style: { width: '10%' }},
   { key: 'action', label: 'Action'}
 ]
 
 export default function AssetTable () {
+  const router = useHistory()
   const dispatch = useDispatch()
-  const [assetData, setAssetData] = useState([])
-  const [filteredAsset, setFilteredAsset] = useState([])
+  const { assets, filteredAssets, loading } = useSelector((state) => state)
+  // const [assets, setAssets] = useState([])
+  // const [filteredAssets, setFilteredAssets] = useState([])
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
-  const locationId = localStorage.getItem('location_id')
 
-  const fetchDataAsset = (locationId) => {
-    api({
-      url: `/Surveillance/${locationId}`,
-      // url: '/asset',
-      method: 'GET'
-    })
-    .then(({ data }) => {
-      setAssetData(data)
-      setFilteredAsset(data)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-  }
-
-  const convertDate = (asset) => {
-    let date = moment(asset.cert_date).format('DD MMM YYYY')
-    if(date === 'Invalid date') {
+  const convertDate = (date) => {
+    let newDate = moment(date).format('DD MMM YYYY')
+    if(newDate === 'Invalid date') {
       return (
         <td>
           -
@@ -77,7 +72,7 @@ export default function AssetTable () {
     }
     return (
         <td>
-          {date}
+          {newDate}
         </td>
     )
   }
@@ -129,26 +124,15 @@ export default function AssetTable () {
   const showRemoveModal = (assetId) => {
     Swal.fire({
       title: 'Are you sure to remove this item ?',
-      // text: "You won't be able to revert this item!",
       icon: 'warning',
+      timer: 2000,
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        api({
-          url: `/Surveillance/${assetId}`,
-          method: 'DELETE'
-        })
-        .then(({ data }) => {
-          Swal.fire(
-            'Deleted!',
-            'Sukses remove item',
-            'success'
-          )
-          fetchDataAsset(localStorage.getItem('loc_id'))
-        })
+        dispatch(deleteAsset(assetId))
       }
     })
   }
@@ -164,19 +148,16 @@ export default function AssetTable () {
       <td style={{ verticalAlign: 'middle'}}>
         <div className='d-flex'>
           <div className='btn border mx-1 rounded'>
-            <CIcon icon={Icon.cilPencil} width={20} onClick={() => showEditModal(asset.id_surv)} />
+            <CIcon icon={Icon.cilPencil} width={20} onClick={() => router.push(`/edit/item/${asset.id_surv}`)} />
           </div>
           <div className='btn border mx-1 rounded'>
-            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => showHandoverModal(asset.id_surv)}/>
+            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => router.push(`edit/handover/${asset.id_surv}`)}/>
           </div>
-          {
-            (asset.status === 'Installed' || asset.status === 'Backload') &&
-            <div className='btn border mx-1 rounded'>
-              <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
-            </div>
-          }
+          <div className='btn border mx-1 rounded'>
+            <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
+          </div>
         </div>
-    </td>
+      </td>
     )
   }
 
@@ -199,7 +180,7 @@ export default function AssetTable () {
         timer: 2000,
         showConfirmButton: false
       })
-      fetchDataAsset(localStorage.getItem('loc_id'))
+      // fetchDataAsset(localStorage.getItem('loc_id'))
       hideModal()
     })
     .catch((err) => {
@@ -208,72 +189,46 @@ export default function AssetTable () {
   }
 
   const saveHandover = (item) => {
-    api({
-      url: `/Surveillance/handover/${localStorage.getItem('loc_id')}`,
-      method: 'POST',
-      data: JSON.stringify(
-        { 
-          ...item,
-          id_surv: idSurv,
-          maintenance_by: localStorage.getItem('pic_name'),
-          location: localStorage.getItem('loc_id'),
-          phone: localStorage.getItem('pic_phone')
-        }
-      )
-    })
-    .then(({ data }) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Sukses menambahkan handover',
-        timer: 2000,
-        showConfirmButton: false
-      })
+    let payload = {
+      ...item,
+      id_surv: idSurv,
+      maintenance_by: localStorage.getItem('pic_name'),
+      location: localStorage.getItem('loc_id'),
+      phone: localStorage.getItem('pic_phone')
+    }
+
+    dispatch(saveHandoverAsset(payload, localStorage.getItem('loc_id')))
+
+    setTimeout(() => {
+      window.location.reload()
       hideModal()
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+    },[5000])
   }
 
   const saveItem = (item) => {
-    api({
-      url: `/Surveillance/update/${item.id_surv}`,
-      method: 'POST',
-      data: JSON.stringify({
-        ...item,
-        maintenance_by: localStorage.getItem('pic_name'),
-        location: localStorage.getItem('loc_id'),
-        phone: localStorage.getItem('pic_phone')
-      })
-    })
-    .then(({ data }) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Sukses edit asset',
-        timer: 2000,
-        showConfirmButton: false
-      })
-      fetchDataAsset(localStorage.getItem('loc_id'))
-      dispatch(getAssetsBackloadByLocationId(localStorage.getItem('loc_id')))
+    let payload = {
+      ...item,
+      maintenance_by: localStorage.getItem('pic_name'),
+      location: localStorage.getItem('loc_id'),
+      phone: localStorage.getItem('pic_phone')
+    }
+
+    dispatch(saveEditAsset(payload))
+
+    setTimeout(() => {
+      window.location.reload()
       hideModal()
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+    },[5000])
   }
 
   const filterAsset = (event) => {
-    if(event.target.value === '') {
-      setFilteredAsset(assetData)
-    } else {
-      setFilteredAsset(assetData.filter((asset) => asset.type === event.target.value))
-    }
+    dispatch(filterAssetByType(event.target.value, assets))
   }
 
   const exportToExcel = () => {
       const link = document.createElement('a');
 
-      link.href = `${process.env.REACT_APP_API_URL_PROD_EXPORT}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/notbackload`;
+      link.href = `${process.env.REACT_APP_API_URL_PROD}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/notbackload`;
       
       document.body.appendChild(link);
 
@@ -282,19 +237,60 @@ export default function AssetTable () {
       link.remove();
   }
 
+  const checkValue = (asset, params) => {
+    if(!asset[params]) {
+      return (
+        <td>
+          N/A
+        </td>
+      )
+    } 
+    return (
+      <td>
+        {asset[params]}
+      </td>
+    )
+  }
+
+  const getName = (asset) => {
+    let date = moment(asset.maintenance_date).format('DD MMM YYYY')
+    return (
+      <td>
+        {`${asset.maintenance_by} - ${date}`}
+      </td>
+    )
+  }
+
   useEffect(() => {
     let locationId = localStorage.getItem('loc_id')
-    fetchDataAsset(locationId)
-    dispatch(getAssetsBackloadByLocationId(localStorage.getItem('loc_id')))
-  },[locationId])
 
+    // const fetchDataAsset = async () => {
+    //   await api({
+    //     url: `/Surveillance/${locationId}`,
+    //     method: 'GET'
+    //   })
+    //   .then(({ data }) => {
+    //     setAssets(data)
+    //     setFilteredAssets(data)
+    //   })
+    //   .catch((err) => {
+    //     console.log(err)
+    //   })
+    // }
+
+    // fetchDataAsset()
+
+    dispatch(fetchDataAsset(locationId))
+    dispatch(getAssetsBackloadByLocationId(locationId))
+    dispatch(getAssetRequest(locationId))
+  },[])
 
   return (
     <>
       <CRow className="justify-content-between">
         <CCol md="4" style={{position: 'relative'}}>
           <div className={'d-flex'} style={{position: 'absolute', bottom: 0, width: '100%'}}>
-            <CButton block size='lg' color="primary" onClick={showModal} className={'mr-3'}>Add Item</CButton>
+            <CButton block size='lg' color="primary" onClick={() => router.push('/add/item')} className={'mr-3'}>Add Item</CButton>
             <CButton block size='lg' color="primary" onClick={exportToExcel} className={'mt-0'}>Export</CButton>
           </div>
         </CCol>
@@ -317,20 +313,23 @@ export default function AssetTable () {
       <CRow className="mt-5">
         <CCol xl={12}>
           <CDataTable
-            items={filteredAsset}
+            items={filteredAssets}
             fields={fields}
             size='500px'
             hover
             striped
             scopedSlots={{
-              'cert_date': (asset) => convertDate(asset),
+              'type': (asset) => checkValue(asset, 'type'),
+              'cert_date': (asset) => convertDate(asset.cert_date),
               'status': (asset) => (
                 <td style={{ verticalAlign: 'middle'}}>
                   {badgeStatus(asset)}
                 </td>
               ),
               'action': (asset, index) => actionField(asset),
-              'tools_date_in': (asset) => calculateDateIn(asset)
+              'tools_date_in': (asset) => calculateDateIn(asset),
+              'remark': (asset) => checkValue(asset, 'remark'),
+              'maintenance_by': (asset) => getName(asset)
             }}
           />
         </CCol>
@@ -352,7 +351,7 @@ export default function AssetTable () {
           <Modal.Title>Handover Notes</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <FormHandover onSubmit={saveHandover} onCancel={hideModal}/>
+          <FormHandover onSubmit={saveHandover} onCancel={hideModal} assetId={idSurv}/>
         </Modal.Body>
       </Modal>
 
