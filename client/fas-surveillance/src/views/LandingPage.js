@@ -69,7 +69,7 @@ const LandingPage = ({first_name, location}) => {
         </CCarousel>
           
       </div>
-      <div style={{ position: 'absolute', width: '100%', bottom: 50, color: 'white', zIndex: 2 }}>© 2021 Heri Purnomo</div>
+      <div style={{ position: 'absolute', width: '100%', bottom: 50, color: 'white', zIndex: 2 }}>© 2022 fas-slb.com</div>
       <div className='square__div' style={{  width: 300, height: 300 , transform: 'rotate(32.13deg)', bottom: '150px', right: '200px'}}/>
 
     </div>
