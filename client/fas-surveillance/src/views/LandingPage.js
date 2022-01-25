@@ -1,9 +1,9 @@
 import { CCarousel, CCarouselCaption, CCarouselControl, CCarouselIndicators, CCarouselInner, CCarouselItem } from '@coreui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Header from '../Components/Header';
 import { importImg } from '../helper';
 
-const carouselImg = importImg(require.context('../assets/images', false, /.png/));
+const carouselImg = importImg(require.context('../assets/images/carousell', false, /.png/));
 const keys = Object.keys(carouselImg);
 
 const diplayCarousel = () => {
@@ -19,10 +19,37 @@ const diplayCarousel = () => {
   return component
 }
 
+const  useInterval = (callback, delay) => {
+  const savedCallback = useRef();
+
+
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    let id = setInterval(() => {
+      savedCallback.current();
+    }, delay);
+    return () => clearInterval(id);
+  }, [delay]);
+}
 
 const LandingPage = ({first_name, location}) => {
 
-  const [activeIndex, setActiveIndex] = useState(0)
+  let [activeIndex, setActiveIndex] = useState(0);
+
+  const autoPlay = () => {
+    if(activeIndex === keys.length-1) {
+      setActiveIndex(0)
+    } else {
+      setActiveIndex(activeIndex + 1)
+    }
+  }
+
+  useInterval(() => {
+    autoPlay()
+  }, 5000);
 
 
   return (
@@ -32,7 +59,7 @@ const LandingPage = ({first_name, location}) => {
 
       <div className='d-flex align-items-center flex-column'>
 
-        <CCarousel className='w-100 background__gradient' activeIndex={activeIndex}>
+        <CCarousel animate={true} className='w-100 background__gradient' activeIndex={activeIndex}>
           <CCarouselIndicators/>
           <CCarouselInner>
             {diplayCarousel()}
