@@ -172,7 +172,7 @@ export default function EditItem () {
                       </CFormGroup>
                       <CFormGroup>
                           <CLabel htmlFor="hf-email">Quantity <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
-                          <CInput type="text" name="qty" onChange={changeForm} value={asset.qty} />
+                          <CInput type="number" name="qty" onChange={changeForm} value={asset.qty} />
                       </CFormGroup>
                       <CFormGroup>
                         <CLabel htmlFor="hf-email">Condition <span style={{ color: '#FF0B0B' }}>*</span></CLabel>

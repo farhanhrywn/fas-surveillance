@@ -229,7 +229,7 @@ export default function RequestTable ({ requestList }) {
         <CCol md="2">
           <CFormGroup>
             <CLabel>Quantity : </CLabel>
-            <CInput type='text' name='qty' onChange={changeForm}/>
+            <CInput type='number' name='qty' onChange={changeForm}/>
           </CFormGroup>
         </CCol>
         <CCol md="2">

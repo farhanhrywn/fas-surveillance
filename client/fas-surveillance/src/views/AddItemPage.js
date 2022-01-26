@@ -185,7 +185,7 @@ export default function AddItem () {
                       </CFormGroup>
                       <CFormGroup>
                           <CLabel htmlFor="hf-email">Quantity <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
-                          <CInput type="text" name="qty" onChange={changeForm} />
+                          <CInput type="number" name="qty" onChange={changeForm} />
                       </CFormGroup>
                       <CFormGroup>
                         <CLabel htmlFor="hf-email">Condition <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
