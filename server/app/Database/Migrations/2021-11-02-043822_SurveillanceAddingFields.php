@@ -32,7 +32,7 @@ class SurveillanceAddingFields extends Migration
             // ,
             // 'status' => [
             //     'type' => 'ENUM', #1       #2       #3           #4       #5       #6          #7               #8           #9
-            //     'constraint' => ['New', 'Pulled', 'Running', 'Move', 'Backup', 'Standby', 'Need Backload', 'Installed', 'Backload'],
+            //     'constraint' => ['New', 'Pulled', 'Running', 'Move', 'Backup', 'Standby', 'Used Item', 'Installed', 'Backload'],
             // ],
         ];
         $this->forge->addColumn('Surveillance', $data);

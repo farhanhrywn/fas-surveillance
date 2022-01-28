@@ -13,6 +13,8 @@ use DateTime;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
+use function PHPSTORM_META\type;
+
 class Surveillance extends ResourceController
 {
     protected $modelName = 'App\Models\SurveillanceModel';
@@ -78,30 +80,33 @@ class Surveillance extends ResourceController
     public function create()
     {
         #ini kalo dari frontend
-        $input = $this->request->getPost();
+        // $data = $this->request->getPost();
         // $data1 = json_decode(json_encode($input), true);
         // $data2 = key((array)json_decode(json_encode($input), true));
 
-        $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
-        $data = str_replace('_', ' ', $data3);
+        // $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
+        // $data = str_replace('_', ' ', $data3);
+        $data = [
+            'item' => $this->request->getVar('item'),
+            'location' => $this->request->getVar('location'),
+            'sn' => $this->request->getVar('sn'),
+            'pn' => $this->request->getVar('pn'),
+            'plan' => $this->request->getVar('plan'),
+            'steelbox' => $this->request->getVar('steelbox'),
+            'status' => $this->request->getVar('status'),
+            'type' => $this->request->getVar('type'),
+            'qty' => $this->request->getVar('qty'),
+            'condition' => $this->request->getVar('condition'),
+            'cert_date' => $this->request->getVar('cert_date'),
+            'tools_date_in' => $this->request->getVar('tools_date_in'),
+            'maintenance_by' => $this->request->getVar('maintenance_by'),
+            'maintenance_date' => $this->datetime,
+        ];
 
-        // return $this->respond($data);
-
-        if (!$this->validation->run($data, 'surveillanceValCreate')) {
-            return $this->respond([
-                'status' => 400,
-                'error' => true,
-                'data' => $this->validation->getErrors()
-            ], 400);
-        }
-
-        // $strItem = str_replace('_', ' ', $data['item']);
 
         $item = new \App\Entities\Surveillance();
         $item->fill($data);
         $item->maintenance_date = $this->datetime;
-        // $item->status = 1;
-        // $item->location = 1;
 
         $created = $this->model->save($item);
         if ($created) {
@@ -134,10 +139,6 @@ class Surveillance extends ResourceController
         if (!$file->isvalid()) {
             return 'error';
         }
-        // cek sesuai rules
-        // if (!$this->validate($rules)) {
-        //     return 'error';
-        // }
         $namaFileBaru = $file->getRandomName();
         $file->move($this->PATH_UPLOADED, $namaFileBaru);
         return $file;
@@ -147,40 +148,32 @@ class Surveillance extends ResourceController
     #update harian
     public function update($id = null)
     {
-        #ini kalo dari frontend
-        // $input = $this->request->getPost();
-        $input = $this->request->getRawInput();
-        $data['id_surv'] = $id;
-        $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
-        $data = str_replace('_', ' ', $data3);
+        #cara3
+        $data = [
+            'id_surv' => $id,
+            'item' => $this->request->getVar('item'),
+            'location' => $this->request->getVar('location'),
+            'sn' => $this->request->getVar('sn'),
+            'pn' => $this->request->getVar('pn'),
+            'plan' => $this->request->getVar('plan'),
+            'steelbox' => $this->request->getVar('steelbox'),
+            'status' => $this->request->getVar('status'),
+            'type' => $this->request->getVar('type'),
+            'qty' => $this->request->getVar('qty'),
+            'condition' => $this->request->getVar('condition'),
+            'cert_date' => $this->request->getVar('cert_date'),
+            'tools_date_in' => $this->request->getVar('tools_date_in'),
+            'maintenance_by' => $this->request->getVar('maintenance_by'),
+            'maintenance_date' => $this->datetime,
+        ];
 
-        #testing from backend
-        if (!$this->model->find($id)) {
-            return $this->fail('id not found');
-        }
-
-        // $validate = $this->validation->run($data, 'surveillanceValCreate');
-        // $errors = $this->validation->getErrors();
-        // if ($errors) {
-        //     return $this->fail($errors);
-        // }
-
-        // return $this->respond($data, 400);
-
-        if (!$this->validation->run($data, 'surveillanceValCreate')) {
-            return $this->respond([
-                'status' => 400,
-                'error' => true,
-                'data' => $this->validation->getErrors()
-            ], 400);
-        }
-
-
+        #cara1
         $surv = new \App\Entities\Surveillance();
         $surv->fill($data);
         $surv->maintenance_date = $this->datetime;
-
         $update = $this->model->save($surv);
+
+
         if ($update) {
             $code = 200;
             $msg = 'update success';
@@ -198,8 +191,8 @@ class Surveillance extends ResourceController
                 'data' => $msg,
             ];
         }
-        // return $this->respond($response, $code);
-        return $this->respondUpdated($surv);
+        return $this->respond($response, $code);
+        // return $this->respondUpdated($surv);
     }
 
     public function show($id = null)
@@ -223,13 +216,13 @@ class Surveillance extends ResourceController
         }
         $existStatus = $data->status;
         // $data->status = 2;
-        if ($existStatus != 'Backload' && $existStatus != 'Installed') {
-            return $this->respond($response = [
-                'status' => 200,
-                'error' => true,
-                'data' => 'status item must be installed or backload',
-            ], 200);
-        }
+        // if ($existStatus != 'Backload' && $existStatus != 'Installed') {
+        //     return $this->respond($response = [
+        //         'status' => 200,
+        //         'error' => true,
+        //         'data' => 'status item must be installed or backload',
+        //     ], 200);
+        // }
 
         $action = $this->model->delete($id);
         if ($action) {
@@ -249,7 +242,8 @@ class Surveillance extends ResourceController
                 'data' => $msg,
             ];
         }
-        $this->deleteFile($data->remark_file);
+
+        // $this->deleteFile($data->remark_file);
         return $this->respond($response, $code);
     }
 
@@ -265,24 +259,31 @@ class Surveillance extends ResourceController
     {
         //validasi
         $existItem = $this->model->find($id);
-        if (!$existItem) {
-            return $this->fail('id not found');
-        }
 
-        #ini kalo dari frontend
-        $input = $this->request->getPost();
-        $input['id_surv'] = $id;
-        // $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
-        // $data = str_replace('_', ' ', $data3);
-
-        // return $this->respond($this->request->getFile('remarkFile'));
-
+        // $dataFile = $this->request->getFile('remark_file');
+        $data = [
+            'id_surv' => $id,
+            'item' => $this->request->getVar('item'),
+            'location' => $this->request->getVar('location'),
+            'sn' => $this->request->getVar('sn'),
+            'pn' => $this->request->getVar('pn'),
+            'plan' => $this->request->getVar('plan'),
+            'steelbox' => $this->request->getVar('steelbox'),
+            // 'status' => $this->request->getVar('status'),
+            'type' => $this->request->getVar('type'),
+            'qty' => $this->request->getVar('qty'),
+            'condition' => $this->request->getVar('condition'),
+            'cert_date' => $this->request->getVar('cert_date'),
+            'tools_date_in' => $this->request->getVar('tools_date_in'),
+            'maintenance_by' => $this->request->getVar('maintenance_by'),
+            'remark' => $this->request->getVar('remark'),
+            // 'remark_file' => $dataFile->getName(),
+            'maintenance_date' => $this->datetime,
+        ];
         $surv = new \App\Entities\Surveillance();
-        $surv->fill($input);
-        $surv->maintenance_date = $this->datetime;
+        $surv->fill($data);
 
-        //cek apakah param handover_file ada isinya?
-        if ($this->request->getFile('remarkFile')) {
+        /*if ($data['remark_file']) {
             #2
             $old_file = $existItem->remark_file;
             //file dengan id item tersebut ada ga?
@@ -290,7 +291,7 @@ class Surveillance extends ResourceController
                 //kalo ada diapus dulu biar file ga numpuk di db
                 unlink($this->PATH_UPLOADED . $old_file);
             }
-            $file = $this->uploadFile($this->request->getFile('remarkFile'));
+            $file = $this->uploadFile($this->request->getFile('remark_file'));
             if ($file == 'error') {
                 return $this->respond([
                     'status' => 400,
@@ -298,9 +299,10 @@ class Surveillance extends ResourceController
                     'data' => 'File format is not supported. File Format Supported : pdf, png, jpg, jpeg, heif, hevc, xlsx, docx, txt. Size maximum : 10 Mb'
                 ], 400);
             }
-            $surv->remark_file = $file->getName();
-        }
+            // $surv->remark_file = $file->getName();
+        }*/
         // return $this->respond($surv);
+
         $action = $this->model->save($surv);
         if ($action) {
             $code = 200;
@@ -334,11 +336,6 @@ class Surveillance extends ResourceController
 
     public function sendEmail()
     {
-        // $input = $this->request->getPost();
-        // $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
-        // $data = str_replace('_', ' ', $data3);
-
-        // $dataToSend = 
         $email = \Config\Services::email();
         $email->initialize($this->emailConfig());
         $email->setFrom('tesarradiputro@gmail.com', 'TEssar');
@@ -391,12 +388,13 @@ class Surveillance extends ResourceController
             ->setCellValue('G1', 'Condition')
             ->setCellValue('H1', 'Status')
             ->setCellValue('I1', 'Remark')
-            ->setCellValue('J1', 'Cert Data')
+            ->setCellValue('J1', 'Cert Date')
             ->setCellValue('K1', 'Arrival Date')
             ->setCellValue('L1', 'Steelbox')
             ->setCellValue('M1', 'Location')
             ->setCellValue('N1', 'Plan')
-            ->setCellValue('P1', 'Last Maintenance'); //maintenance_by + phone
+            ->setCellValue('O1', 'Maintenance by') //maintenance_by + phone
+            ->setCellValue('P1', 'Maintenance date'); //maintenance_by + phone
 
         $column = 2;
 
@@ -409,21 +407,23 @@ class Surveillance extends ResourceController
                 ->setCellValue('E' . $column, $data['sn'])
                 ->setCellValue('F' . $column, $data['qty'])
                 ->setCellValue('G' . $column, $data['condition'])
+                ->setCellValue('H' . $column, $data['status'])
                 ->setCellValue('I' . $column, $data['remark'])
                 ->setCellValue('J' . $column, $data['cert_date'])
-                ->setCellValue('K' . $column, $data['tools_date_in'])
+                ->setCellValue('K' . $column, date_format(new DateTime($data['tools_date_in']), "Y-m-d"))
                 ->setCellValue('L' . $column, $data['steelbox'])
                 ->setCellValue('M' . $column, $data['nama_lokasi'])
                 ->setCellValue('N' . $column, $data['plan'])
-                ->setCellValue('O' . $column, $data['sheet'])
-                ->setCellValue('P' . $column, $data['maintenance_by'] . ' - ' . $data['phone']);
+                ->setCellValue('O' . $column, $data['maintenance_by'] . ' - ' . $data['phone'])
+                ->setCellValue('P' . $column, date_format(new DateTime($data['maintenance_date']), "Y-m-d"));
 
             $column++;
             $lokasi = $data['nama_lokasi'];
         }
 
         $writer = new Xlsx($spreadsheet);
-        $filename = date('Y-m-d-His') . '-' .  $lokasi;
+        $filename = date('Y-m-d-His') . '-' .  $lokasi . '-' . $status;
+        if ($status == 'notbackload') $filename = date('Y-m-d-His') . '-' .  $lokasi;
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename=' . $filename . '.xlsx');
@@ -432,39 +432,3 @@ class Surveillance extends ResourceController
         $writer->save('php://output');
     }
 }
-
-
-//function upload file cara pertama
-            #1
-            // $file = $this->uploadFile($this->request->getFile('remark_file'));
-            // //kalo balikan dari uploadFile ada yg error
-            // if ($file == 'error') {
-            //     return $this->respond([
-            //         'status' => 400,
-            //         'error' => true,
-            //         'data' => 'File format is not supported. File Format Supported : pdf, png, jpg, jpeg, heif, hevc, xlsx, docx, txt. Size maximum : 10 Mb'
-            //     ], 400);
-            // } else {
-            //     $old_file = $existItem->remark_file;
-            //     // return $this->respond($old_file);
-            //     //file dengan id item tersebut ada ga?
-            //     if (file_exists($this->PATH_UPLOADED . '/' . $old_file)) {
-            //         //kalo ada diapus dulu biar file ga numpuk di db
-            //         unlink($this->PATH_UPLOADED . '/' . $old_file);
-            //     }
-            //     $surv->remark_file = $file->getName();
-            // }
-
-
-/*
-validation form dari function create
-
-        #testing from backend
-        // $data = $this->request->getPost();
-        // $validate = $this->validation->run($data, 'surveillanceValCreate'); //nama validasinya (app/config/validation)
-        // $error = $this->validation->getErrors();
-        // if ($error) {
-        //     return $this->fail($error);
-        // }
-
-*/

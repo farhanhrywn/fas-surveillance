@@ -55,7 +55,7 @@ class Location extends ResourceController
         $data = [
             'nama_lokasi' => $input['nama_lokasi'],
             'alamat_lokasi' => $input['alamat_lokasi'],
-            'password' => $input['password'],
+            'password' => password_hash($this->request->getVar('password'), PASSWORD_BCRYPT),
             'create_by' => $input['create_by'],
             'update_date' => $this->datetime,
             'status' => 1,
@@ -152,5 +152,46 @@ class Location extends ResourceController
         if ($this->model->save($location)) {
             return $this->respondUpdated($location, 'has been deleted');
         }
+    }
+
+    public function checkOldPassword($id)
+    {
+        $input = [
+            'nama_lokasi' => $this->request->getVar('nama_lokasi'),
+            'alamat_lokasi' => $this->request->getVar('alamat_lokasi'),
+            'password' => password_hash($this->request->getVar('password'), PASSWORD_BCRYPT),
+            'oldPass' => $this->request->getVar('password'),
+            'update_by' => $this->request->getVar('update_by'),
+            'update_date' => $this->datetime
+        ];
+
+        $data = $this->model->getWhere(['id_lokasi' => $id])->getResult();
+
+        if ($data['password'] == $input['oldPass']) {
+            return $this->fail('Password not match');
+        }
+
+        unset($input['oldPass']);
+
+        $model = new LocationModel();
+        $action = $model->update($id, $input);
+        if ($action) {
+            $code = 200;
+            $msg = 'update success';
+            $response = [
+                'status' => $code,
+                'error' => false,
+                'data' => $msg,
+            ];
+        } else {
+            $code = 400;
+            $msg = 'update failed';
+            $response = [
+                'status' => $code,
+                'error' => false,
+                'data' => $msg,
+            ];
+        }
+        return $this->respond($response, $code);
     }
 }

@@ -31,14 +31,14 @@ class Login extends ResourceController
     {
         helper(['form']);
 
-        $in = $this->request->getPost();
+        $input = $this->request->getPost();
         // $validate = $this->validation->run($input, 'loginTeknisi'); //nama validasinya (app/config/validation)
         // $error = $this->validation->getErrors();
         // if ($error) {
         //     return $this->fail($error);
         // }
-        $data3 = json_decode(key((array)json_decode(json_encode($in), true)), true);
-        $input = str_replace('_', ' ', $data3);
+        // $data3 = json_decode(key((array)json_decode(json_encode($in), true)), true);
+        // $input = str_replace('_', ' ', $data3);
 
         if (!$this->validation->run($input, 'loginTeknisi')) {
             return $this->respond([
@@ -59,8 +59,8 @@ class Login extends ResourceController
         //     ? password_verify($input['password'], $teknisi['password'])
         //     : $this->checkPass($this->request->getVar('password'), $teknisi['password']);
 
-        // $verify = password_verify($this->request->getVar('password'), $teknisi['password']); //ini kalo passwordnya udah di hash
-        $verify = password_verify($input['password'], $teknisi['password']);
+        $verify = password_verify($this->request->getVar('password'), $teknisi['password']); //ini kalo passwordnya udah di hash
+        // $verify = password_verify($input['password'], $teknisi['password']);
         // $verify = $this->checkPass($this->request->getVar('password'), $teknisi['password']);
         if (!$verify) return $this->failNotFound('Wrong Password');
 

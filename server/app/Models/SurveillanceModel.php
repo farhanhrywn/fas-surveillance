@@ -127,4 +127,14 @@ class SurveillanceModel extends Model
 
         return $join;
     }
+
+
+    public function checkDate()
+    {
+        if ($date == new DateTime("0000-00-00 00:00:00")) {
+            echo "-";
+        } else {
+            echo date_format($date, "Y-m-d");
+        }
+    }
 }
