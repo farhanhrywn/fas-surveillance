@@ -159,15 +159,27 @@ class Request extends ResourceController
     {
         #ini kalo dari frontend
         // $data = $this->request->getPost();
-        $data = $this->request->getRawInput();
-        $data['id_req'] = $id;
+        // $data = $this->request->getRawInput();
+        // $data['id_req'] = $id;
         // $data['id_req'] = $id;
         // $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
         // $data = str_replace('_', ' ', $data3);
         #testing from backend
-        if (!$this->model->find($id)) {
-            return $this->fail('id not found');
-        }
+        // if (!$this->model->find($id)) {
+        //     return $this->fail('id not found');
+        // }
+
+        $data = [
+            'id_req' => $id,
+            'item' => $this->request->getVar('item'),
+            'qty' => $this->request->getVar('qty'),
+            'req_to' => $this->request->getVar('req_to'),
+            'email_to' => $this->request->getVar('email_to'),
+            'phone' => $this->request->getVar('phone'),
+            'create_date' => $this->datetime,
+        ];
+
+        //kirim email
 
         $surv = new \App\Entities\Request();
         $surv->fill($data);
