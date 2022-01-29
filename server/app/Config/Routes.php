@@ -70,7 +70,7 @@ $routes->get('/Request/(:num)/(:alpha)', 'Request::listRequestByLocation/$1/$2')
 //count request for notification [ count request where status_seen = waiting ]
 
 #RemarkHistory
-$routes->get('RemarkHistory/(:num)', 'RemarkHistory::indexByItem/(:num)');
+$routes->get('RemarkHistory/(:num)', 'RemarkHistory::indexByItem/$1');
 $routes->post('Remarks/(:num)', 'Remarks::saveRemarkHistory/(:num)');
 
 

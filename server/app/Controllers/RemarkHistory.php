@@ -40,8 +40,8 @@ class RemarkHistory extends ResourceController
 
         $model = new RemarkHistoryModel();
         $data = $model
-            // ->where('item', $item)
-            // ->orderBy('create_date', 'DESC')
+            ->where('item', $item)
+            ->orderBy('create_date', 'DESC')
             ->findAll();
         if ($data) {
             return $this->respond($data);

@@ -32,26 +32,33 @@ class Login extends ResourceController
         helper(['form']);
 
         $input = $this->request->getPost();
+        // $input = [
+        //     'id_surv' => $this->request->getVar('id_lokasi'),
+        //     'pic_name' => $this->request->getVar('pic_name'),
+        //     'password' => $this->request->getVar('password'),
+        //     'pic_phone' => $this->request->getVar('pic_phone'),
+        // ];
         // $validate = $this->validation->run($input, 'loginTeknisi'); //nama validasinya (app/config/validation)
         // $error = $this->validation->getErrors();
         // if ($error) {
         //     return $this->fail($error);
         // }
-        // $data3 = json_decode(key((array)json_decode(json_encode($in), true)), true);
+
+        // $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
         // $input = str_replace('_', ' ', $data3);
 
-        if (!$this->validation->run($input, 'loginTeknisi')) {
-            return $this->respond([
-                'status' => 400,
-                'error' => true,
-                'data' => $this->validation->getErrors()
-            ], 400);
-        }
-
+        // if (!$this->validation->run($input, 'loginTeknisi')) {
+        //     return $this->respond([
+        //         'status' => 400,
+        //         'error' => true,
+        //         'data' => $this->validation->getErrors()
+        //     ], 400);
+        // }
+        // return $this->respond($input);
         $model = new LocationModel();
         // return $this->respond($input);
-        // $teknisi = $model->Where('id_lokasi', $this->request->getVar('id_lokasi'))->first();
-        $teknisi = $model->Where('id_lokasi', $input['id_lokasi'])->first();
+        $teknisi = $model->Where('id_lokasi', $this->request->getVar('id_lokasi'))->first();
+        // $teknisi = $model->Where('id_lokasi', $input['id_lokasi'])->first();
         if (!$teknisi) return $this->failNotFound('ID Lokasi not Found');
         //return $this->respond($this->request->getVar('password'));
 

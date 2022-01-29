@@ -98,12 +98,27 @@ class Request extends ResourceController
     public function create()
     {
         #ini kalo dari frontend
-        $input = $this->request->getPost();
+        // $input = $this->request->getPost();
         // $data3 = json_decode(key((array)json_decode(json_encode($input), true)), true);
         // $data = str_replace('_', ' ', $data3);
 
+        $data = [
+            'item' => $this->request->getVar('item'),
+            'location' => $this->request->getVar('location'),
+            'qty' => $this->request->getVar('qty'),
+            'req_to' => $this->request->getVar('condition'),
+            'email_to' => $this->request->getVar('cert_date'),
+            'create_by' => $this->request->getVar('tools_date_in'),
+            'phone' => $this->request->getVar('maintenance_by'),
+            'create_date' => $this->datetime,
+            'req_status' => 3,
+            'seen_status' => 2,
+        ];
+
+        return $this->respond($data);
+
         $item = new \App\Entities\Request();
-        $item->fill($input);
+        $item->fill($data);
         $item->create_date = $this->datetime;
         $item->req_status = 3; //3 -> waiting
         $item->seen_status = 2; //2 -> not seen

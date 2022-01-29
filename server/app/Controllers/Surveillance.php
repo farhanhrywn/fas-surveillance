@@ -157,6 +157,7 @@ class Surveillance extends ResourceController
             'id_surv' => $id,
             'item' => $this->request->getVar('item'),
             'location' => $this->request->getVar('location'),
+            'subLocation' => $this->request->getVar('subLocation'),
             'sn' => $this->request->getVar('sn'),
             'pn' => $this->request->getVar('pn'),
             'plan' => $this->request->getVar('plan'),
