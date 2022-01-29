@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\SurveillanceModel;
+use App\Models\RemarkHistoryModel;
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\HTTP\Response;
 use CodeIgniter\I18n\Time;
@@ -24,6 +25,8 @@ class Surveillance extends ResourceController
     protected $validation;
     protected $email;
 
+    // protected $modelHistory;
+
     public function __construct()
     {
         $this->validation = \Config\Services::validation();
@@ -31,6 +34,7 @@ class Surveillance extends ResourceController
         $this->datetime = date('Y-m-d H:i:s');
         $validation =  \Config\Services::validation();
         $email = \Config\Services::email();
+        // $this->modelHistory = new RemarkHistoryModel();
     }
 
     public function index()
@@ -263,25 +267,38 @@ class Surveillance extends ResourceController
         // $dataFile = $this->request->getFile('remark_file');
         $data = [
             'id_surv' => $id,
-            'item' => $this->request->getVar('item'),
-            'location' => $this->request->getVar('location'),
-            'sn' => $this->request->getVar('sn'),
-            'pn' => $this->request->getVar('pn'),
-            'plan' => $this->request->getVar('plan'),
-            'steelbox' => $this->request->getVar('steelbox'),
-            // 'status' => $this->request->getVar('status'),
-            'type' => $this->request->getVar('type'),
-            'qty' => $this->request->getVar('qty'),
-            'condition' => $this->request->getVar('condition'),
-            'cert_date' => $this->request->getVar('cert_date'),
-            'tools_date_in' => $this->request->getVar('tools_date_in'),
+            // 'item' => $this->request->getVar('item'),
+            // 'location' => $this->request->getVar('location'),
+            // 'sn' => $this->request->getVar('sn'),
+            // 'pn' => $this->request->getVar('pn'),
+            // 'plan' => $this->request->getVar('plan'),
+            // 'steelbox' => $this->request->getVar('steelbox'),
+            // // 'status' => $this->request->getVar('status'),
+            // 'type' => $this->request->getVar('type'),
+            // 'qty' => $this->request->getVar('qty'),
+            // 'condition' => $this->request->getVar('condition'),
+            // 'cert_date' => $this->request->getVar('cert_date'),
+            // 'tools_date_in' => $this->request->getVar('tools_date_in'),
             'maintenance_by' => $this->request->getVar('maintenance_by'),
             'remark' => $this->request->getVar('remark'),
             // 'remark_file' => $dataFile->getName(),
             'maintenance_date' => $this->datetime,
         ];
+
+        #insert to surveillance
         $surv = new \App\Entities\Surveillance();
         $surv->fill($data);
+
+        $dataHistory = [
+            'item' => $id,
+            'create_by' => $data['maintenance_by'],
+            'remark' => $data['remark'],
+            'create_date' => $data['maintenance_date'],
+        ];
+        #prepare object to save into history
+        $remark = new \App\Entities\RemarkHistory();
+        $modelHistory = new RemarkHistoryModel();
+        $remark->fill($dataHistory);
 
         /*if ($data['remark_file']) {
             #2
@@ -301,12 +318,16 @@ class Surveillance extends ResourceController
             }
             // $surv->remark_file = $file->getName();
         }*/
-        // return $this->respond($surv);
 
-        $action = $this->model->save($surv);
+        $action = $this->model->save($surv); //save update into surveillance
         if ($action) {
+            $action2 = $modelHistory->save($remark); //save insert into surveillance
+            $msg = 'update remark surveillance succes';
+        }
+
+        if ($action2) {
             $code = 200;
-            $msg = 'handover success';
+            $msg = 'update remark history succes';
             $response = [
                 'status' => $code,
                 'error' => false,
@@ -316,7 +337,7 @@ class Surveillance extends ResourceController
             $code = 400;
             $msg = $action->geterrorMessage(); //'handover failed';
             $response = [
-                'status' => $code,
+                'status' => "action2 gagal",
                 'error' => true,
                 'data' => $msg,
             ];

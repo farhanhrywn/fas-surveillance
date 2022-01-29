@@ -69,11 +69,17 @@ $routes->get('/Request/(:num)/(:alpha)', 'Request::listRequestByLocation/$1/$2')
 //view request by req_to + filter lokasi - [ spv & wh ]
 //count request for notification [ count request where status_seen = waiting ]
 
+#RemarkHistory
+$routes->get('RemarkHistory/(:num)', 'RemarkHistory::indexByItem/(:num)');
+$routes->post('Remarks/(:num)', 'Remarks::saveRemarkHistory/(:num)');
+
+
 $routes->resource('Role');
 $routes->resource('User');
 $routes->resource('Location');
 $routes->resource('Request');
 $routes->resource('Surveillance');
+$routes->resource('RemarkHistory');
 
 /*
  * --------------------------------------------------------------------
