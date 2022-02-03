@@ -99,13 +99,13 @@ export default function FormEditRequest ({ onSubmit, onCancel, requestId }) {
           </CFormGroup>
           <CFormGroup row>
             <CCol md="3">
-              <CLabel htmlFor="hf-email">Plan <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
+              <CLabel htmlFor="hf-email">Request To <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
             </CCol>
             <CCol xs="12" md="9">
               <CSelect type="text" name="plan" onChange={changeForm} value={asset.req_to}>
               <option value="">Please Select..</option>
-              <option value="Supervisor">Supervisor</option>
-              <option value="Warehouse">Warehouse</option>
+              <option value="Supervisor KAL">Supervisor KAL</option>
+              <option value="Supervisor JOP">Supervisor JOP</option>
             </CSelect>
             </CCol>
           </CFormGroup>

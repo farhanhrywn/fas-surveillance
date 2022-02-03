@@ -46,7 +46,7 @@ const Login = () => {
       api({
         url: '/loginLoc',
         method: 'POST',
-        data: JSON.stringify(form)
+        data: form
       })
       .then(({data}) => {
         localStorage.setItem('pic_name', picName)
