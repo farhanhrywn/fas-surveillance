@@ -149,10 +149,10 @@ export default function RequestTable ({ requestList }) {
     api({
       url: `/Request/${item.id_req}`,
       method: 'PUT',
-      data: JSON.stringify({
+      data: {
         ...item,
         create_by: localStorage.getItem('pic_name')
-      })
+      }
     })
     .then(({ data }) => {
       Swal.fire({
@@ -180,7 +180,7 @@ export default function RequestTable ({ requestList }) {
     api({
       url: '/Request',
       method: 'POST',
-      data: JSON.stringify(payload)
+      data: payload
     })
     .then(({ data }) => {
       Swal.fire({
@@ -237,8 +237,8 @@ export default function RequestTable ({ requestList }) {
             <CLabel>Request To : </CLabel>
             <CSelect className={'custom-input__background'} name='req_to' onChange={changeForm}>
               <option value="">Please select...</option>
-              <option value="Supervisor">Supervisor</option>
-              <option value="Warehouse">Warehouse</option>
+              <option value="Supervisor KAL">Supervisor KAL</option>
+              <option value="Supervisor JOP">Supervisor JOP</option>
             </CSelect>
           </CFormGroup>
         </CCol>
