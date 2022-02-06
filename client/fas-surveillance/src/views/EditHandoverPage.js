@@ -4,11 +4,9 @@ import { useDispatch } from "react-redux";
 import { 
   CCol,
   CCard,
-  CSelect,
   CCardBody,
   CFormGroup,
   CLabel,
-  CInput,
   CTabs,
   CTabContent,
   CTabPane,
@@ -22,10 +20,8 @@ import {
   CTextarea
 } from "@coreui/react";
 import Header from "../Components/Header";
-import assetType from "../assetType.json";
 import { api } from "../config/axios";
-import moment from "moment";
-import { saveEditAsset, saveHandoverAsset } from "../store";
+import { saveHandoverAsset } from "../store";
 
 const styles = {
   headerTitle: {
@@ -56,7 +52,7 @@ export default function EditHandover () {
     }
 
     getDetailAsset(id)
-  },[])
+  },[id])
 
   const changeForm = (event) => {
     if(event.target.name === 'remark_file') {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import {
   CCol,
@@ -6,8 +6,6 @@ import {
   CButton,
   CLabel,
   CSelect,
-  CCard,
-  CCardBody,
   CDataTable,
   CFormGroup,
   CInput
@@ -15,14 +13,11 @@ import {
 
 import CIcon from '@coreui/icons-react'
 import * as Icon from '@coreui/icons'
-import FormAdd from './formAdd'
-import FormHandover from './formHandover'
 import FormEditRequest from './formEditRequest'
 import moment from 'moment'
 import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
-import assetType from '../assetType.json'
 import { getAssetRequest } from '../store'
 
 const fields = [
@@ -41,10 +36,6 @@ const fields = [
 
 export default function RequestTable ({ requestList }) {
   const dispatch = useDispatch()
-  const [assetData, setAssetData] = useState([])
-  const [filteredAsset, setFilteredAsset] = useState([])
-  const [isModalOpen, setModalOpen] = useState(false)
-  const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idReq, setIdReq] = useState('')
   const [form, setForm] = useState({
@@ -119,8 +110,6 @@ export default function RequestTable ({ requestList }) {
   }
 
   const hideModal = () => {
-    setModalOpen(false)
-    setModalHandoverOpen(false)
     setModalEditOpen(false)
   }
 

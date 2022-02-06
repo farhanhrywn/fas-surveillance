@@ -1,14 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import {
   CCol,
   CRow,
   CButton,
-  CLabel,
-  CSelect,
-  CCard,
-  CCardBody,
   CBadge,
   CDataTable,
 } from '@coreui/react'
@@ -22,9 +17,6 @@ import moment from 'moment'
 import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
-import assetType from '../assetType.json'
-
-import { getAssetsBackloadByLocationId } from '../store'
 
 const fields = [
   { key: 'type', label: 'Type' },
@@ -43,7 +35,6 @@ const fields = [
 ]
 
 export default function BackloadTable ({ backloadList }) {
-  const dispatch = useDispatch()
   const router = useHistory()
   const [assetData, setAssetData] = useState([])
   const [filteredAsset, setFilteredAsset] = useState([])
@@ -98,20 +89,6 @@ export default function BackloadTable ({ backloadList }) {
         {assetDuration}
       </td>
     )
-  }
-
-  const showHandoverModal = (assetId) => {
-    setModalHandoverOpen(true)
-    setIdSurv(assetId)
-  }
-
-  const showModal = () => {
-    setModalOpen(true)
-  }
-
-  const showEditModal = (assetId) => {
-    setModalEditOpen(true)
-    setIdSurv(assetId)
   }
 
   const showRemoveModal = (assetId) => {
@@ -243,14 +220,6 @@ export default function BackloadTable ({ backloadList }) {
     .catch((err) => {
       console.log(err)
     })
-  }
-
-  const filterAsset = (event) => {
-    if(event.target.value === '') {
-      setFilteredAsset(assetData)
-    } else {
-      setFilteredAsset(assetData.filter((asset) => asset.type === event.target.value))
-    }
   }
 
   const exportToExcel = () => {

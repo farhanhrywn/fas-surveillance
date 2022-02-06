@@ -5,10 +5,7 @@ import {
   CCol,
   CRow,
   CButton,
-  CLabel,
   CSelect,
-  CCard,
-  CCardBody,
   CDataTable,
   CBadge,
 } from '@coreui/react'
@@ -39,6 +36,7 @@ const fields = [
   { key: 'pn', label: 'PN' },
   { key: 'sn', label: 'SN' },
   { key: 'item', label: 'Description' },
+  { key: 'sub_location', label: 'Sub Location' },
   { key: 'status', label: 'Status' },
   { key: 'steelbox', label: 'Steelbox' },
   { key: 'condition', label: 'Condition'},
@@ -53,7 +51,7 @@ const fields = [
 export default function AssetTable () {
   const router = useHistory()
   const dispatch = useDispatch()
-  const { assets, filteredAssets, loading } = useSelector((state) => state)
+  const { assets, filteredAssets } = useSelector((state) => state)
   // const [assets, setAssets] = useState([])
   // const [filteredAssets, setFilteredAssets] = useState([])
   const [isModalOpen, setModalOpen] = useState(false)
@@ -105,20 +103,6 @@ export default function AssetTable () {
         {assetDuration}
       </td>
     )
-  }
-
-  const showHandoverModal = (assetId) => {
-    setModalHandoverOpen(true)
-    setIdSurv(assetId)
-  }
-
-  const showModal = () => {
-    setModalOpen(true)
-  }
-
-  const showEditModal = (assetId) => {
-    setModalEditOpen(true)
-    setIdSurv(assetId)
   }
 
   const showRemoveModal = (assetId) => {
@@ -283,7 +267,7 @@ export default function AssetTable () {
     dispatch(fetchDataAsset(locationId))
     dispatch(getAssetsBackloadByLocationId(locationId))
     dispatch(getAssetRequest(locationId))
-  },[])
+  },[dispatch])
 
   return (
     <>
@@ -329,7 +313,8 @@ export default function AssetTable () {
               'action': (asset, index) => actionField(asset),
               'tools_date_in': (asset) => calculateDateIn(asset),
               'remark': (asset) => checkValue(asset, 'remark'),
-              'maintenance_by': (asset) => getName(asset)
+              'maintenance_by': (asset) => getName(asset),
+              'sub_location': (asset) => checkValue(asset, 'sub_location')
             }}
           />
         </CCol>
