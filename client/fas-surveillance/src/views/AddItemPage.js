@@ -46,7 +46,8 @@ export default function AddItem () {
     status: '',
     type: '',
     condition: '',
-    tools_date_in: ''
+    tools_date_in: '',
+    sub_location: ''
   })
 
   useEffect(() => {
@@ -135,6 +136,14 @@ export default function AddItem () {
                           <CLabel htmlFor="hf-email">Serial Number <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
                           <CInput type="text" name="sn" onChange={changeForm} />
                           <CFormText style={{ marginBottom: '1rem', fontSize: 11 }}>Fill n/a if Serial Number unavailable</CFormText>
+                      </CFormGroup>
+                      <CFormGroup>
+                          <CLabel htmlFor="hf-email">Sub Location <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
+                          <CSelect type="text" name="sub_location" onChange={changeForm}>
+                            <option value="">Please Select..</option>
+                            <option value="Well site">Well site</option>
+                            <option value="Yard">Yard</option>
+                          </CSelect>
                       </CFormGroup>
                       <CFormGroup>
                           <CLabel htmlFor="hf-email">Plan <span style={{ color: '#FF0B0B' }}>*</span></CLabel>

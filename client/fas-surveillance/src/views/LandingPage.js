@@ -1,4 +1,4 @@
-import { CCarousel, CCarouselCaption, CCarouselControl, CCarouselIndicators, CCarouselInner, CCarouselItem } from '@coreui/react'
+import { CCarousel, CCarouselControl, CCarouselIndicators, CCarouselInner, CCarouselItem } from '@coreui/react'
 import React, { useEffect, useRef, useState } from 'react'
 import Header from '../Components/Header';
 import { importImg } from '../helper';
@@ -10,11 +10,11 @@ const diplayCarousel = () => {
 
   const component = [];
 
-  keys.map((value, i) => {
+  keys.map((value, i) => (
     component.push( <CCarouselItem key={i}>
       <img className="d-block w-100" src={carouselImg[keys[i]].default} alt="slide 1"/>
     </CCarouselItem>)
-  })
+  ))
 
   return component
 }

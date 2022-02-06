@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom"
 import Button from 'react-bootstrap/Button'
 import {
   CRow,
@@ -8,50 +7,21 @@ import {
   CLabel,
   CInput,
   CSelect,
-  CForm,
   CFormText,
-  CInvalidFeedback,
-  CValidFeedback
 } from '@coreui/react'
 import assetType from '../assetType.json'
 import assetStatus from '../assetStatus.json'
-import { api, apiForExport } from "../config/axios";
+import { api } from "../config/axios";
 import moment from "moment";
 
 
 export default function FormEdit ({ onSubmit, onCancel, assetId }) {
-  const router = useHistory()
   const [assetsType, setAssetsType] = useState([])
   const [type, setType] = useState('')
-  const [certDate, setCertDate] = useState('') 
   const [asset, setAsset] = useState({})
-  const [form, setForm] = useState({
-    item: '',
-    sn: '',
-    pn: '',
-    plan: '',
-    qty: '',
-    steelbox: '',
-    sheet: '',
-    type: '',
-    condition: '',
-    cert_date: '',
-    phone: '',
-    tools_date_in: '',
-    status: ''
-  })
 
   const changeForm = (event) => {
     setAsset({ ...asset, [event.target.name]: event.target.value })
-  }
-
-  const isFormValid = () => {
-    let arrValueForm = Object.values(form)
-    let isValueEmpty = arrValueForm.some(val => val === '' || val === undefined)
-    if(isValueEmpty) {
-      return true
-    }
-    return false
   }
 
   const getAssetType = (value) => {
@@ -63,14 +33,6 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
   const filterType = (event) => {
     setType(event.target.value)
     setAssetsType(assetType.filter(asset => asset.type === event.target.value))
-  }
-
-  const changeCertDate = (event) => {
-    setCertDate(event.target.value)
-  }
-
-  const saveForm = () => {
-    onSubmit(asset)
   }
 
   useEffect(() => {
@@ -90,7 +52,7 @@ export default function FormEdit ({ onSubmit, onCancel, assetId }) {
     }
 
     getRequestById(assetId)
-  },[])
+  },[assetId])
 
 
   return (

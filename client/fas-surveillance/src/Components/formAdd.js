@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom"
 import Button from 'react-bootstrap/Button'
-import DateTimePicker from 'react-datetime-picker'
 import {
   CRow,
   CCol,
@@ -9,9 +7,6 @@ import {
   CLabel,
   CInput,
   CSelect,
-  CForm,
-  CInvalidFeedback,
-  CValidFeedback,
   CFormText
 } from '@coreui/react'
 import assetType from '../assetType.json'
@@ -20,7 +15,6 @@ import assetType from '../assetType.json'
 export default function FormAdd ({ onSubmit, onCancel }) {
   const [assets, setAssets] = useState([])
   const [certDate, setCertDate] = useState('') 
-  const router = useHistory()
   const [form, setForm] = useState({
     item: '',
     sn: '',
@@ -67,8 +61,7 @@ export default function FormAdd ({ onSubmit, onCancel }) {
 
   useEffect(() => {
     setAssets(assetType)
-    isFormValid()
-  },[form])
+  },[])
 
 
   return (

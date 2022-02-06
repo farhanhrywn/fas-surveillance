@@ -26,7 +26,6 @@ import assetStatus from "../assetStatus.json";
 import { api } from "../config/axios";
 import moment from "moment";
 import { saveEditAsset } from "../store";
-import Swal from "sweetalert2";
 
 const styles = {
   headerTitle: {
@@ -60,7 +59,7 @@ export default function EditItem () {
     }
 
     getDetailAsset(id)
-  },[])
+  },[id])
 
   const changeForm = (event) => {
     setAsset({ ...asset, [event.target.name]: event.target.value })
@@ -119,6 +118,14 @@ export default function EditItem () {
                           <CLabel htmlFor="hf-email">Serial Number <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
                           <CInput type="text" name="sn" onChange={changeForm} value={asset.sn}/>
                           <CFormText style={{ marginBottom: '1rem', fontSize: 11 }}>Fill n/a if Serial Number unavailable</CFormText>
+                      </CFormGroup>
+                      <CFormGroup>
+                          <CLabel htmlFor="hf-email">Sub Location <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
+                          <CSelect type="text" name="sub_location" onChange={changeForm} value={asset.sub_location}>
+                            <option value="">Please Select..</option>
+                            <option value="Well site">Well site</option>
+                            <option value="Yard">Yard</option>
+                          </CSelect>
                       </CFormGroup>
                       <CFormGroup>
                           <CLabel htmlFor="hf-email">Plan <span style={{ color: '#FF0B0B' }}>*</span></CLabel>

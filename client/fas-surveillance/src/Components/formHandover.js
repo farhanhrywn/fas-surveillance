@@ -1,24 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom"
-import { useDispatch, useSelector } from "react-redux";
 import Button from 'react-bootstrap/Button'
 import {
   CRow,
   CCol,
   CFormGroup,
   CLabel,
-  CInput,
   CTextarea,
   CInputFile,
-  CSelect,
-  CForm,
-  CInvalidFeedback,
-  CValidFeedback
 } from '@coreui/react'
-import { getDetailAsset } from "../store";
 import { api } from "../config/axios";
-import assetType from '../assetType.json'
-
 
 export default function FormHandover ({ onSubmit, onCancel, assetId }) {
   const [asset, setAsset] = useState({})
@@ -62,7 +52,7 @@ export default function FormHandover ({ onSubmit, onCancel, assetId }) {
     }
 
     getAssetById(assetId)
-  },[])
+  },[assetId])
 
   return (
     <>
