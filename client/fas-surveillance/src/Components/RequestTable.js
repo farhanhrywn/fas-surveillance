@@ -167,25 +167,24 @@ export default function RequestTable ({ requestList }) {
       location_name: localStorage.getItem('loc_name')
     }
 
-    console.log(payload)
 
-    // api({
-    //   url: '/Request',
-    //   method: 'POST',
-    //   data: payload
-    // })
-    // .then(({ data }) => {
-    //   Swal.fire({
-    //     icon: 'success',
-    //     title: 'Request Success',
-    //     timer: 1500,
-    //     showConfirmButton: false
-    //   })
-    //   dispatch(getAssetRequest(localStorage.getItem('loc_id')))
-    // })
-    // .catch((err) => {
-    //   console.log(err)
-    // })
+    api({
+      url: '/Request',
+      method: 'POST',
+      data: payload
+    })
+    .then(({ data }) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Request Success',
+        timer: 1500,
+        showConfirmButton: false
+      })
+      dispatch(getAssetRequest(localStorage.getItem('loc_id')))
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 
   }
 
