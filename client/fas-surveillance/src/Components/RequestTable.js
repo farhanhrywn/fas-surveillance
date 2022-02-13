@@ -163,26 +163,29 @@ export default function RequestTable ({ requestList }) {
       ...item,
       location: localStorage.getItem('loc_id'),
       create_by: localStorage.getItem('pic_name'),
-      phone: localStorage.getItem('pic_phone')
+      phone: localStorage.getItem('pic_phone'),
+      location_name: localStorage.getItem('loc_name')
     }
 
-    api({
-      url: '/Request',
-      method: 'POST',
-      data: payload
-    })
-    .then(({ data }) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Request Success',
-        timer: 1500,
-        showConfirmButton: false
-      })
-      dispatch(getAssetRequest(localStorage.getItem('loc_id')))
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+    console.log(payload)
+
+    // api({
+    //   url: '/Request',
+    //   method: 'POST',
+    //   data: payload
+    // })
+    // .then(({ data }) => {
+    //   Swal.fire({
+    //     icon: 'success',
+    //     title: 'Request Success',
+    //     timer: 1500,
+    //     showConfirmButton: false
+    //   })
+    //   dispatch(getAssetRequest(localStorage.getItem('loc_id')))
+    // })
+    // .catch((err) => {
+    //   console.log(err)
+    // })
 
   }
 
@@ -227,7 +230,9 @@ export default function RequestTable ({ requestList }) {
             <CSelect className={'custom-input__background'} name='req_to' onChange={changeForm}>
               <option value="">Please select...</option>
               <option value="Supervisor KAL">Supervisor KAL</option>
-              <option value="Supervisor JOP">Supervisor JOP</option>
+              <option value="Supervisor Floating">Supervisor Floating</option>
+              <option value="Supervisor TCO">Supervisor TCO</option>
+              <option value="Supervisor OSES">Supervisor OSES</option>
             </CSelect>
           </CFormGroup>
         </CCol>
