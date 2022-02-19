@@ -106,7 +106,7 @@ export default function EditItem () {
       location: localStorage.getItem('loc_id'),
       phone: localStorage.getItem('pic_phone')
     }
-
+    console.log(payload)
     dispatch(saveEditAsset(payload, router))
   }
 
