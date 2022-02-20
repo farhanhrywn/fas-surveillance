@@ -19,11 +19,13 @@ import {
   CRow,
   CFormText
 } from "@coreui/react";
+import { AutoComplete } from "antd";
 import Header from "../Components/Header";
 import assetType from "../assetType.json";
 import { api } from "../config/axios";
 import Swal from "sweetalert2";
 
+const { Option } = AutoComplete
 const styles = {
   headerTitle: {
     fontSize: 24,
@@ -36,6 +38,8 @@ export default function AddItem () {
   const router = useHistory()
   const [assetsType, setAssetsType] = useState([])
   const [certDate, setCertDate] = useState('')
+  const [waiting, setWaiting] = useState(null)
+  const [suggestionList, setSuggestionList] = useState([])
   const [form, setForm] = useState({
     item: '',
     sn: '',
@@ -103,6 +107,32 @@ export default function AddItem () {
     })
   }
 
+  const handleSearch = (value) => {
+    if(waiting !== null) {
+      clearTimeout(waiting)
+    }
+    if( value === "" ) {
+      clearTimeout(waiting)
+      setSuggestionList([])
+      return
+    }
+    setWaiting(
+      setTimeout(() => getAssetSuggestion(value), 1000)
+    )
+  }
+
+  const getAssetSuggestion = async (value) => {
+    await api({
+      url:`/SourceItem/${value}`,
+      method: 'GET'
+    })
+    .then(({ data }) => {
+      setSuggestionList(data)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
 
   return (
     <>
@@ -124,8 +154,22 @@ export default function AddItem () {
                   <CCard>
                     <CCardBody>
                       <CFormGroup>
-                        <CLabel htmlFor="input-name">Name <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
-                        <CInput type="text" name="item" required onChange={changeForm}/>
+                        <CLabel htmlFor="input-name">Name <span style={{ color: '#FF0B0B' }}>*</span></CLabel> <br/>
+                        <AutoComplete
+                          style={{ width: '100%' }}
+                          onSearch={handleSearch}
+                          notFoundContent="Not Found"
+                        >
+                          {
+                            suggestionList.length !== 0 && suggestionList.map((suggestion) => (
+                              <Option key={suggestion.id} value={suggestion.item}>
+                                { suggestion.item }
+                              </Option>
+                            ))
+                          }
+
+                        </AutoComplete>
+                        {/* <CInput type="text" name="item" required onChange={changeForm}/> */}
                       </CFormGroup>
                       <CFormGroup>
                           <CLabel htmlFor="hf-email" >Part Number <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
