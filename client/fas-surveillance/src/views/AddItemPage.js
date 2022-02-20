@@ -134,6 +134,12 @@ export default function AddItem () {
     })
   }
 
+  const handleSelect = (value) => {
+    let selectedItem = suggestionList.filter(suggestion => suggestion.item === value)
+    
+    setForm({ ...form, pn: selectedItem[0].pn })
+  }
+
   return (
     <>
       <Header className="bg-primary"/>
@@ -159,6 +165,7 @@ export default function AddItem () {
                           style={{ width: '100%' }}
                           onSearch={handleSearch}
                           notFoundContent="Not Found"
+                          onSelect={handleSelect}
                         >
                           {
                             suggestionList.length !== 0 && suggestionList.map((suggestion) => (
@@ -169,11 +176,10 @@ export default function AddItem () {
                           }
 
                         </AutoComplete>
-                        {/* <CInput type="text" name="item" required onChange={changeForm}/> */}
                       </CFormGroup>
                       <CFormGroup>
                           <CLabel htmlFor="hf-email" >Part Number <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
-                          <CInput type="text" name="pn" onChange={changeForm} />
+                          <CInput type="text" name="pn" onChange={changeForm} value={form.pn}/>
                           <CFormText style={{ marginBottom: '1rem', fontSize: 11 }}>Fill n/a if Part Number unavailable</CFormText>
                       </CFormGroup>
                       <CFormGroup>
