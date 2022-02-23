@@ -137,7 +137,7 @@ export default function AddItem () {
   const handleSelect = (value) => {
     let selectedItem = suggestionList.filter(suggestion => suggestion.item === value)
     
-    setForm({ ...form, pn: selectedItem[0].pn })
+    setForm({ ...form, pn: selectedItem[0].pn, item: selectedItem[0].item })
   }
 
   return (
