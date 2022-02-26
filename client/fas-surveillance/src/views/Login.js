@@ -20,6 +20,7 @@ import bgImages from '../assets/images/bg-login.jpg';
 const Login = () => {
   const router = useHistory()
   const [picName, setPicName] = useState('')
+  const [loginAs, setLoginAs] = useState('teknisi')
   const [picPhoneNumber, setPicPhoneNumber] = useState('')
   const [form, setForm] = useState({
     id_lokasi: '',
@@ -48,6 +49,7 @@ const Login = () => {
         data: form
       })
       .then(({data}) => {
+        console.log(data)
         localStorage.setItem('pic_name', picName)
         localStorage.setItem('pic_phone', picPhoneNumber)
         localStorage.setItem('loc_id', data.data.loc_id)
@@ -74,6 +76,59 @@ const Login = () => {
     setFields(locations.filter(location => location.alamat_lokasi === event.target.value))
   }
 
+  const showFormLogin = () => {
+    if(loginAs === 'teknisi') {
+      return (
+        <>
+          <CFormGroup>
+            <CLabel className="label__custom" htmlFor="nf-email">PIC Name</CLabel>
+            <CInput className="custom-input__background" type="text" onChange={(e) => setPicName(e.target.value)}/>
+          </CFormGroup>
+          <CFormGroup>
+            <CLabel className="label__custom" htmlFor="nf-password">Phone Number</CLabel>
+            <CInput className="custom-input__background" type="text" onChange={(e) => setPicPhoneNumber(e.target.value)} />
+          </CFormGroup>
+          <CFormGroup>
+            <CLabel className="label__custom">Location</CLabel>
+            <CSelect className="custom-input__background" onChange={filterFields}>
+              <option value="">Select location</option>
+              <option value="KAL Operation">KAL Operation</option>
+              <option value="JOP Operation">JOP Operation</option>
+            </CSelect>
+          </CFormGroup>
+          <CFormGroup>
+            <CLabel className="label__custom">Field</CLabel>
+            <CSelect className="custom-input__background" name="id_lokasi" onChange={updateForm}>
+              <option value="">Select field</option>
+              {
+                fields.map((location) => (
+                  <option key={location.id_lokasi} value={location.id_lokasi}>{location.nama_lokasi}</option>
+                ))
+              }
+            </CSelect>
+          </CFormGroup>
+          <CFormGroup>
+            <CLabel className="label__custom" htmlFor="nf-password">Password</CLabel>
+            <CInput className="custom-input__background" type="password" name="password" onChange={updateForm} />
+          </CFormGroup>
+        </>
+      )
+    } else {
+      return (
+        <>
+          <CFormGroup>
+            <CLabel className="label__custom" htmlFor="nf-email">Username</CLabel>
+            <CInput className="custom-input__background" type="text" onChange={(e) => setPicName(e.target.value)}/>
+          </CFormGroup>
+          <CFormGroup>
+            <CLabel className="label__custom" htmlFor="nf-password">Password</CLabel>
+            <CInput className="custom-input__background" type="password" name="password" onChange={updateForm} />
+          </CFormGroup>
+        </>
+      )
+    }
+  }
+
   useEffect(() => {
     getListLocation()
   },[])
@@ -88,36 +143,13 @@ const Login = () => {
             <CCardBody className="custom-card__body">
               <CForm>
                 <CFormGroup>
-                  <CLabel className="label__custom" htmlFor="nf-email">PIC Name</CLabel>
-                  <CInput className="custom-input__background" type="text" onChange={(e) => setPicName(e.target.value)}/>
-                </CFormGroup>
-                <CFormGroup>
-                  <CLabel className="label__custom" htmlFor="nf-password">Phone Number</CLabel>
-                  <CInput className="custom-input__background" type="text" onChange={(e) => setPicPhoneNumber(e.target.value)} />
-                </CFormGroup>
-                <CFormGroup>
-                  <CLabel className="label__custom">Location</CLabel>
-                  <CSelect className="custom-input__background" onChange={filterFields}>
-                    <option value="">Select location</option>
-                    <option value="KAL Operation">KAL Operation</option>
-                    <option value="JOP Operation">JOP Operation</option>
+                  <CLabel className="label__custom" htmlFor="nf-email">Login As :</CLabel>
+                  <CSelect className="custom-input__background" value={loginAs} onChange={(e) => setLoginAs(e.target.value)}>
+                    <option value="teknisi">Teknisi</option>
+                    <option value="supervisor">Supervisor</option>
                   </CSelect>
                 </CFormGroup>
-                <CFormGroup>
-                  <CLabel className="label__custom">Field</CLabel>
-                  <CSelect className="custom-input__background" name="id_lokasi" onChange={updateForm}>
-                    <option value="">Select field</option>
-                    {
-                      fields.map((location) => (
-                        <option key={location.id_lokasi} value={location.id_lokasi}>{location.nama_lokasi}</option>
-                      ))
-                    }
-                  </CSelect>
-                </CFormGroup>
-                <CFormGroup>
-                  <CLabel className="label__custom" htmlFor="nf-password">Password</CLabel>
-                  <CInput className="custom-input__background" type="password" name="password" onChange={updateForm} />
-                </CFormGroup>
+                { showFormLogin() }
               </CForm>
             </CCardBody>
             <CCardFooter className="custom-card__footer">
