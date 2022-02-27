@@ -139,6 +139,10 @@ export default function AddItem () {
     
     setForm({ ...form, pn: selectedItem[0].pn, item: selectedItem[0].item })
   }
+  
+  const handleChange = (value) => {
+    setForm({ ...form, item: value })
+  }
 
   return (
     <>
@@ -166,6 +170,7 @@ export default function AddItem () {
                           onSearch={handleSearch}
                           notFoundContent="Not Found"
                           onSelect={handleSelect}
+                          onChange={handleChange}
                         >
                           {
                             suggestionList.length !== 0 && suggestionList.map((suggestion) => (
