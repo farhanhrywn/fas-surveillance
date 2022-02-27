@@ -145,7 +145,7 @@ const Login = () => {
                 <CFormGroup>
                   <CLabel className="label__custom" htmlFor="nf-email">Login As :</CLabel>
                   <CSelect className="custom-input__background" value={loginAs} onChange={(e) => setLoginAs(e.target.value)}>
-                    <option value="teknisi">Teknisi</option>
+                    <option value="teknisi">Technician</option>
                     <option value="supervisor">Supervisor</option>
                   </CSelect>
                 </CFormGroup>

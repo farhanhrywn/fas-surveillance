@@ -100,12 +100,6 @@ export default function EditHandover () {
                   <CCard>
                     <CCardBody>
                       <CFormGroup row>
-                        <CLabel col md="2" htmlFor="file-input">Remark File :</CLabel>
-                        <CCol xs="12" md="10">
-                          <CInputFile type="file" name="remark_file" onChange={changeForm}/>
-                        </CCol>
-                      </CFormGroup>
-                      <CFormGroup row>
                         <CCol md="2">
                           <CLabel htmlFor="textarea-input">Remark <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
                         </CCol>
