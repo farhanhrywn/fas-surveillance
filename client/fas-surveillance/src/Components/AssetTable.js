@@ -275,7 +275,8 @@ export default function AssetTable () {
         <CCol md="4" style={{position: 'relative'}}>
           <div className={'d-flex'} style={{position: 'absolute', bottom: 0, width: '100%'}}>
             <CButton block size='lg' color="primary" onClick={() => router.push('/add/item')} className={'mr-3'}>Add Item</CButton>
-            <CButton block size='lg' color="primary" onClick={exportToExcel} className={'mt-0'}>Export</CButton>
+            <CButton block size='lg' color="primary" onClick={exportToExcel} className={'mt-0 mr-3'}>Export</CButton>
+            <CButton block size='lg' color="primary" className={'mt-0'}>Import</CButton>
           </div>
         </CCol>
         <CCol md="4">
