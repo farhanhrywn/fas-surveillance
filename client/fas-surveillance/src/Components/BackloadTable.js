@@ -6,6 +6,7 @@ import {
   CButton,
   CBadge,
   CDataTable,
+  CSelect
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
@@ -31,17 +32,20 @@ const fields = [
   { key: 'cert_date', label: 'Certification Date' },
   { key: 'tools_date_in', label: 'Number of Days in Storage', _style: { width: '20%'} },
   { key: 'maintenance_by', label: 'Update By', _style: { width: '10%'}},
+  { key: 'backload_status', label: 'Backload Status', _style: { width: '10%'}},
   { key: 'action', label: 'Action'}
 ]
 
 export default function BackloadTable ({ backloadList }) {
   const router = useHistory()
   const [assetData, setAssetData] = useState([])
-  const [filteredAsset, setFilteredAsset] = useState([])
+  const [filteredAsset, setFilteredAsset] = useState(null)
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
+  const [selectedMonth, setSelectedMonth] = useState('')
+  const [selectedBackloadStatus, setSelectedBackloadStatus] = useState('Not yet')
 
   const fetchDataAsset = (locationId) => {
     api({
@@ -118,6 +122,33 @@ export default function BackloadTable ({ backloadList }) {
     })
   }
 
+  const showUpdateStatusBackloadModal = (assetId) => {
+    Swal.fire({
+      title: 'Are you sure to update this item ?',
+      // text: "You won't be able to revert this item!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sure!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        api({
+          url: `/Surveillance/setStatusBackloadOff/${assetId}`,
+          method: 'PUT'
+        })
+        .then(({ data }) => {
+          Swal.fire(
+            'Success!',
+            'Sukses update item',
+            'success'
+          )
+          fetchDataAsset(localStorage.getItem('loc_id'))
+        })
+      }
+    })
+  }
+
   const hideModal = () => {
     setModalOpen(false)
     setModalHandoverOpen(false)
@@ -136,6 +167,9 @@ export default function BackloadTable ({ backloadList }) {
           </CCol>
           <CCol md="3">
             <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
+          </CCol>
+          <CCol md="3">
+            <CIcon style={{ color: '#008000'}} icon={Icon.cilCheckAlt} width={20} onClick={() => showUpdateStatusBackloadModal(asset.id_surv)}/>
           </CCol>
         </CRow>
     </td>
@@ -272,13 +306,44 @@ export default function BackloadTable ({ backloadList }) {
     )
   }
 
+  const getTransportStatus = (asset) => {
+    if( asset.status === 'Backload' && asset.plan === 'Backload' ) {
+      return <CBadge color='success'>Done</CBadge>
+    } else {
+      return <CBadge color='danger'>Not yet</CBadge>
+    }
+  }
 
+  const getBackloadList = () => {
+    let result = backloadList.filter((backloadItem) => backloadItem.plan !== 'Backload')
+    return result
+  }
+
+  const filterBackloadList = () => {
+    if(!selectedMonth) {
+      let result = backloadList.filter((backloadItem) => selectedBackloadStatus === 'Not yet' ? backloadItem.plan !== 'Backload' : backloadItem.plan === 'Backload')
+      setFilteredAsset(result)
+    } else {
+      let start = moment().month(selectedMonth).date(1).hours(0).minutes(0).seconds(0).milliseconds(0);
+      let end = moment(start).endOf('month')
+  
+      let filterByMonth = backloadList.filter((backloadItem) => {
+        let result = moment(backloadItem.maintenance_date).isBetween(start, end)
+  
+        return result === true
+      })
+  
+      let result = filterByMonth.filter((backloadItem) => selectedBackloadStatus === 'Not yet' ? backloadItem.plan !== 'Backload' : backloadItem.plan === 'Backload')
+  
+      setFilteredAsset(result)
+
+    }
+  }
 
   // useEffect(() => {
   //   let locationId = localStorage.getItem('loc_id')
   //   fetchDataAsset(locationId)
   // },[])
-
 
   return (
     <>
@@ -288,9 +353,43 @@ export default function BackloadTable ({ backloadList }) {
         </CCol>
       </CRow>
       <CRow className="mt-5">
+        <CCol md="12">
+          <div className={'d-flex'}>
+            <div className={'d-flex align-items-center mr-3'}>
+              <span style={{ width: 100 }}>Status :</span>
+              <CSelect className={'custom-input__background'} onChange={(event) => setSelectedBackloadStatus(event.target.value)} value={selectedBackloadStatus}>
+                <option value="Not yet">Not yet</option>
+                <option value="Done">Done</option>
+              </CSelect>
+            </div>
+            <div className={'d-flex align-items-center mr-3'}>
+              <span style={{ width: 100 }}>Month :</span>
+              <CSelect className={'custom-input__background'} onChange={(event) => setSelectedMonth(event.target.value)}>
+                <option value="">Select the month..</option>
+                <option value="0">Januari</option>
+                <option value="1">Februari</option>
+                <option value="2">Maret</option>
+                <option value="3">April</option>
+                <option value="4">Mei</option>
+                <option value="5">Juni</option>
+                <option value="6">Juli</option>
+                <option value="7">Agustus</option>
+                <option value="8">September</option>
+                <option value="9">Oktober</option>
+                <option value="10">November</option>
+                <option value="11">Desember</option>
+              </CSelect>
+            </div>
+            <div className={'d-flex align-items-center'}>
+              <CButton block size='lg' color="primary" onClick={filterBackloadList}>Search</CButton>
+            </div>
+          </div>
+        </CCol>
+      </CRow>
+      <CRow className="mt-5">
         <CCol xl={12}>
           <CDataTable
-            items={backloadList}
+            items={filteredAsset ? filteredAsset : getBackloadList()}
             fields={fields}
             size='500px'
             hover
@@ -307,6 +406,11 @@ export default function BackloadTable ({ backloadList }) {
                   {badgeStatus(asset)}
                 </td>
               ),
+              'backload_status': (asset) => (
+                <td style={{ verticalAlign: 'middle'}}>
+                  {getTransportStatus(asset)}
+                </td>
+              )
             }}
           />
         </CCol>
