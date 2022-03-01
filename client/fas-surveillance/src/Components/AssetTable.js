@@ -8,6 +8,9 @@ import {
   CSelect,
   CDataTable,
   CBadge,
+  CFormGroup,
+  CLabel,
+  CInput
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
@@ -27,7 +30,8 @@ import {
   filterAssetByType,
   saveHandoverAsset,
   saveEditAsset,
-  deleteAsset
+  deleteAsset,
+  filterAssetByName
 } from "../store";
 
 
@@ -58,6 +62,7 @@ export default function AssetTable () {
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
+  const [itemName, setItemName] = useState(null)
 
   const convertDate = (date) => {
     let newDate = moment(date).format('DD MMM YYYY')
@@ -245,6 +250,10 @@ export default function AssetTable () {
     )
   }
 
+  const searchItemByName = () => {
+    dispatch(filterAssetByName(itemName, localStorage.getItem('loc_id'), assets))
+  }
+
   useEffect(() => {
     let locationId = localStorage.getItem('loc_id')
 
@@ -296,6 +305,16 @@ export default function AssetTable () {
         </CCol>
       </CRow>
       <CRow className="mt-5">
+        <CCol md="12" className="mb-3">
+          <div className={'d-flex justify-content-end'}>
+              <div className={'d-flex align-items-center mr-3'}>
+                <CInput type='text' name='item_name' placeholder='Search asset here...' onChange={(event) => setItemName(event.target.value)}/>
+              </div>
+              <div className={'d-flex align-items-center'}>
+                <CButton block size='md' color="primary" onClick={searchItemByName}>Search</CButton>
+            </div>
+          </div>
+        </CCol>
         <CCol xl={12}>
           <CDataTable
             items={filteredAssets}

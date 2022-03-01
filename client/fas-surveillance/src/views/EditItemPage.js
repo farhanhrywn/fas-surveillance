@@ -167,7 +167,6 @@ export default function EditItem () {
                           <CLabel htmlFor="hf-email">Plan <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
                           <CSelect type="text" name="plan" onChange={changeForm} value={asset.plan} disabled={isEdit}>
                             <option value="">Please Select..</option>
-                            <option value="Backload">Backload</option>
                             <option value="Keep in Store">Keep in Store</option>
                             <option value="Repair">Repair</option>
                           </CSelect>

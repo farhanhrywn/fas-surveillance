@@ -214,6 +214,40 @@ export const getDetailAsset = (id) => {
   }
 }
 
+export const filterAssetByName = (name, loc_id, assetList) => {
+  return (dispatch) => {
+    if(!name) {
+      dispatch({
+        type: 'SET_FILTERED_ASSETS',
+        payload: assetList
+      })
+    } else {
+      api({
+        url: `/Surveillance/searchItemByLocation/${loc_id}/${name}`,
+        method: 'GET'
+      })
+      .then(({ data }) => {
+        dispatch({
+          type: 'SET_FILTERED_ASSETS',
+          payload: data
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: 'SET_ERROR_MSG',
+          payload: err
+        })
+      })
+      .finally(() => {
+        dispatch({
+          type: 'SET_LOADING',
+          payload: false
+        })
+      })
+    }
+  }
+}
+
 const reducer = (state = initialState, action) => {
   switch ( action.type ) {
     case 'SET_LOADING':
