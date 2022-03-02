@@ -31,7 +31,7 @@ import {
   saveHandoverAsset,
   saveEditAsset,
   deleteAsset,
-  filterAssetByName
+  filterAssetByParams
 } from "../store";
 
 
@@ -63,6 +63,13 @@ export default function AssetTable () {
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
   const [itemName, setItemName] = useState(null)
+  const [formFilter, setFormFilter] = useState({
+    item_name: 'null',
+    type: 'null',
+    status: 'null',
+    start_date: 'null',
+    end_date: 'null'
+  })
 
   const convertDate = (date) => {
     let newDate = moment(date).format('DD MMM YYYY')
@@ -210,9 +217,9 @@ export default function AssetTable () {
     },[5000])
   }
 
-  const filterAsset = (event) => {
-    dispatch(filterAssetByType(event.target.value, assets))
-  }
+  // const filterAsset = (event) => {
+  //   dispatch(filterAssetByType(event.target.value, assets))
+  // }
 
   const exportToExcel = () => {
       const link = document.createElement('a');
@@ -250,8 +257,17 @@ export default function AssetTable () {
     )
   }
 
-  const searchItemByName = () => {
-    dispatch(filterAssetByName(itemName, localStorage.getItem('loc_id'), assets))
+  const searchItemByFilter = () => {
+    let payload = {}
+
+    for( const key in formFilter ) {
+      if(formFilter[key] === '') {
+        payload[key] = 'null'
+      } else {
+        payload[key] = formFilter[key]
+      }
+    }
+    dispatch(filterAssetByParams(localStorage.getItem('loc_id'), payload))
   }
 
   useEffect(() => {
@@ -280,7 +296,7 @@ export default function AssetTable () {
 
   return (
     <>
-      <CRow className="justify-content-between">
+      <CRow className="justify-content-between mt-5">
         <CCol md="4" style={{position: 'relative'}}>
           <div className={'d-flex'} style={{position: 'absolute', bottom: 0, width: '100%'}}>
             <CButton block size='lg' color="primary" onClick={() => router.push('/add/item')} className={'mr-3'}>Add Item</CButton>
@@ -288,34 +304,53 @@ export default function AssetTable () {
             <CButton block size='lg' color="primary" className={'mt-0'}>Import</CButton>
           </div>
         </CCol>
-        <CCol md="4">
-          <div className={'d-flex justify-content-end'}>
-              <div className={'d-flex align-items-center'}>
-                <span style={{width:60}}>Type :</span>
-                <CSelect onChange={filterAsset} className={'custom-input__background'}>
-                  <option value="">Select the type</option>
-                  {
-                    assetType.map(type => (
-                      <option value={type.value} key={type.value}>{type.label}</option>
-                    ))
-                  }
-                </CSelect>
-              </div>
-          </div>
-        </CCol>
       </CRow>
       <CRow className="mt-5">
-        <CCol md="12" className="mb-3">
-          <div className={'d-flex justify-content-end'}>
-              <div className={'d-flex align-items-center mr-3'}>
-                <CInput type='text' name='item_name' placeholder='Search asset here...' onChange={(event) => setItemName(event.target.value)}/>
-              </div>
-              <div className={'d-flex align-items-center'}>
-                <CButton block size='md' color="primary" onClick={searchItemByName}>Search</CButton>
-            </div>
-          </div>
+        <CCol md="2">
+          <CFormGroup>
+            <CLabel>Item Name : </CLabel>
+            <CInput type='text' name='item_name' onChange={(event) => setFormFilter({ ...formFilter, [event.target.name]: event.target.value })}/>
+          </CFormGroup>
         </CCol>
-        <CCol xl={12}>
+        <CCol md="2">
+          <CFormGroup>
+            <CLabel>Type : </CLabel>
+            <CSelect name='type' className={'custom-input__background'} onChange={(event) => setFormFilter({ ...formFilter, [event.target.name]: event.target.value })}>
+              <option value="null">Select the type</option>
+              {
+                assetType.map(type => (
+                  <option value={type.value} key={type.value}>{type.label}</option>
+                ))
+              }
+            </CSelect>
+          </CFormGroup>
+        </CCol>
+        <CCol md="2">
+          <CFormGroup>
+            <CLabel>Status : </CLabel>
+            <CSelect className={'custom-input__background'} name='status' onChange={(event) => setFormFilter({ ...formFilter, [event.target.name]: event.target.value })}>
+              <option value="null">Please select...</option>
+              <option value="New">New</option>
+              <option value="Backload">Backload</option>
+            </CSelect>
+          </CFormGroup>
+        </CCol>
+        <CCol md="2">
+          <CFormGroup>
+            <CLabel>Start Date : </CLabel>
+            <CInput type="date" name="start_date" onChange={(event) => setFormFilter({ ...formFilter, [event.target.name]: event.target.value })}/>
+          </CFormGroup>
+        </CCol>
+        <CCol md="2">
+          <CFormGroup>
+            <CLabel>End Date : </CLabel>
+            <CInput type="date" name="end_date" onChange={(event) => setFormFilter({ ...formFilter, [event.target.name]: event.target.value })}/>
+          </CFormGroup>
+        </CCol>
+        <CCol md="2">
+          <CButton block color="primary" style={{ marginTop: 32 }} onClick={searchItemByFilter}>Search</CButton>
+        </CCol>
+        <CCol xl={12} className="mt-3">
           <CDataTable
             items={filteredAssets}
             fields={fields}

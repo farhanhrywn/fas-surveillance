@@ -214,16 +214,10 @@ export const getDetailAsset = (id) => {
   }
 }
 
-export const filterAssetByName = (name, loc_id, assetList) => {
+export const filterAssetByParams = (loc_id, params) => {
   return (dispatch) => {
-    if(!name) {
-      dispatch({
-        type: 'SET_FILTERED_ASSETS',
-        payload: assetList
-      })
-    } else {
       api({
-        url: `/Surveillance/searchItemByLocation/${loc_id}/${name}`,
+        url: `/Surveillance/viewItembyFilter/${loc_id}/${params.item_name}/${params.type}/${params.status}/${params.start_date}/${params.end_date}`,
         method: 'GET'
       })
       .then(({ data }) => {
@@ -244,7 +238,6 @@ export const filterAssetByName = (name, loc_id, assetList) => {
           payload: false
         })
       })
-    }
   }
 }
 
