@@ -23,11 +23,11 @@ import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
 import assetType from '../assetType.json'
+import assetStatus from '../assetStatus.json'
 import { 
   getAssetsBackloadByLocationId,
   getAssetRequest,
   fetchDataAsset,
-  filterAssetByType,
   saveHandoverAsset,
   saveEditAsset,
   deleteAsset,
@@ -56,8 +56,6 @@ export default function AssetTable () {
   const router = useHistory()
   const dispatch = useDispatch()
   const { assets, filteredAssets } = useSelector((state) => state)
-  // const [assets, setAssets] = useState([])
-  // const [filteredAssets, setFilteredAssets] = useState([])
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
@@ -217,10 +215,6 @@ export default function AssetTable () {
     },[5000])
   }
 
-  // const filterAsset = (event) => {
-  //   dispatch(filterAssetByType(event.target.value, assets))
-  // }
-
   const exportToExcel = () => {
       const link = document.createElement('a');
 
@@ -267,27 +261,19 @@ export default function AssetTable () {
         payload[key] = formFilter[key]
       }
     }
+
     dispatch(filterAssetByParams(localStorage.getItem('loc_id'), payload))
   }
 
+  const getStatusList = () => {
+    let result = assetStatus.filter( status => status.value !== 'Backload' ).map((status => (
+      <option value={status.value} key={status.value}>{status.label}</option>
+    )))
+
+    return result
+  }
   useEffect(() => {
     let locationId = localStorage.getItem('loc_id')
-
-    // const fetchDataAsset = async () => {
-    //   await api({
-    //     url: `/Surveillance/${locationId}`,
-    //     method: 'GET'
-    //   })
-    //   .then(({ data }) => {
-    //     setAssets(data)
-    //     setFilteredAssets(data)
-    //   })
-    //   .catch((err) => {
-    //     console.log(err)
-    //   })
-    // }
-
-    // fetchDataAsset()
 
     dispatch(fetchDataAsset(locationId))
     dispatch(getAssetsBackloadByLocationId(locationId))
@@ -330,8 +316,7 @@ export default function AssetTable () {
             <CLabel>Status : </CLabel>
             <CSelect className={'custom-input__background'} name='status' onChange={(event) => setFormFilter({ ...formFilter, [event.target.name]: event.target.value })}>
               <option value="null">Please select...</option>
-              <option value="New">New</option>
-              <option value="Backload">Backload</option>
+              {getStatusList()}
             </CSelect>
           </CFormGroup>
         </CCol>
