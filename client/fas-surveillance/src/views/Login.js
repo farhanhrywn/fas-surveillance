@@ -49,7 +49,6 @@ const Login = () => {
         data: form
       })
       .then(({data}) => {
-        console.log(data)
         localStorage.setItem('pic_name', picName)
         localStorage.setItem('pic_phone', picPhoneNumber)
         localStorage.setItem('loc_id', data.data.loc_id)
