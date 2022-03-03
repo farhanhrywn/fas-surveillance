@@ -46,6 +46,11 @@ export default function EditItem () {
   const [asset, setAsset] = useState({})
   const [isEdit, setIsEdit] = useState(true)
   const [remarkHistory, setRemarkHistory] = useState([])
+  const [fields, setFields] = useState([])
+  const [locations, setLocations] = useState([])
+  const [existingLocation, setExistingLocation] = useState('')
+  const [existingField, setExistingField] = useState('')
+
 
   useEffect(() => {
     const getDetailAsset = (assetId) => {
@@ -80,13 +85,34 @@ export default function EditItem () {
         console.log(err)
       })
     }
+    const getListLocation = () => {
+      api({
+        url: '/Location',
+        method: 'GET'
+      })
+      .then (({ data }) => {
+        let getExistingLocation = data.filter((location) => location.nama_lokasi === localStorage.getItem('loc_name')) 
+        setExistingLocation(getExistingLocation[0].alamat_lokasi)
+        setExistingField(getExistingLocation[0].id_lokasi)
+        setFields(data.filter((location) => location.alamat_lokasi === getExistingLocation[0].alamat_lokasi))
+        setLocations(data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    }
 
+    getListLocation()
     getRemarkHistory(id)
     getDetailAsset(id)
   },[id])
 
   const changeForm = (event) => {
-    setAsset({ ...asset, [event.target.name]: event.target.value })
+    if(event.target.name === 'location') {
+      setExistingField(event.target.value)
+    } else {
+      setAsset({ ...asset, [event.target.name]: event.target.value })
+    }
   }
 
   const filterType = (event) => {
@@ -103,11 +129,15 @@ export default function EditItem () {
     let payload = {
       ...asset,
       maintenance_by: localStorage.getItem('pic_name'),
-      location: localStorage.getItem('loc_id'),
+      location: existingField,
       phone: localStorage.getItem('pic_phone')
     }
-    console.log(payload)
     dispatch(saveEditAsset(payload, router))
+  }
+
+  const filterFields = (event) => {
+    setExistingLocation(event.target.value)
+    setFields(locations.filter(location => location.alamat_lokasi === event.target.value))
   }
 
 
@@ -141,6 +171,31 @@ export default function EditItem () {
                 <CCol xs="12" sm="12">
                   <CCard>
                     <CCardBody>
+                      <CFormGroup row className="my-0">
+                        <CCol xs="6">
+                          <CFormGroup>
+                            <CLabel htmlFor="input-name">Location <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
+                            <CSelect disabled={isEdit} value={existingLocation} onChange={filterFields}>
+                              <option value="">Select location</option>
+                              <option value="KAL Operation">KAL Operation</option>
+                              <option value="JOP Operation">JOP Operation</option>
+                            </CSelect>
+                          </CFormGroup>
+                        </CCol>
+                        <CCol xs="6">
+                          <CFormGroup>
+                              <CLabel>Field <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
+                              <CSelect name="location" onChange={changeForm} value={existingField} disabled={isEdit}>
+                                <option value="">Please Select..</option>
+                                {
+                                  fields.map((location) => (
+                                    <option key={location.id_lokasi} value={location.id_lokasi}>{location.nama_lokasi}</option>
+                                  ))
+                                }
+                              </CSelect>
+                          </CFormGroup>
+                        </CCol>
+                      </CFormGroup>
                       <CFormGroup>
                         <CLabel htmlFor="input-name">Name <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
                         <CInput type="text" name="item" disabled={isEdit} required onChange={changeForm} value={asset.item}/>
