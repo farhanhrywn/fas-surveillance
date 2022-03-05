@@ -259,7 +259,7 @@ export default function BackloadTable ({ backloadList }) {
   const exportToExcel = () => {
     const link = document.createElement('a');
 
-    link.href = `${process.env.REACT_APP_API_URL_PROD}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/backload`;
+    link.href = `${process.env.REACT_APP_API_URL_DEV}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/backload`;
     
     document.body.appendChild(link);
 
