@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import {
   CCol,
@@ -18,6 +18,7 @@ import moment from 'moment'
 import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
+import { Button, Space } from 'antd'
 import { getAssetRequest } from '../store'
 
 const fields = [
@@ -35,8 +36,9 @@ const fields = [
 ]
 
 export default function RequestTable ({ requestList }) {
-  const dispatch = useDispatch()
   const [isModalEditOpen, setModalEditOpen] = useState(false)
+  const [isButtonDisable, setIsButtonDisable] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [idReq, setIdReq] = useState('')
   const [form, setForm] = useState({
     item: '',
@@ -158,9 +160,10 @@ export default function RequestTable ({ requestList }) {
     })
   }
 
-  const createRequest = (item) => {
+  const createRequest = () => {
+    setIsLoading(true)
     let payload = {
-      ...item,
+      ...form,
       location: localStorage.getItem('loc_id'),
       create_by: localStorage.getItem('pic_name'),
       phone: localStorage.getItem('pic_phone'),
@@ -180,10 +183,17 @@ export default function RequestTable ({ requestList }) {
         timer: 1500,
         showConfirmButton: false
       })
-      dispatch(getAssetRequest(localStorage.getItem('loc_id')))
+      setIsLoading(false)
+      window.location.reload()
     })
     .catch((err) => {
-      console.log(err)
+      setIsLoading(false)
+      Swal.fire({
+        icon: 'error',
+        title: 'Sorry, cannot create request',
+        timer: 1500,
+        showConfirmButton: false
+      })
     })
 
   }
@@ -197,15 +207,16 @@ export default function RequestTable ({ requestList }) {
     let arrValueForm = Object.values(form)
     let isValueEmpty = arrValueForm.some(val => val === '' || val === undefined)
     if(isValueEmpty) {
-      return true
+      setIsButtonDisable(true)
+    } else {
+      setIsButtonDisable(false)
+
     }
-    return false
   }
 
-  // useEffect(() => {
-  //   let locationId = localStorage.getItem('loc_id')
-  //   fetchDataAsset(locationId)
-  // },[])
+  useEffect(() => {
+    isFormValid()
+  },[form])
 
 
   return (
@@ -236,7 +247,14 @@ export default function RequestTable ({ requestList }) {
           </CFormGroup>
         </CCol>
         <CCol md="2">
-          <CButton block color="primary" onClick={() => createRequest(form)} style={{ marginTop: 32 }} disabled={isFormValid()}>Add Request</CButton>
+          <Button
+            type='primary'
+            size='large'
+            loading={isLoading}
+            disabled={isButtonDisable}
+            style={{ marginTop: 30 }}
+            onClick={() => createRequest()}
+          >Add Request</Button>
         </CCol>
       </CRow>
       <CRow className="mt-5">
