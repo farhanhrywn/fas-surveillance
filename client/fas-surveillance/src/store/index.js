@@ -10,6 +10,9 @@ const initialState = {
   assets: [],
   filteredAssets: [],
   assetDetail: {},
+  assetsSpv: [],
+  filteredAssetsSpv: [],
+  locations: [],
   error: null,
   loading: true
 }
@@ -240,6 +243,86 @@ export const filterAssetByParams = (loc_id, params) => {
       })
   }
 }
+export const filterAssetSpvByParams = (params) => {
+  return (dispatch) => {
+      api({
+        url: `/Surveillance/viewItembyFilter/${params.id_lokasi}/${params.item_name}/${params.type}/${params.status}/${params.start_date}/${params.end_date}`,
+        method: 'GET'
+      })
+      .then(({ data }) => {
+        dispatch({
+          type: 'SET_FILTERED_ASSETS_SPV',
+          payload: data
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: 'SET_ERROR_MSG',
+          payload: err
+        })
+      })
+      .finally(() => {
+        dispatch({
+          type: 'SET_LOADING',
+          payload: false
+        })
+      })
+  }
+}
+
+export const fetchDataAssetSpv = (locationId) => {
+  return (dispatch) => {
+    api({
+      url: `/Surveillance/viewItembyFilter/null/null/null/null/null/null`,
+      method: 'GET'
+    })
+    .then(({ data }) => {
+      dispatch({
+        type: 'SET_ASSETS_SPV',
+        payload: data
+      })
+    })
+    .catch((err) => {
+      dispatch({
+        type: 'SET_ERROR_MSG',
+        payload: err
+      })
+    })
+    .finally(() => {
+      dispatch({
+        type: 'SET_LOADING',
+        payload: false
+      })
+    })
+  }
+}
+
+export const fetchDataLocations = () => {
+  return (dispatch) => {
+    api({
+      url: '/Location',
+      method: 'GET'
+    })
+    .then (({ data }) => {
+      dispatch({
+        type: 'SET_LOCATIONS',
+        payload: data
+      })
+    })
+    .catch((err) => {
+      dispatch({
+        type: 'SET_ERROR_MSG',
+        payload: err
+      })
+    })
+    .finally(() => {
+      dispatch({
+        type: 'SET_LOADING',
+        payload: false
+      })
+    })
+  }
+}
 
 const reducer = (state = initialState, action) => {
   switch ( action.type ) {
@@ -270,6 +353,12 @@ const reducer = (state = initialState, action) => {
       return { ...state, assets: newAssetList, filteredAssets: newAssetList }
     case 'SET_ERROR_MSG':
       return { ...state, error: action.payload }
+    case 'SET_ASSETS_SPV':
+      return { ...state, assetsSpv: action.payload, filteredAssetsSpv: action.payload }
+    case 'SET_FILTERED_ASSETS_SPV':
+      return { ...state, filteredAssetsSpv: action.payload }
+    case 'SET_LOCATIONS':
+      return { ...state, locations: action.payload }
     default:
       return state
   }

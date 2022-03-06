@@ -26,6 +26,10 @@ const Login = () => {
     id_lokasi: '',
     password: ''
   })
+  const [formSpv, setFormSpv] = useState({
+    username: '',
+    password: ''
+  })
   const [locations, setLocations] = useState([])
   const [fields, setFields] = useState([])
 
@@ -43,6 +47,7 @@ const Login = () => {
   }
 
   const userLogin = () => {
+    if(loginAs === "teknisi") {
       api({
         url: '/loginLoc',
         method: 'POST',
@@ -54,6 +59,7 @@ const Login = () => {
         localStorage.setItem('loc_id', data.data.loc_id)
         localStorage.setItem('loc_name', data.data.lokasi)
         localStorage.setItem('token', data.token)
+        localStorage.setItem('isSpv', data.data.isSpv)
         Swal.fire({
           title: 'Login Success',
           icon: 'success',
@@ -65,10 +71,38 @@ const Login = () => {
       .catch ((err) => {
         console.log(err)
       })
+    } else {
+      api({
+        url: '/Login/LoginSpv',
+        method: 'POST',
+        data: formSpv
+      })
+      .then(({ data }) => {
+        localStorage.setItem('id', data.data.id_user)
+        localStorage.setItem('token', data.token)
+        localStorage.setItem('category', data.data.kategori)
+        localStorage.setItem('isSpv', data.data.isSpv)
+        Swal.fire({
+          title: 'Login Success',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 2000
+        })
+        router.push('/landing/spv')
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    }
+
   }
 
   const updateForm = (event) => {
     setForm({...form, [event.target.name]: event.target.value})
+  }
+
+  const updateFormSpv = (event) => {
+    setFormSpv({...formSpv, [event.target.name]: event.target.value})
   }
 
   const filterFields = (event) => {
@@ -80,12 +114,12 @@ const Login = () => {
       return (
         <>
           <CFormGroup>
-            <CLabel className="label__custom" htmlFor="nf-email">PIC Name</CLabel>
-            <CInput className="custom-input__background" type="text" onChange={(e) => setPicName(e.target.value)}/>
+            <CLabel className="label__custom">PIC Name</CLabel>
+            <CInput className="custom-input__background" type="text" name='pic_name' onChange={(e) => setPicName(e.target.value)}/>
           </CFormGroup>
           <CFormGroup>
-            <CLabel className="label__custom" htmlFor="nf-password">Phone Number</CLabel>
-            <CInput className="custom-input__background" type="text" onChange={(e) => setPicPhoneNumber(e.target.value)} />
+            <CLabel className="label__custom">Phone Number</CLabel>
+            <CInput className="custom-input__background" type="text" name='pic_phone_number' onChange={(e) => setPicPhoneNumber(e.target.value)} />
           </CFormGroup>
           <CFormGroup>
             <CLabel className="label__custom">Location</CLabel>
@@ -116,16 +150,22 @@ const Login = () => {
       return (
         <>
           <CFormGroup>
-            <CLabel className="label__custom" htmlFor="nf-email">Username</CLabel>
-            <CInput className="custom-input__background" type="text" onChange={(e) => setPicName(e.target.value)}/>
+            <CLabel className="label__custom">Username</CLabel>
+            <CInput className="custom-input__background" type="text" name='username' onChange={updateFormSpv}/>
           </CFormGroup>
           <CFormGroup>
-            <CLabel className="label__custom" htmlFor="nf-password">Password</CLabel>
-            <CInput className="custom-input__background" type="password" name="password" onChange={updateForm} />
+            <CLabel className="label__custom">Password</CLabel>
+            <CInput className="custom-input__background" type='password' name='password' onChange={updateFormSpv}/>
           </CFormGroup>
         </>
       )
     }
+  }
+
+  const onChangeRole = (event) => {
+    setPicName('')
+    setPicPhoneNumber('')
+    setLoginAs(event.target.value)
   }
 
   useEffect(() => {
@@ -143,7 +183,7 @@ const Login = () => {
               <CForm>
                 <CFormGroup>
                   <CLabel className="label__custom" htmlFor="nf-email">Login As :</CLabel>
-                  <CSelect className="custom-input__background" value={loginAs} onChange={(e) => setLoginAs(e.target.value)}>
+                  <CSelect className="custom-input__background" value={loginAs} onChange={onChangeRole}>
                     <option value="teknisi">Technician</option>
                     <option value="supervisor">Supervisor</option>
                   </CSelect>
