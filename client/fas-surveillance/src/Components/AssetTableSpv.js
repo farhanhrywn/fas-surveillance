@@ -31,9 +31,12 @@ import {
   saveHandoverAsset,
   saveEditAsset,
   deleteAsset,
-  filterAssetByParams
+  filterAssetSpvByParams,
+  fetchDataAssetSpv,
+  fetchDataLocations
 } from "../store";
-
+import { Select } from 'antd'
+const { Option, OptGroup } = Select
 
 const fields = [
   { key: 'type', label: 'Type' },
@@ -49,19 +52,19 @@ const fields = [
   { key: 'cert_date', label: 'Certification Date' },
   { key: 'tools_date_in', label: 'Number of Days in Storage', _style: { width: '20%'} },
   { key: 'maintenance_by', label: 'Update By', _style: { width: '10%' }},
-  { key: 'action', label: 'Action'}
 ]
 
-export default function AssetTable () {
+export default function AssetTableSpv () {
   const router = useHistory()
   const dispatch = useDispatch()
-  const { assets, filteredAssets } = useSelector((state) => state)
+  const { assetsSpv, filteredAssetsSpv, locations } = useSelector((state) => state)
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
   const [itemName, setItemName] = useState(null)
   const [formFilter, setFormFilter] = useState({
+    id_lokasi: 'null',
     item_name: 'null',
     type: 'null',
     status: 'null',
@@ -115,44 +118,10 @@ export default function AssetTable () {
     )
   }
 
-  const showRemoveModal = (assetId) => {
-    Swal.fire({
-      title: 'Are you sure to remove this item ?',
-      icon: 'warning',
-      timer: 2000,
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        dispatch(deleteAsset(assetId))
-      }
-    })
-  }
-
   const hideModal = () => {
     setModalOpen(false)
     setModalHandoverOpen(false)
     setModalEditOpen(false)
-  }
-
-  const actionField = (asset) => {
-    return (
-      <td style={{ verticalAlign: 'middle'}}>
-        <div className='d-flex'>
-          <div className='btn border mx-1 rounded'>
-            <CIcon icon={Icon.cilPencil} width={20} onClick={() => router.push(`/edit/item/${asset.id_surv}`)} />
-          </div>
-          <div className='btn border mx-1 rounded'>
-            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => router.push(`edit/handover/${asset.id_surv}`)}/>
-          </div>
-          <div className='btn border mx-1 rounded'>
-            <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
-          </div>
-        </div>
-      </td>
-    )
   }
 
   const createItem = (item) => {
@@ -218,7 +187,7 @@ export default function AssetTable () {
   const exportToExcel = () => {
       const link = document.createElement('a');
 
-      link.href = `${process.env.REACT_APP_API_URL_DEV}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/notbackload`;
+      link.href = `${process.env.REACT_APP_API_URL_DEV}/Surveillance/exportToExcel/${formFilter.id_lokasi}/notbackload`;
       
       document.body.appendChild(link);
 
@@ -262,7 +231,7 @@ export default function AssetTable () {
       }
     }
 
-    dispatch(filterAssetByParams(localStorage.getItem('loc_id'), payload))
+    dispatch(filterAssetSpvByParams(payload))
   }
 
   const getStatusList = () => {
@@ -272,12 +241,13 @@ export default function AssetTable () {
 
     return result
   }
-  useEffect(() => {
-    let locationId = localStorage.getItem('loc_id')
 
-    dispatch(fetchDataAsset(locationId))
-    dispatch(getAssetsBackloadByLocationId(locationId))
-    dispatch(getAssetRequest(locationId))
+  useEffect(() => {
+
+    dispatch(fetchDataAssetSpv())
+    dispatch(fetchDataLocations())
+    // dispatch(getAssetsBackloadByLocationId())
+    // dispatch(getAssetRequest())
   },[dispatch])
 
   return (
@@ -285,13 +255,25 @@ export default function AssetTable () {
       <CRow className="justify-content-between mt-5">
         <CCol md="4" style={{position: 'relative'}}>
           <div className={'d-flex'} style={{position: 'absolute', bottom: 0, width: '100%'}}>
-            <CButton block size='lg' color="primary" onClick={() => router.push('/add/item')} className={'mr-3'}>Add Item</CButton>
             <CButton block size='lg' color="primary" onClick={exportToExcel} className={'mt-0 mr-3'}>Export</CButton>
             <CButton block size='lg' color="primary" className={'mt-0'}>Import</CButton>
           </div>
         </CCol>
       </CRow>
       <CRow className="mt-5">
+        <CCol md="2">
+          <CFormGroup>
+            <CLabel>Location : </CLabel> <br />
+            <CSelect name='id_lokasi' className={'custom-input__background'} onChange={(event) => setFormFilter({ ...formFilter, [event.target.name]: event.target.value })}>
+              <option value="null">Select the location</option>
+              {
+                locations.map(location => (
+                  <option value={location.id_lokasi} key={location.id_lokasi}>{location.nama_lokasi}</option>
+                ))
+              }
+            </CSelect>
+          </CFormGroup>
+        </CCol>
         <CCol md="2">
           <CFormGroup>
             <CLabel>Item Name : </CLabel>
@@ -337,7 +319,7 @@ export default function AssetTable () {
         </CCol>
         <CCol xl={12} className="mt-3">
           <CDataTable
-            items={filteredAssets}
+            items={filteredAssetsSpv}
             fields={fields}
             size='500px'
             hover
@@ -350,7 +332,6 @@ export default function AssetTable () {
                   {badgeStatus(asset)}
                 </td>
               ),
-              'action': (asset, index) => actionField(asset),
               'tools_date_in': (asset) => calculateDateIn(asset),
               'remark': (asset) => checkValue(asset, 'remark'),
               'maintenance_by': (asset) => getName(asset),
