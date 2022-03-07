@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@coreui/coreui": "^3.4.0",
     "@coreui/icons": "^2.1.0",
     "@coreui/icons-react": "^2.0.0",

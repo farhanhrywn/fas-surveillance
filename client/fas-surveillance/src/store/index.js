@@ -7,12 +7,16 @@ import Swal from 'sweetalert2';
 const initialState = {
   assetsBackload: [],
   assetsRequest: [],
+  assetsRequestSpv: [],
+  filteredReqSpv: [],
   assets: [],
   filteredAssets: [],
   assetDetail: {},
   assetsSpv: [],
   filteredAssetsSpv: [],
   locations: [],
+  assetsBackloadSpv: [],
+  countNotSeenRequest: 0,
   error: null,
   loading: true
 }
@@ -21,7 +25,6 @@ export const getAssetsBackloadByLocationId = (locationId) => {
   return (dispatch) => {
     api({
       url: `/Surveillance/getBackload/${locationId}`,
-      // url: '/asset',
       method: 'GET'
     })
     .then(({ data }) => {
@@ -243,6 +246,7 @@ export const filterAssetByParams = (loc_id, params) => {
       })
   }
 }
+
 export const filterAssetSpvByParams = (params) => {
   return (dispatch) => {
       api({
@@ -324,6 +328,102 @@ export const fetchDataLocations = () => {
   }
 }
 
+export const getRequestSpv = () => {
+  return (dispatch) => {
+    api({
+      url: `/Request/viewRequestbyFilter/null/null/null/null`,
+      method: 'GET'
+    })
+    .then(({ data }) => {
+      dispatch({
+        type: 'SET_REQUEST_SPV',
+        payload: data
+      })
+    })
+    .catch((err) => {
+      dispatch({
+        type: 'SET_ERROR_MSG',
+        payload: err
+      })
+    })
+  }
+}
+
+export const filterRequestSpvByParams = (params) => {
+  return (dispatch) => {
+      api({
+        url: `/Request/viewRequestbyFilter/${params.id_lokasi}/${params.seen_status}/${params.start_date}/${params.end_date}`,
+        method: 'GET'
+      })
+      .then(({ data }) => {
+        dispatch({
+          type: 'SET_FILTERED_REQUEST_SPV',
+          payload: data
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: 'SET_ERROR_MSG',
+          payload: err
+        })
+      })
+      .finally(() => {
+        dispatch({
+          type: 'SET_LOADING',
+          payload: false
+        })
+      })
+  }
+}
+
+export const getBackloadSpv = () => {
+  return (dispatch) => {
+    api({
+      url: `/Surveillance/itemBackloadByMonth/null/null/null`,
+      method: 'GET'
+    })
+    .then(({ data }) => {
+      dispatch({
+        type: 'SET_BACKLOAD_SPV',
+        payload: data
+      })
+    })
+    .catch((err) => {
+      dispatch({
+        type: 'SET_ERROR_MSG',
+        payload: err
+      })
+    })
+  }
+}
+
+export const filterBackloadSpvByParams = (params) => {
+  return (dispatch) => {
+      api({
+        url: `/Surveillance/itemBackloadByMonth/${params.id_lokasi}/${params.month}/${params.plan_status}`,
+        method: 'GET'
+      })
+      .then(({ data }) => {
+        dispatch({
+          type: 'SET_FILTERED_BACKLOAD_SPV',
+          payload: data
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: 'SET_ERROR_MSG',
+          payload: err
+        })
+      })
+      .finally(() => {
+        dispatch({
+          type: 'SET_LOADING',
+          payload: false
+        })
+      })
+  }
+}
+
 const reducer = (state = initialState, action) => {
   switch ( action.type ) {
     case 'SET_LOADING':
@@ -332,6 +432,9 @@ const reducer = (state = initialState, action) => {
       return { ...state, assetsBackload: action.payload }
     case 'SET_ASSETS_REQUEST':
       return { ...state, assetsRequest: action.payload }
+    case 'SET_REQUEST_SPV':
+      let notSeenRequest = action.payload.filter((request) => request.seen_status === 'not seen')
+      return { ...state, filteredReqSpv: action.payload, assetsRequestSpv: action.payload, countNotSeenRequest: notSeenRequest.length  }
     case 'SET_ASSETS':
       return { ...state, assets: action.payload, filteredAssets: action.payload }
     case 'SET_FILTERED_ASSETS':
@@ -357,8 +460,14 @@ const reducer = (state = initialState, action) => {
       return { ...state, assetsSpv: action.payload, filteredAssetsSpv: action.payload }
     case 'SET_FILTERED_ASSETS_SPV':
       return { ...state, filteredAssetsSpv: action.payload }
+    case 'SET_FILTERED_REQUEST_SPV':
+      return { ...state, filteredReqSpv: action.payload }
+    case 'SET_FILTERED_BACKLOAD_SPV':
+      return { ...state, assetsBackloadSpv: action.payload }
     case 'SET_LOCATIONS':
       return { ...state, locations: action.payload }
+    case 'SET_BACKLOAD_SPV':
+      return { ...state, assetsBackloadSpv: action.payload }
     default:
       return state
   }

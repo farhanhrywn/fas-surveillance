@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router'
 import { CCollapse, CNavbar, CNavbarBrand, CNavbarNav, CNavLink, CToggler } from '@coreui/react'
+import { Badge, Avatar } from 'antd'
+import { BellOutlined } from '@ant-design/icons';
 
 const styles = {
   headerLeft: {
@@ -20,7 +22,7 @@ const styles = {
 }
 
 
-export default function HeaderSpv ({ className }) {
+export default function HeaderSpv ({ className, bgColor, notSeenReq }) {
   const router = useHistory()
   const logout = () => {
     localStorage.clear()
@@ -44,6 +46,11 @@ export default function HeaderSpv ({ className }) {
             <CNavbarNav className="ml-auto">
               <span className="navbar-text mr-3 text-uppercase">
                 {localStorage.getItem('category')}
+              </span>
+              <span style={{ marginRight: 30, marginBottom: 5 }}>
+                <Badge count={notSeenReq}>
+                  <Avatar icon={<BellOutlined />} size="default" style={{ backgroundColor: bgColor }} />
+                </Badge>
               </span>
               <button className="btn btn-danger my-2 my-sm-0" onClick={logout}>Logout</button>
             </CNavbarNav>
