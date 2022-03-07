@@ -25,8 +25,8 @@ import Swal from 'sweetalert2'
 import assetType from '../assetType.json'
 import assetStatus from '../assetStatus.json'
 import { 
-  getAssetsBackloadByLocationId,
-  getAssetRequest,
+  getRequestSpv,
+  getBackloadSpv,
   fetchDataAsset,
   saveHandoverAsset,
   saveEditAsset,
@@ -246,8 +246,8 @@ export default function AssetTableSpv () {
 
     dispatch(fetchDataAssetSpv())
     dispatch(fetchDataLocations())
-    // dispatch(getAssetsBackloadByLocationId())
-    // dispatch(getAssetRequest())
+    dispatch(getRequestSpv())
+    dispatch(getBackloadSpv())
   },[dispatch])
 
   return (

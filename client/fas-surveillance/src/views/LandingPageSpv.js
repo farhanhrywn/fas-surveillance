@@ -1,7 +1,9 @@
 import { CCarousel, CCarouselControl, CCarouselIndicators, CCarouselInner, CCarouselItem } from '@coreui/react'
 import React, { useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import HeaderSpv from '../Components/HeaderSpv';
 import { importImg } from '../helper';
+import { getRequestSpv } from '../store';
 
 const carouselImg = importImg(require.context('../assets/images/carousell', false, /.png/));
 const keys = Object.keys(carouselImg);
@@ -36,7 +38,8 @@ const  useInterval = (callback, delay) => {
 }
 
 const LandingPageSpv = ({first_name, location}) => {
-
+  const dispatch = useDispatch()
+  const numOfNotSeenReq = useSelector((state) => state.countNotSeenRequest)
   let [activeIndex, setActiveIndex] = useState(0);
 
   const autoPlay = () => {
@@ -51,10 +54,14 @@ const LandingPageSpv = ({first_name, location}) => {
     autoPlay()
   }, 5000);
 
+  useEffect(() => {
+    dispatch(getRequestSpv())
+  },[])
+
 
   return (
     <div className='text-center text-color__primary vh-100' style={{ overflow: "hidden" }}>
-      <HeaderSpv className="bg-black position-fixed w-100 backdrop-blur" />
+      <HeaderSpv className="bg-black position-fixed w-100 backdrop-blur" bgColor="#2a2a2a6e" notSeenReq={numOfNotSeenReq} />
 
 
       <div className='d-flex align-items-center flex-column'>
