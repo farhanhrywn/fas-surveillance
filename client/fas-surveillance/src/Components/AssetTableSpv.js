@@ -13,8 +13,6 @@ import {
   CInput
 } from '@coreui/react'
 
-import CIcon from '@coreui/icons-react'
-import * as Icon from '@coreui/icons'
 import FormAdd from './formAdd'
 import FormHandover from './formHandover'
 import FormEdit from './formEdit'
@@ -27,16 +25,13 @@ import assetStatus from '../assetStatus.json'
 import { 
   getRequestSpv,
   getBackloadSpv,
-  fetchDataAsset,
   saveHandoverAsset,
   saveEditAsset,
-  deleteAsset,
   filterAssetSpvByParams,
   fetchDataAssetSpv,
   fetchDataLocations
 } from "../store";
-import { Select } from 'antd'
-const { Option, OptGroup } = Select
+import { checkCertDate } from '../helper'
 
 const fields = [
   { key: 'type', label: 'Type' },
@@ -55,14 +50,12 @@ const fields = [
 ]
 
 export default function AssetTableSpv () {
-  const router = useHistory()
   const dispatch = useDispatch()
-  const { assetsSpv, filteredAssetsSpv, locations } = useSelector((state) => state)
+  const { filteredAssetsSpv, locations } = useSelector((state) => state)
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
-  const [itemName, setItemName] = useState(null)
   const [formFilter, setFormFilter] = useState({
     id_lokasi: 'null',
     item_name: 'null',
@@ -71,22 +64,6 @@ export default function AssetTableSpv () {
     start_date: 'null',
     end_date: 'null'
   })
-
-  const convertDate = (date) => {
-    let newDate = moment(date).format('DD MMM YYYY')
-    if(newDate === 'Invalid date') {
-      return (
-        <td>
-          -
-        </td>
-      )
-    }
-    return (
-        <td>
-          {newDate}
-        </td>
-    )
-  }
 
   const badgeStatus = (asset) => {
 
@@ -187,7 +164,7 @@ export default function AssetTableSpv () {
   const exportToExcel = () => {
       const link = document.createElement('a');
 
-      link.href = `${process.env.REACT_APP_API_URL_DEV}/Surveillance/exportToExcel/${formFilter.id_lokasi}/notbackload`;
+      link.href = `${process.env.REACT_APP_API_URL_PROD}/Surveillance/exportToExcel/${formFilter.id_lokasi}/notbackload`;
       
       document.body.appendChild(link);
 
@@ -326,7 +303,7 @@ export default function AssetTableSpv () {
             striped
             scopedSlots={{
               'type': (asset) => checkValue(asset, 'type'),
-              'cert_date': (asset) => convertDate(asset.cert_date),
+              'cert_date': (asset) => checkCertDate(asset.cert_date),
               'status': (asset) => (
                 <td style={{ verticalAlign: 'middle'}}>
                   {badgeStatus(asset)}

@@ -18,6 +18,7 @@ import moment from 'moment'
 import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
+import { checkCertDate } from '../helper'
 
 const fields = [
   { key: 'type', label: 'Type' },
@@ -60,22 +61,6 @@ export default function BackloadTable ({ backloadList }) {
     .catch((err) => {
       console.log(err)
     })
-  }
-
-  const convertDate = (asset) => {
-    let date = moment(asset.cert_date).format('DD MMM YYYY')
-    if(date === 'Invalid date') {
-      return (
-        <td>
-          -
-        </td>
-      )
-    }
-    return (
-        <td>
-          {date}
-        </td>
-    )
   }
 
   const calculateDateIn = (asset) => {
@@ -283,7 +268,6 @@ export default function BackloadTable ({ backloadList }) {
     )
   }
 
-
   const badgeStatus = (asset) => {
 
     switch (asset.status) {
@@ -396,7 +380,7 @@ export default function BackloadTable ({ backloadList }) {
             striped
             scopedSlots={{
               'type': (asset) => checkValue(asset, 'type'),
-              'cert_date': (asset) => convertDate(asset),
+              'cert_date': (asset) => checkCertDate(asset.cert_date),
               'action': (asset, index) => actionField(asset),
               'tools_date_in': (asset) => calculateDateIn(asset),
               'remark': (asset) => checkValue(asset, 'remark'),

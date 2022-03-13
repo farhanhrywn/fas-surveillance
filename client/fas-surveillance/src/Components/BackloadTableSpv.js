@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { useDispatch } from 'react-redux'
 import {
   CCol,
@@ -12,8 +11,6 @@ import {
   CLabel
 } from '@coreui/react'
 
-import CIcon from '@coreui/icons-react'
-import * as Icon from '@coreui/icons'
 import FormAdd from './formAdd'
 import FormHandover from './formHandover'
 import FormEdit from './formEdit'
@@ -22,6 +19,7 @@ import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
 import { filterBackloadSpvByParams } from '../store'
+import { checkCertDate } from '../helper'
 
 const fields = [
   { key: 'type', label: 'Type' },
@@ -40,7 +38,6 @@ const fields = [
 ]
 
 export default function BackloadTableSpv ({ backloadList, locationList }) {
-  const router = useHistory()
   const dispatch = useDispatch()
   const [assetData, setAssetData] = useState([])
   const [filteredAsset, setFilteredAsset] = useState(null)
@@ -48,8 +45,6 @@ export default function BackloadTableSpv ({ backloadList, locationList }) {
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
-  const [selectedMonth, setSelectedMonth] = useState('')
-  const [selectedBackloadStatus, setSelectedBackloadStatus] = useState('Not yet')
   const [formFilter, setFormFilter] = useState({
     id_lokasi: 'null',
     month: 'null',
@@ -68,22 +63,6 @@ export default function BackloadTableSpv ({ backloadList, locationList }) {
     .catch((err) => {
       console.log(err)
     })
-  }
-
-  const convertDate = (asset) => {
-    let date = moment(asset.cert_date).format('DD MMM YYYY')
-    if(date === 'Invalid date') {
-      return (
-        <td>
-          -
-        </td>
-      )
-    }
-    return (
-        <td>
-          {date}
-        </td>
-    )
   }
 
   const calculateDateIn = (asset) => {
@@ -191,7 +170,7 @@ export default function BackloadTableSpv ({ backloadList, locationList }) {
   const exportToExcel = () => {
     const link = document.createElement('a');
 
-    link.href = `${process.env.REACT_APP_API_URL_DEV}/Surveillance/exportToExcel/null/backload`;
+    link.href = `${process.env.REACT_APP_API_URL_PROD}/Surveillance/exportToExcel/null/backload`;
     
     document.body.appendChild(link);
 
@@ -251,27 +230,6 @@ export default function BackloadTableSpv ({ backloadList, locationList }) {
     return result
   }
 
-  const filterBackloadList = () => {
-    if(!selectedMonth) {
-      let result = backloadList.filter((backloadItem) => selectedBackloadStatus === 'Not yet' ? backloadItem.plan !== 'Backload' : backloadItem.plan === 'Backload')
-      setFilteredAsset(result)
-    } else {
-      let start = moment().month(selectedMonth).date(1).hours(0).minutes(0).seconds(0).milliseconds(0);
-      let end = moment(start).endOf('month')
-  
-      let filterByMonth = backloadList.filter((backloadItem) => {
-        let result = moment(backloadItem.maintenance_date).isBetween(start, end)
-  
-        return result === true
-      })
-  
-      let result = filterByMonth.filter((backloadItem) => selectedBackloadStatus === 'Not yet' ? backloadItem.plan !== 'Backload' : backloadItem.plan === 'Backload')
-  
-      setFilteredAsset(result)
-
-    }
-  }
-
   const searchItemByFilter = () => {
     let payload = {}
 
@@ -285,11 +243,6 @@ export default function BackloadTableSpv ({ backloadList, locationList }) {
 
     dispatch(filterBackloadSpvByParams(payload))
   }
-
-  // useEffect(() => {
-  //   let locationId = localStorage.getItem('loc_id')
-  //   fetchDataAsset(locationId)
-  // },[])
 
   return (
     <>
@@ -355,7 +308,7 @@ export default function BackloadTableSpv ({ backloadList, locationList }) {
             striped
             scopedSlots={{
               'type': (asset) => checkValue(asset, 'type'),
-              'cert_date': (asset) => convertDate(asset),
+              'cert_date': (asset) => checkCertDate(asset.cert_date),
               'tools_date_in': (asset) => calculateDateIn(asset),
               'remark': (asset) => checkValue(asset, 'remark'),
               'maintenance_by': (asset) => getName(asset),
