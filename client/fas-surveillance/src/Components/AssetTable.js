@@ -33,6 +33,7 @@ import {
   deleteAsset,
   filterAssetByParams
 } from "../store";
+import { checkCertDate } from '../helper'
 
 
 const fields = [
@@ -55,12 +56,11 @@ const fields = [
 export default function AssetTable () {
   const router = useHistory()
   const dispatch = useDispatch()
-  const { assets, filteredAssets } = useSelector((state) => state)
+  const { filteredAssets } = useSelector((state) => state)
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalHandoverOpen, setModalHandoverOpen] = useState(false)
   const [isModalEditOpen, setModalEditOpen] = useState(false)
   const [idSurv, setIdSurv] = useState('')
-  const [itemName, setItemName] = useState(null)
   const [formFilter, setFormFilter] = useState({
     item_name: 'null',
     type: 'null',
@@ -68,22 +68,6 @@ export default function AssetTable () {
     start_date: 'null',
     end_date: 'null'
   })
-
-  const convertDate = (date) => {
-    let newDate = moment(date).format('DD MMM YYYY')
-    if(newDate === 'Invalid date') {
-      return (
-        <td>
-          -
-        </td>
-      )
-    }
-    return (
-        <td>
-          {newDate}
-        </td>
-    )
-  }
 
   const badgeStatus = (asset) => {
 
@@ -218,7 +202,7 @@ export default function AssetTable () {
   const exportToExcel = () => {
       const link = document.createElement('a');
 
-      link.href = `${process.env.REACT_APP_API_URL_DEV}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/notbackload`;
+      link.href = `${process.env.REACT_APP_API_URL_PROD}/Surveillance/exportToExcel/${localStorage.getItem('loc_id')}/notbackload`;
       
       document.body.appendChild(link);
 
@@ -344,7 +328,7 @@ export default function AssetTable () {
             striped
             scopedSlots={{
               'type': (asset) => checkValue(asset, 'type'),
-              'cert_date': (asset) => convertDate(asset.cert_date),
+              'cert_date': (asset) => checkCertDate(asset.cert_date),
               'status': (asset) => (
                 <td style={{ verticalAlign: 'middle'}}>
                   {badgeStatus(asset)}
