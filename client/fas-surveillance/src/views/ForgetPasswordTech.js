@@ -62,7 +62,7 @@ const ForgetPasswordTech = () => {
   },[])
 
   return (
-    <div style={{ background: `url(${bgImages})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}>
+    <div style={{ background: `url(https://dev.fas-slb.com/static/media/bg-login.8f85b1df.jpg)`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}>
         <CContainer className="align-items-center login__container vh-100">
           <CCard className="w-100 custom-card">
             <CCardHeader className="custom-card__header" style={{ color: '#fff', textAlign: 'center'}}>
