@@ -22,8 +22,10 @@ import {
 import { AutoComplete } from "antd";
 import Header from "../Components/Header";
 import assetType from "../assetType.json";
+import assetStatus from "../assetStatus.json";
 import { api } from "../config/axios";
 import Swal from "sweetalert2";
+import { isFormValid } from "../helper";
 
 const { Option } = AutoComplete
 const styles = {
@@ -68,15 +70,6 @@ export default function AddItem () {
 
   const changeCertDate = (event) => {
     setCertDate(event.target.value)
-  }
-
-  const isFormValid = () => {
-    let arrValueForm = Object.values(form)
-    let isValueEmpty = arrValueForm.some(val => val === '' || val === undefined)
-    if(isValueEmpty) {
-      return true
-    }
-    return false
   }
 
   const submitForm = async () => {
@@ -198,6 +191,8 @@ export default function AddItem () {
                             <option value="">Please Select..</option>
                             <option value="Well site">Well site</option>
                             <option value="Yard">Yard</option>
+                            <option value="Dog House">Dog House</option>
+                            <option value="Mess Storage">Mess Storage</option>
                           </CSelect>
                       </CFormGroup>
                       <CFormGroup>
@@ -217,8 +212,11 @@ export default function AddItem () {
                           <CLabel htmlFor="hf-email">Status <span style={{ color: '#FF0B0B' }}>*</span></CLabel>
                           <CSelect type="text" name="status" onChange={changeForm}>
                             <option value="">Please Select..</option>
-                            <option value="New">New</option>
-                            <option value="Used Item">Used item</option>
+                            {
+                              assetStatus.map(status => (
+                                <option value={status.value} key={status.value}>{status.label}</option>
+                              ))
+                            }
                           </CSelect>
                       </CFormGroup>
                       <CFormGroup row className="my-0">
@@ -229,6 +227,8 @@ export default function AddItem () {
                               <option value="">Please Select..</option>
                               <option value="Tools">Tools</option>
                               <option value="ESP Equipment">ESP Equipment</option>
+                              <option value="PCP">PCP</option>
+                              <option value="HPS">HPS</option>
                             </CSelect>
                           </CFormGroup>
                         </CCol>
@@ -256,6 +256,8 @@ export default function AddItem () {
                           <option value="">Please Select..</option>
                           <option value="Good">Good</option>
                           <option value="Bad">Bad</option>
+                          <option value="Need test">Need test</option>
+                          <option value="Unknown">Unknown</option>
                         </CSelect>
                       </CFormGroup>
                       <CFormGroup row className="my-0">
@@ -278,7 +280,7 @@ export default function AddItem () {
                           <CButton color="danger" size="lg" block onClick={() => router.push('/home')}>Cancel</CButton>
                         </CCol>
                         <CCol md="6">
-                          <CButton color="primary" size="lg" block onClick={() => submitForm()} disabled={isFormValid()}>Submit</CButton>
+                          <CButton color="primary" size="lg" block onClick={() => submitForm()} disabled={isFormValid(form)}>Submit</CButton>
                         </CCol>
                       </CRow>
                     </CCardBody>
@@ -288,7 +290,6 @@ export default function AddItem () {
             </CTabContent>
           </CTabs>
         </div>
-        
     </>
   )
 }

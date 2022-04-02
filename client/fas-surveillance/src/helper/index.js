@@ -8,6 +8,7 @@ export const importImg = (img) => {
 
 export const checkCertDate = (date) => {
   let dateColor
+  let fontWeight
   let certDate = moment(date).format('DD MMM YYYY')
   if(certDate === 'Invalid date') {
     return (
@@ -20,13 +21,32 @@ export const checkCertDate = (date) => {
 
     if(moment().isSameOrBefore(endOfCertDate)) {
       dateColor = null
+      fontWeight = null
     } else {
       dateColor = '#dc3545'
+      fontWeight = 'bold'
     }
     return (
-        <td style={{ color: dateColor }}>
+        <td style={{ color: dateColor, fontWeight: fontWeight, fontSize: '13px' }}>
           {certDate}
         </td>
     )
   }
+}
+
+export const getNumRow = (index) => {
+  return (
+    <td>
+      { index + 1 }
+    </td>
+  )
+}
+
+export const isFormValid = (form) => {
+  let arrValueForm = Object.values(form)
+  let isValueEmpty = arrValueForm.some(val => val === '' || val === undefined)
+  if(isValueEmpty) {
+    return true
+  }
+  return false
 }

@@ -44,14 +44,14 @@ export default function MainPage () {
               <CNavItem>
                 <CNavLink className="custom-nav__item" data-tab="profile">
                   <CContainer>
-                    <CLabel style={styles.headerTitle}>Request Tools</CLabel>
+                    <CLabel style={styles.headerTitle}>Items Request</CLabel>
                   </CContainer>
                 </CNavLink>
               </CNavItem>
               <CNavItem>
                 <CNavLink className="custom-nav__item" data-tab="backload">
                   <CContainer>
-                    <CLabel style={styles.headerTitle}>Backload Items</CLabel>
+                    <CLabel style={styles.headerTitle}>Items Backload</CLabel>
                   </CContainer>
                 </CNavLink>
               </CNavItem>
