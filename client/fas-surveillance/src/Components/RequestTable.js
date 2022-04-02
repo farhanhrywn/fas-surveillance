@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
 import {
   CCol,
   CRow,
-  CButton,
+  CTooltip,
   CLabel,
   CSelect,
   CDataTable,
@@ -18,10 +17,11 @@ import moment from 'moment'
 import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
-import { Button, Space } from 'antd'
-import { getAssetRequest } from '../store'
+import { Button } from 'antd'
+import { getNumRow } from '../helper'
 
 const fields = [
+  { key: 'no', label: 'No' },
   { key: 'item', label: 'Item Name' },
   { key: 'qty', label: 'Quantity' },
   { key: 'req_to', label: 'Request To' },
@@ -105,7 +105,6 @@ export default function RequestTable ({ requestList }) {
             'Sukses remove item',
             'success'
           )
-          // fetchDataAsset(localStorage.getItem('loc_id'))
         })
       }
     })
@@ -118,21 +117,22 @@ export default function RequestTable ({ requestList }) {
   const actionField = (asset) => {
     return (
       <td>
-        <CRow>
-          {
-            ( asset.seen_status !== 'seen' ) &&
-            <CCol md="3">
-              <CIcon icon={Icon.cilPencil} width={20} onClick={() => showEditModal(asset.id_req)} />
-            </CCol>
-          }
-          {
-            (asset.seen_status !== 'seen') &&
-            <CCol md="3">
-              <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_req)}/>
-            </CCol>
-          }
-        </CRow>
-    </td>
+        {
+          ( asset.seen_status !== 'seen' ) &&
+          <div className='d-flex'>
+            <div className='btn border mx-1 rounded'>
+              <CTooltip content='edit request'>
+                <CIcon icon={Icon.cilPencil} width={20} onClick={() => showEditModal(asset.id_req)} />
+              </CTooltip>
+            </div>
+            <div className='btn border mx-1 rounded'>
+              <CTooltip content='delete request'>
+                <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_req)}/>
+              </CTooltip>
+            </div>
+          </div>
+        }
+      </td>
     )
   }
 
@@ -266,6 +266,7 @@ export default function RequestTable ({ requestList }) {
             hover
             striped
             scopedSlots={{
+              'no': (asset, index) => getNumRow(index),
               'create_date': (asset) => convertDate(asset.create_date),
               'update_by': (asset) => checkName(asset),
               'update_date': (asset) => convertDate(asset.update_date),

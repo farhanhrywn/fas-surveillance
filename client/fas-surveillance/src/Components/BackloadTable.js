@@ -6,7 +6,8 @@ import {
   CButton,
   CBadge,
   CDataTable,
-  CSelect
+  CSelect,
+  CTooltip
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
@@ -18,9 +19,10 @@ import moment from 'moment'
 import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
-import { checkCertDate } from '../helper'
+import { checkCertDate, getNumRow } from '../helper'
 
 const fields = [
+  { key: 'no', label: 'No' },
   { key: 'type', label: 'Type' },
   { key: 'pn', label: 'PN' },
   { key: 'sn', label: 'SN' },
@@ -51,7 +53,6 @@ export default function BackloadTable ({ backloadList }) {
   const fetchDataAsset = (locationId) => {
     api({
       url: `/Surveillance/getBackload/${locationId}`,
-      // url: '/asset',
       method: 'GET'
     })
     .then(({ data }) => {
@@ -143,20 +144,28 @@ export default function BackloadTable ({ backloadList }) {
   const actionField = (asset) => {
     return (
       <td>
-        <CRow>
-          <CCol md="3">
-            <CIcon icon={Icon.cilPencil} width={20} onClick={() => router.push(`/edit/item/${asset.id_surv}`)} />
-          </CCol>
-          <CCol md="3">
-            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => router.push(`edit/handover/${asset.id_surv}`)}/>
-          </CCol>
-          <CCol md="3">
-            <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
-          </CCol>
-          <CCol md="3">
-            <CIcon style={{ color: '#008000'}} icon={Icon.cilCheckAlt} width={20} onClick={() => showUpdateStatusBackloadModal(asset.id_surv)}/>
-          </CCol>
-        </CRow>
+        <div className='d-flex'>
+          <div className='btn border mx-1 rounded'>
+            <CTooltip content='edit item'>
+              <CIcon icon={Icon.cilPencil} width={20} onClick={() => router.push(`/edit/item/${asset.id_surv}`)}  />
+            </CTooltip>
+          </div>
+          <div className='btn border mx-1 rounded'>
+            <CTooltip content='edit handover'>
+              <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => router.push(`edit/handover/${asset.id_surv}`)} />
+            </CTooltip>
+          </div>
+          <div className='btn border mx-1 rounded'>
+            <CTooltip content='change status'>
+              <CIcon style={{ color: '#008000'}} icon={Icon.cilCheckAlt} width={20} onClick={() => showUpdateStatusBackloadModal(asset.id_surv)}/>
+            </CTooltip>
+          </div>
+          <div className='btn border mx-1 rounded'>
+            <CTooltip content='delete item'>
+              <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
+            </CTooltip>
+          </div>
+        </div>
     </td>
     )
   }
@@ -379,6 +388,7 @@ export default function BackloadTable ({ backloadList }) {
             hover
             striped
             scopedSlots={{
+              'no': (asset, index) => getNumRow(index),
               'type': (asset) => checkValue(asset, 'type'),
               'cert_date': (asset) => checkCertDate(asset.cert_date),
               'action': (asset, index) => actionField(asset),

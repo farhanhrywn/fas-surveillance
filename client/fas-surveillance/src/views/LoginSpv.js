@@ -18,6 +18,7 @@ import {
 import Swal from 'sweetalert2'
 import { api } from '../config/axios'
 import bgImages from '../assets/images/bg-login.jpg';
+import { isFormValid } from '../helper'
 
 const LoginSpv = () => {
   const router = useHistory()
@@ -79,7 +80,7 @@ const LoginSpv = () => {
               </CForm>
             </CCardBody>
             <CCardFooter className="custom-card__footer">
-              <CButton block size="lg" color="primary" onClick={userLogin}>Login</CButton>
+              <CButton block size="lg" color="primary" onClick={userLogin} disabled={isFormValid(formSpv)}>Login</CButton>
               <CRow className="mt-3">
                 <CCol md="12" style={{justifyContent: 'space-between', display: 'flex' }}>
                   <CLink className="text-white" onClick={() => router.push('/forget-password/spv')}>

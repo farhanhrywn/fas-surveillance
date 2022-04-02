@@ -16,5 +16,7 @@
   {"value": "Liftwatcher", "type": "ESP Equipment", "label": "Liftwatcher"},
   {"value": "VSD Part", "type": "ESP Equipment", "label": "VSD Part"},
   {"value": "Other Accessories", "type": "ESP Equipment", "label": "Other Accessories"},
-  {"value": "Consumable", "type": "ESP Equipment", "label": "Consumable"}
+  {"value": "Consumable", "type": "ESP Equipment", "label": "Consumable"},
+  {"value": "PCP Equipment", "type": "PCP", "label": "PCP Equipment"},
+  {"value": "HPS Equipment", "type": "HPS", "label": "HPS Equipment"}
 ]

@@ -22,34 +22,34 @@ function App() {
           <Route exact path='/'>
             <Login />
           </Route>
-          <Route path='/login/spv'>
+          <Route exact path='/login/spv'>
             <LoginSpv />
           </Route>
-          <Route path='/landing'>
+          <Route exact path='/landing'>
             <LandingPage />
           </Route>
-          <Route path='/landing/spv'>
+          <Route exact path='/landing/spv'>
             <LandingPageSpv />
           </Route>
-          <Route path='/home'>
+          <Route exact path='/home'>
             <MainPage />
           </Route>
-          <Route path='/add/item'>
+          <Route exact path='/add/item'>
             <AddItem />
           </Route>
-          <Route path='/edit/item/:id'>
+          <Route exact path='/edit/item/:id'>
             <EditItem />
           </Route>
-          <Route path='/edit/handover/:id'>
+          <Route exact path='/edit/handover/:id'>
             <EditHandover />
           </Route>
-          <Route path='/home/spv'>
+          <Route exact path='/home/spv'>
             <MainPageSpv />
           </Route>
-          <Route path='/forget-password/tech'>
+          <Route exact path='/forget-password/tech'>
             <ForgetPasswordTech />
           </Route>
-          <Route path='/forget-password/spv'>
+          <Route exact path='/forget-password/spv'>
             <ForgetPasswordSpv />
           </Route>
         </Switch>

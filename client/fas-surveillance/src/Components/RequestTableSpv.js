@@ -9,7 +9,8 @@ import {
   CDataTable,
   CFormGroup,
   CInput,
-  CBadge
+  CBadge,
+  CTooltip
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
@@ -19,10 +20,11 @@ import moment from 'moment'
 import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
-import { Button, Space } from 'antd'
 import { filterRequestSpvByParams, getRequestSpv } from '../store'
+import { getNumRow } from '../helper'
 
 const fields = [
+  { key: 'no', label: 'No' },
   { key: 'item', label: 'Item Name' },
   { key: 'qty', label: 'Quantity' },
   { key: 'req_to', label: 'Request To' },
@@ -39,8 +41,6 @@ const fields = [
 export default function RequestTableSpv ({ requestList, locationList }) {
   const dispatch = useDispatch()
   const [isModalEditOpen, setModalEditOpen] = useState(false)
-  const [isButtonDisable, setIsButtonDisable] = useState(true)
-  const [isLoading, setIsLoading] = useState(false)
   const [idReq, setIdReq] = useState('')
 
   const [formFilter, setFormFilter] = useState({
@@ -80,39 +80,6 @@ export default function RequestTableSpv ({ requestList, locationList }) {
         {asset.update_by}
       </td>
     )
-  }
-
-
-  const showEditModal = (assetId) => {
-    setModalEditOpen(true)
-    setIdReq(assetId)
-  }
-
-  const showRemoveModal = (requestId) => {
-    Swal.fire({
-      title: 'Are you sure to remove this request ?',
-      // text: "You won't be able to revert this item!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        api({
-          url: `/Request/${requestId}`,
-          method: 'DELETE'
-        })
-        .then(({ data }) => {
-          Swal.fire(
-            'Deleted!',
-            'Sukses remove item',
-            'success'
-          )
-          // fetchDataAsset(localStorage.getItem('loc_id'))
-        })
-      }
-    })
   }
 
   const hideModal = () => {
@@ -182,17 +149,18 @@ export default function RequestTableSpv ({ requestList, locationList }) {
   const actionField = (request) => {
     return (
       <td>
-        <CRow>
-          <CCol md="3">
-            <CIcon style={{ color: '#008000'}} icon={Icon.cilCheckAlt} width={20} onClick={() => acceptRequest(request.id_req)}/>
-          </CCol>
-          <CCol md="3">
-            <CIcon style={{ color: '#FF0000'}} icon={Icon.cilBan} width={20} onClick={() => declineRequest(request.id_req)}/>
-          </CCol>
-          {/* <CCol md="3">
-            <CIcon icon={Icon.cilFolderOpen} width={20} onClick={() => seenRequest(request.id_req)}/>
-          </CCol> */}
-        </CRow>
+        <div className='d-flex'>
+          <div className='btn border mx-1 rounded'>
+            <CTooltip content='accept'>
+              <CIcon style={{ color: '#008000'}} icon={Icon.cilCheckAlt} width={20} onClick={() => acceptRequest(request.id_req)}/>
+            </CTooltip>
+          </div>
+          <div className='btn border mx-1 rounded'>
+            <CTooltip content='reject'>
+              <CIcon style={{ color: '#FF0000'}} icon={Icon.cilBan} width={20} onClick={() => declineRequest(request.id_req)}/>
+            </CTooltip>
+          </div>
+        </div>
     </td>
     )
   }
@@ -286,6 +254,7 @@ export default function RequestTableSpv ({ requestList, locationList }) {
             hover
             striped
             scopedSlots={{
+              'no': (asset, index) => getNumRow(index),
               'create_date': (asset) => convertDate(asset.create_date),
               'update_by': (asset) => checkName(asset),
               'update_date': (asset) => convertDate(asset.update_date),

@@ -19,9 +19,10 @@ import { api } from '../config/axios'
 import Modal from 'react-bootstrap/Modal'
 import Swal from 'sweetalert2'
 import { filterBackloadSpvByParams } from '../store'
-import { checkCertDate } from '../helper'
+import { checkCertDate, getNumRow } from '../helper'
 
 const fields = [
+  { key: 'no', label: 'No' },
   { key: 'type', label: 'Type' },
   { key: 'pn', label: 'PN' },
   { key: 'sn', label: 'SN' },
@@ -31,10 +32,10 @@ const fields = [
   { key: 'condition', label: 'Condition'},
   { key: 'plan', label: 'Plan'},
   { key: 'remark', label: 'Remark', _style: { width: '20%'} },
-  { key: 'cert_date', label: 'Certification Date' },
+  { key: 'cert_date', label: 'Certification Date', _style: { width: '20%'} },
   { key: 'tools_date_in', label: 'Number of Days in Storage', _style: { width: '20%'} },
   { key: 'maintenance_by', label: 'Update By', _style: { width: '10%'}},
-  { key: 'backload_status', label: 'Backload Status', _style: { width: '10%'}},
+  { key: 'backload_status', label: 'Backload Status' },
 ]
 
 export default function BackloadTableSpv ({ backloadList, locationList }) {
@@ -307,6 +308,7 @@ export default function BackloadTableSpv ({ backloadList, locationList }) {
             hover
             striped
             scopedSlots={{
+              'no': (asset, index) => getNumRow(index),
               'type': (asset) => checkValue(asset, 'type'),
               'cert_date': (asset) => checkCertDate(asset.cert_date),
               'tools_date_in': (asset) => calculateDateIn(asset),

@@ -31,21 +31,23 @@ import {
   fetchDataAssetSpv,
   fetchDataLocations
 } from "../store";
-import { checkCertDate } from '../helper'
+import { checkCertDate, getNumRow } from '../helper'
 
 const fields = [
+  { key: 'no', label: 'No' },
   { key: 'type', label: 'Type' },
   { key: 'pn', label: 'PN' },
   { key: 'sn', label: 'SN' },
   { key: 'item', label: 'Description' },
   { key: 'sub_location', label: 'Sub Location' },
   { key: 'status', label: 'Status' },
+  { key: 'qty', label: 'Quantity' },
   { key: 'steelbox', label: 'Steelbox' },
   { key: 'condition', label: 'Condition'},
   { key: 'plan', label: 'Plan'},
-  { key: 'remark', label: 'Remark', _style: { width: '20%'} },
-  { key: 'cert_date', label: 'Certification Date' },
-  { key: 'tools_date_in', label: 'Number of Days in Storage', _style: { width: '20%'} },
+  { key: 'remark', label: 'Remark' },
+  { key: 'cert_date', label: 'Certification Date', _style: { width: '20%'} },
+  { key: 'tools_date_in', label: 'Number of Days in Storage' },
   { key: 'maintenance_by', label: 'Update By', _style: { width: '10%' }},
 ]
 
@@ -302,6 +304,7 @@ export default function AssetTableSpv () {
             hover
             striped
             scopedSlots={{
+              'no': (asset, index) => getNumRow(index),
               'type': (asset) => checkValue(asset, 'type'),
               'cert_date': (asset) => checkCertDate(asset.cert_date),
               'status': (asset) => (

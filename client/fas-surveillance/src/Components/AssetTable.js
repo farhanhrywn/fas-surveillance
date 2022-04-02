@@ -10,7 +10,8 @@ import {
   CBadge,
   CFormGroup,
   CLabel,
-  CInput
+  CInput,
+  CTooltip
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
@@ -33,21 +34,23 @@ import {
   deleteAsset,
   filterAssetByParams
 } from "../store";
-import { checkCertDate } from '../helper'
+import { checkCertDate, getNumRow } from '../helper'
 
 
 const fields = [
+  { key: 'no', label: 'No' },
   { key: 'type', label: 'Type' },
   { key: 'pn', label: 'PN' },
   { key: 'sn', label: 'SN' },
   { key: 'item', label: 'Description' },
   { key: 'sub_location', label: 'Sub Location' },
   { key: 'status', label: 'Status' },
+  { key: 'qty', label: 'Quantity' },
   { key: 'steelbox', label: 'Steelbox' },
   { key: 'condition', label: 'Condition'},
   { key: 'plan', label: 'Plan'},
   { key: 'remark', label: 'Remark', _style: { width: '20%'} },
-  { key: 'cert_date', label: 'Certification Date' },
+  { key: 'cert_date', label: 'Certification Date', _style: { width: '30%' } },
   { key: 'tools_date_in', label: 'Number of Days in Storage', _style: { width: '20%'} },
   { key: 'maintenance_by', label: 'Update By', _style: { width: '10%' }},
   { key: 'action', label: 'Action'}
@@ -126,13 +129,19 @@ export default function AssetTable () {
       <td style={{ verticalAlign: 'middle'}}>
         <div className='d-flex'>
           <div className='btn border mx-1 rounded'>
-            <CIcon icon={Icon.cilPencil} width={20} onClick={() => router.push(`/edit/item/${asset.id_surv}`)} />
+            <CTooltip content='edit item'>
+              <CIcon icon={Icon.cilPencil} width={20} onClick={() => router.push(`/edit/item/${asset.id_surv}`)} />
+            </CTooltip>
           </div>
           <div className='btn border mx-1 rounded'>
-            <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => router.push(`edit/handover/${asset.id_surv}`)}/>
+            <CTooltip content='edit handover'>
+              <CIcon icon={Icon.cilNoteAdd} width={20} onClick={() => router.push(`edit/handover/${asset.id_surv}`)}/>
+            </CTooltip>
           </div>
           <div className='btn border mx-1 rounded'>
-            <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
+            <CTooltip content='delete item'>
+              <CIcon style={{ color: '#F83C3C'}} icon={Icon.cilX} width={20} onClick={() => showRemoveModal(asset.id_surv)}/>
+            </CTooltip>
           </div>
         </div>
       </td>
@@ -256,6 +265,7 @@ export default function AssetTable () {
 
     return result
   }
+
   useEffect(() => {
     let locationId = localStorage.getItem('loc_id')
 
@@ -323,10 +333,11 @@ export default function AssetTable () {
           <CDataTable
             items={filteredAssets}
             fields={fields}
-            size='500px'
+            size='1000px'
             hover
             striped
             scopedSlots={{
+              'no': (asset, index) => getNumRow(index),
               'type': (asset) => checkValue(asset, 'type'),
               'cert_date': (asset) => checkCertDate(asset.cert_date),
               'status': (asset) => (

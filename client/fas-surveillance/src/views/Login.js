@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router'
+import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import {
   CButton,
   CCard,
@@ -15,10 +15,10 @@ import {
   CLink,
   CRow,
   CCol
-} from '@coreui/react'
-import Swal from 'sweetalert2'
-import { api } from '../config/axios'
-import bgImages from '../assets/images/bg-login.jpg';
+} from '@coreui/react';
+import Swal from 'sweetalert2';
+import { api } from '../config/axios';
+import { isFormValid } from '../helper';
 
 const Login = () => {
   const router = useHistory()
@@ -26,7 +26,9 @@ const Login = () => {
   const [picPhoneNumber, setPicPhoneNumber] = useState('')
   const [form, setForm] = useState({
     id_lokasi: '',
-    password: ''
+    password: '',
+    picName: '',
+    picPhoneNumber: ''
   })
 
   const [locations, setLocations] = useState([])
@@ -52,8 +54,8 @@ const Login = () => {
         data: form
       })
       .then(({data}) => {
-        localStorage.setItem('pic_name', picName)
-        localStorage.setItem('pic_phone', picPhoneNumber)
+        localStorage.setItem('pic_name', form.picName)
+        localStorage.setItem('pic_phone', form.picPhoneNumber)
         localStorage.setItem('loc_id', data.data.loc_id)
         localStorage.setItem('loc_name', data.data.lokasi)
         localStorage.setItem('token', data.token)
@@ -100,11 +102,11 @@ const Login = () => {
               <CForm>
                 <CFormGroup>
                   <CLabel className="label__custom">PIC Name</CLabel>
-                  <CInput className="custom-input__background" type="text" name='pic_name' onChange={(e) => setPicName(e.target.value)}/>
+                  <CInput className="custom-input__background" type="text" name='picName' onChange={updateForm}/>
                 </CFormGroup>
                 <CFormGroup>
                   <CLabel className="label__custom">Phone Number</CLabel>
-                  <CInput className="custom-input__background" type="text" name='pic_phone_number' onChange={(e) => setPicPhoneNumber(e.target.value)} />
+                  <CInput className="custom-input__background" type="text" name='picPhoneNumber' onChange={updateForm} />
                 </CFormGroup>
                 <CFormGroup>
                   <CLabel className="label__custom">Location</CLabel>
@@ -132,7 +134,7 @@ const Login = () => {
               </CForm>
             </CCardBody>
             <CCardFooter className="custom-card__footer">
-              <CButton block size="lg" color="primary" onClick={userLogin}>Login</CButton>
+              <CButton block size="lg" color="primary" onClick={userLogin} disabled={isFormValid(form)}>Login</CButton>
               <CRow className="mt-3">
                 <CCol md="12" style={{justifyContent: 'space-between', display: 'flex' }}>
                   <CLink className="text-white" onClick={() => router.push('/forget-password/tech')}>
